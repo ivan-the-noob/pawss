@@ -1,0 +1,452 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    margin: 0;
+}
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.logout{
+    background-color: #fff !important;
+}
+/*Navbar Section*/
+.navbar {
+    height: 100vh;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    min-width: 230px;
+}
+.navbar a {
+    color: #000;
+    padding: 12px 15px;
+    text-decoration: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px !important;
+    margin: 2px;
+}
+.navbar-highlight {
+    color: #FFFFFF !important;
+    border-radius: 10px;
+    padding: 12px 15px !important;
+    text-decoration: none !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 14px !important;
+    background-color: #7A3015 !important;
+}
+.navbar a:hover {
+    background-color: #7A3015;
+    color: #FFFFFF;
+    border-radius: 10px;
+}
+
+.navbar-brand {
+    padding: 0 !important;
+}
+.navbar-brand:hover {
+    background-color: #fff !important;
+}
+.navbar-brand img {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    height: 15vh;
+    margin: 20px 0 20px 30px;
+}
+
+.navbar-links {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.content {
+    flex-grow: 1;
+    background-color: #F5F6FA;
+    overflow-x: auto;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    justify-content: space-between;
+    background-color: #FFFFFF !important;
+}
+
+.header button{
+    margin-right: 10px;
+}
+.dashboard {
+    background-color: #F5F6FA;
+    padding: 0;
+    margin: 0;
+    height: auto;
+}
+.navbar-toggler {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+.search-bar {
+    flex-grow: 1;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    position: relative;
+}
+
+.search-bar input {
+    height: 6vh;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding-left: 40px; 
+}
+
+.search-bar i {
+    position: absolute;
+    left: 10px; 
+    font-size: 18px;
+    color: #000;
+    padding: 5px;
+}
+.profile-admin {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 5px;
+}
+.profile-admin img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid #7A3015;
+}
+
+.profile-admin button {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    display: flex;
+    margin: auto;
+}
+.profile-admin i {
+    color: #7A3015;
+}
+.profile-admin span {
+    font-size: 16px;
+    font-weight: bold;
+}
+.maintenance {
+    border-top: 1px solid #e4e0e0;
+}
+.maintenance p {
+    margin: 0;
+    font-size: 14px;
+    padding-left: 16px;
+    margin-top: 20px;
+}
+
+.admin-profile{
+    border:  3px solid #7A3015;
+}
+/*Navbar Section End*/
+
+/*Appointment Request Section*/
+
+.app-req{
+    padding: 10px 20px;
+    overflow-x: auto;
+}
+.app-req h3{
+    padding: 30px 0 0 20px !important;
+    color: #7A3015;
+}
+
+
+.table-remove-borders th,
+.table-remove-borders td {
+    border: none !important;
+    white-space: nowrap;
+    text-align: center;
+    
+}
+.table-remove-borders th{
+    background-color: #7A3015;
+    color: #fff;
+}
+
+.table-remove-borders td{
+    background-color: #F1F5F9 !important;
+}
+
+tr:hover{
+    background-color: #FFFFFF;
+}
+
+.table-wrapper{
+    overflow-x: auto;
+
+}
+
+.pagination {
+    display: flex !important;
+    justify-content: center;
+ 
+}
+.pagination .page-item {
+    margin: 0 5px;
+    display: flex;
+}
+.pagination .page-link {
+    color: #000;
+}
+.pagination .page-link:hover {
+    color: #007bff;
+}
+
+
+.walk-in .search-bars{
+    width: auto;
+}
+
+
+.search-bars {
+    flex-grow: 1;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    position: relative;
+}
+
+.search-bars input {
+    height: 6vh;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding-left: 40px; 
+}
+
+.search-bars i {
+    position: absolute;
+    left: 10px; 
+    font-size: 18px;
+    color: #000;
+    padding: 5px;
+}
+.btn-new{
+    background-color: #7A3015 !important;
+    border: none !important;
+    color: #fff !important;
+    padding:  10px 20px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+}
+.x{
+    display: grid;
+    justify-content: space-between !important;
+    gap: 10px;
+}
+
+.book-save{
+    background-color: #7A3015 !important;
+    border: none !important;
+    color: #fff !important;
+    padding:  10px 20px !important;
+    border-radius: 10px !important;
+}
+.modal-dialog{
+    max-width: 80%;
+}
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 80%;
+        display: flex;
+        margin: auto;
+    }
+}
+
+
+.dropdown-toggle {
+    white-space: wrap;
+}
+
+.medical-services a{
+    word-break: break-word;
+}
+
+.modal-body label{
+    color: #7A3015;
+    font-size: 16px;
+    font-weight: 500;
+}
+.modal-body h6{
+    color:#7A3015;
+    font-size: 22px;
+}
+
+.modal-body p{
+    color: #7A3015;
+}
+
+#dayModal .container{
+    padding: 0;
+}
+
+.contacts input{
+    margin: 5px;
+}
+
+.modal-body .sched p{
+    font-size: 20px;
+    font-weight: 400;
+    padding: 0;
+    margin: 0;
+}
+
+tr:hover{
+    color: #fff;
+    background-color: #000;
+}
+
+.med .dropdown-menu{
+    padding: 0;
+    background-color: #7A3015 !important;
+    color: #fff !important;
+}
+.med .dropdown-menu li{
+    text-align: center;
+}
+
+.m{
+    color: #fff !important;
+    text-align: center;
+}
+
+
+
+.m:hover{
+    background-color: #fff !important;
+    color: #7A3015 !important;
+    padding: 0 !important;
+
+}
+
+.modal-header button{
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+}
+
+
+ul a:hover{
+    background-color: #7A3015 !important;
+    color: #7A3015 !important;
+    border-radius: 5px;
+    color: #fff !important;
+}
+ .dropdown-toggle{
+    background-color: #7A3015;
+    border: none;
+}
+
+.walkin{
+    background-color: #7A3015;
+    padding: 10px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+.swal-icon img{
+    height: 10vh !important;
+}
+
+.swal-button-container button{
+    background-color: green;
+}
+/*Appointment Request End*/
+
+
+.pagination .page-item .page-link {
+    border-radius: 50%;
+    background-color: #7A3015;
+    color: white;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    border: none;
+}
+.pagination li a:hover{
+    background-color: #af5433 !important;
+    color: #fff !important;
+}
+.pagination .page-item.active .page-link {
+    background-color: #5a220d;
+    border-color: #5a220d;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #5a220d;
+    color: white;
+}
+
+.dropdown button{
+    align-items: center;
+}
+
+
+
+.dropdown menu li{
+    background-color: #fff !important;
+}
+
+/*Notif Section*/
+
+.dropdown-menu-end{
+    width: 300px;
+    overflow-y: auto;
+    height: 70vh;
+}
+
+.dropdown-item a{
+    text-decoration: none !important;
+
+}
+.dropdown-item a:hover{
+    background-color: transparent !important;
+
+
+}
+
+.dropdown-item p{
+    margin: 0;
+}
+
+
+.alert {
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
