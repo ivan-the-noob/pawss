@@ -2,7 +2,7 @@
 
 session_start();
 if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
-    $email = $_SESSION['email'];
+    $email = $_SESSION['email'] ?? null;
     $profile_picture = $_SESSION['profile_picture'];
 } else {
   
@@ -10,7 +10,15 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
 
 require 'db.php';
 
-$sql = "SELECT product_name, total_price, quantity FROM cart WHERE email = '$email'";
+if (isset($email) && !empty($email)) {
+    $stmt = $conn->prepare("SELECT product_name, total_price, quantity FROM cart WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+} else {
+    echo ""; 
+}
+
 $result = $conn->query($sql);
 
 $cartItems = [];
