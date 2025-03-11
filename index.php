@@ -5,35 +5,32 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
     $email = $_SESSION['email'];
     $profile_picture = $_SESSION['profile_picture'];
 } else {
-  
+    $email = null;
 }
 
 require 'db.php';
 
-if (isset($email) && !empty($email)) {
+$cartItems = [];
+
+if (!empty($email)) {
     $stmt = $conn->prepare("SELECT product_name, total_price, quantity FROM cart WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
-} else {
-    echo ""; 
-}
 
-$result = $conn->query($sql);
-
-$cartItems = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $cartItems[] = $row;
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $cartItems[] = $row;
+        }
     }
-} else {
-    $cartItems = [];
-}
 
+    $stmt->close(); // Close the prepared statement
+}
 
 $conn->close();
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
