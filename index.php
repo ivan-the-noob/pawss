@@ -2,7 +2,7 @@
 
 session_start();
 if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
-    $email = $_SESSION['email'] ?? null;
+    $email = $_SESSION['email'];
     $profile_picture = $_SESSION['profile_picture'];
 } else {
   
@@ -89,7 +89,10 @@ $conn->close();
                         </li>
                     </ul>
                     <div class="d-flex ml-auto">
-                        <?php if ($email): ?>
+                        
+                        <?php
+                        $email = $_SESSION['email'] ?? null;
+                         if ($email): ?>
                             <!-- Profile Dropdown -->
                             <div class="dropdown second-dropdown">
                                 <button class="btn" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
