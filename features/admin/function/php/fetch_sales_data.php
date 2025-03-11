@@ -1,24 +1,23 @@
 <?php
 require '../../../../db.php';
 
-// Check if a specific month is selected
-$selectedMonth = isset($_GET['month']) ? $_GET['month'] : '';
+// Check if a specific date is selected
+$selectedDate = isset($_GET['date']) ? $_GET['date'] : '';
 
-// If a month is selected, modify the query to filter by that month
-if ($selectedMonth) {
+// If a specific date is selected, modify the query to filter by that date
+if ($selectedDate) {
     $query = "
         SELECT DATE_FORMAT(appointment_date, '%Y-%m') AS month, SUM(payment) AS total_sales
         FROM appointment
-        WHERE appointment_date LIKE '$selectedMonth%'
+        WHERE DATE(appointment_date) = '$selectedDate'
         GROUP BY month
         ORDER BY month ASC
     ";
 } else {
-    // Default query for all months
+    // Default query for all months (no filtering by date)
     $query = "
         SELECT DATE_FORMAT(appointment_date, '%Y-%m') AS month, SUM(payment) AS total_sales
         FROM appointment
-        WHERE YEAR(appointment_date) = YEAR(CURDATE())
         GROUP BY month
         ORDER BY month ASC
     ";
