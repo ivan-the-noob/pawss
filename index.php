@@ -5,8 +5,7 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
     $email = $_SESSION['email'];
     $profile_picture = $_SESSION['profile_picture'];
 } else {
-    header("Location: features/users/web/api/login.php");
-    exit();
+  
 }
 
 require 'db.php';
