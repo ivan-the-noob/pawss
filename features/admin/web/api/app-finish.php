@@ -179,14 +179,23 @@
                                 echo "<td>{$row['email']}</td>";
                                
                                 echo "<td>{$row['payment']}</td>";
-                                echo "<td>{$row['payment_option']}</td>";
+                                echo "<td>" . (!empty($row['gcash_image']) ? $row['payment_option'] : "On store") . "</td>";
                                 echo "<td>
-                                 <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' onclick='viewAdditionalInfo({$row['id']}, \"{$row['barangay']}\", \"{$row['pet_type']}\", \"{$row['breed']}\", \"{$row['age']}\", \"{$row['service']}\", \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", \"{$row['add_info']}\")'>View</button>
-                                        <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#locationModal' onclick='showMap({$row['latitude']}, {$row['longitude']})'>Location</button>
-                                        <button class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#gcashModal' onclick='showGcashImage(\"" . addslashes($row['gcash_image']) . "\")'>Receipt</button>
-                                    </td>";
-                               
-                                echo "</tr>";
+                                <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' 
+                                    onclick='viewAdditionalInfo({$row['id']}, \"{$row['barangay']}\", \"{$row['pet_type']}\", 
+                                    \"{$row['breed']}\", \"{$row['age']}\", \"{$row['service']}\", \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
+                                    \"{$row['add_info']}\")'>View</button>
+                        
+                                <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#locationModal' 
+                                    onclick='showMap({$row['latitude']}, {$row['longitude']})'>Location</button>";
+                        
+                        if (!empty($row['gcash_image'])) {
+                            echo "<button class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#gcashModal' 
+                                    onclick='showGcashImage(\"" . addslashes($row['gcash_image']) . "\")'>Receipt</button>";
+                        }
+                        
+                        echo "</td>";
+                        
                                 $index++;
                             }
                         } else {
