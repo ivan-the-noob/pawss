@@ -48,16 +48,16 @@ if (!empty($current_password) && !empty($new_password)) {
     }
 }
 
-// Prepare update statement
 $stmt = $conn->prepare("UPDATE users SET 
-    profile_picture = COALESCE(NULLIF(?, ''), profile_picture), 
+    profile_picture = COALESCE(NULLIF(CONVERT(?, CHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci), ''), profile_picture), 
     latitude = ?, 
     longitude = ?, 
-    contact_number = COALESCE(NULLIF(?, ''), contact_number), 
-    home_street = COALESCE(NULLIF(?, ''), home_street), 
-    address_search = COALESCE(NULLIF(?, ''), address_search) 
+    contact_number = COALESCE(NULLIF(CONVERT(?, CHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci), ''), contact_number), 
+    home_street = COALESCE(NULLIF(CONVERT(?, CHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci), ''), home_street), 
+    address_search = COALESCE(NULLIF(CONVERT(?, CHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci), ''), address_search) 
 WHERE id = ?");
 $stmt->bind_param("sddsssi", $profile_picture_path, $latitude, $longitude, $contact_number, $home_street, $address_search, $user_id);
+
 
 if ($stmt->execute()) {
     echo "Profile updated successfully.";
