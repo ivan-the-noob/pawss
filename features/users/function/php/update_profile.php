@@ -60,7 +60,7 @@ $stmt->bind_param("sddsssi", $profile_picture_path, $latitude, $longitude, $cont
 
 
 if ($stmt->execute()) {
-    echo "Profile updated successfully.";
+    header('Location: ../../web/api/dashboard.php');
 } else {
     echo "Error: " . $stmt->error;
 }
