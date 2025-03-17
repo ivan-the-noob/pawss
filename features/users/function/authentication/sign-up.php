@@ -1,4 +1,5 @@
 <?php
+session_start();  // Start the session to store error messages
 include '../../../../db.php';
 
 // Check if the form is submitted via POST
@@ -7,7 +8,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-    // Insert the user into the 'users' table
+    // Check if the email is already registered
+    $check_sql = "SELECT id FROM users WHERE email = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("s", $email);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+
+    if ($check_result->num_rows > 0) {
+        // Account already exists
+        $_SESSION['error'] = "Account already registered with this email.";
+        header("Location: sign-up.php");  // Redirect back to sign-up page with error
+        exit();
+    }
+
+    // Insert the user into the 'users' table if email is not already registered
     $sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sss", $name, $email, $password);
@@ -29,11 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     } else {
         // Display error message if registration fails
-        echo "Error: " . $stmt->error;
+        $_SESSION['error'] = "Error: " . $stmt->error;
+        header("Location: sign-up.php");  // Redirect back to sign-up page with error
+        exit();
     }
 
     // Close prepared statement
     $stmt->close();
+    $check_stmt->close();
 }
 
 // Close database connection
