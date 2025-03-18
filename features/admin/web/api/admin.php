@@ -219,9 +219,9 @@ $result_sales = $conn->query($sql_sales);
 $total_sales = $result_sales->fetch_assoc()['total_sales'];
 
 // 4. Get Total Pending
-$sql_pending = "SELECT COUNT(*) AS total_pending FROM appointment WHERE status = 'pending'";
+$sql_pending = "SELECT COUNT(*) AS total_checkout FROM checkout";
 $result_pending = $conn->query($sql_pending);
-$total_pending = $result_pending->fetch_assoc()['total_pending'];
+$total_pending = $result_pending->fetch_assoc()['total_checkout'];
 ?>
 
 <div class="row card-box">
