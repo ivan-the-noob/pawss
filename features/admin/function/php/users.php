@@ -12,7 +12,7 @@ $page = max($page, 1); // Ensure the page is at least 1
 $offset = ($page - 1) * $recordsPerPage;
 
 // Fetch the records with a LIMIT and OFFSET
-$sql = "SELECT id, name, email FROM users LIMIT $recordsPerPage OFFSET $offset";
+$sql = "SELECT id, name, email FROM users WHERE role = 'user' LIMIT $recordsPerPage OFFSET $offset";
 $result = $conn->query($sql);
 
 if (!$result) {
