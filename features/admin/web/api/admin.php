@@ -202,68 +202,90 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
                     + Sales
                 </button>
             </div>
-            <div class="row card-box">
-                <div class="col-12 col-md-6 col-lg-3 cc">
-                    <div class="card">
-                        <div class="cards">
-                            <div class="card-text">
-                                <p>Total Users</p>
-                                <h5>125</h5>
-                            </div>
-                            <div class="logo">
-                                <i class="fa-solid fa-users"></i>
-                            </div>
-                        </div>
-                        <div class="trend card-up"><i class="fa-solid fa-arrow-trend-up"> 8.5 % </i> Up from yesterday
-                        </div>
-                    </div>
+            <?php
+require '../../../../db.php';
+$sql_users = "SELECT COUNT(*) AS total_users FROM users";
+$result_users = $conn->query($sql_users);
+$total_users = $result_users->fetch_assoc()['total_users'];
+
+// 2. Get Total Booked
+$sql_booked = "SELECT COUNT(*) AS total_booked FROM appointment";
+$result_booked = $conn->query($sql_booked);
+$total_booked = $result_booked->fetch_assoc()['total_booked'];
+
+// 3. Get Total Sales
+$sql_sales = "SELECT SUM(payment) AS total_sales FROM appointment";
+$result_sales = $conn->query($sql_sales);
+$total_sales = $result_sales->fetch_assoc()['total_sales'];
+
+// 4. Get Total Pending
+$sql_pending = "SELECT COUNT(*) AS total_pending FROM appointment WHERE status = 'pending'";
+$result_pending = $conn->query($sql_pending);
+$total_pending = $result_pending->fetch_assoc()['total_pending'];
+?>
+
+<div class="row card-box">
+    <div class="col-12 col-md-6 col-lg-3 cc">
+        <div class="card">
+            <div class="cards">
+                <div class="card-text">
+                    <p>Total Users</p>
+                    <h5><?php echo $total_users; ?></h5>
                 </div>
-                <div class="col-12 col-md-6 col-lg-3 cc">
-                    <div class="card">
-                        <div class="cards">
-                            <div class="card-text">
-                                <p>Total Booked</p>
-                                <h5>20</h5>
-                            </div>
-                            <div class="logo">
-                                <i class="fa-solid fa-calendar-check"></i>
-                            </div>
-                        </div>
-                        <div class="trend card-up"><i class="fa-solid fa-arrow-trend-up"> 1.3 % </i> Up from yesterday
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3 cc">
-                    <div class="card">
-                        <div class="cards">
-                            <div class="card-text">
-                                <p>Total Sales</p>
-                                <h5>₱40,689</h5>
-                            </div>
-                            <div class="logo">
-                                <i class="fa-solid fa-dollar-sign"></i>
-                            </div>
-                        </div>
-                        <div class="trend card-down"><i class="fa-solid fa-arrow-trend-down"> 4.3 % </i> Down from
-                            yesterday</div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3 cc">
-                    <div class="card">
-                        <div class="cards">
-                            <div class="card-text">
-                                <p>Total Pending</p>
-                                <h5>10</h5>
-                            </div>
-                            <div class="logo">
-                                <i class="fa-solid fa-clock"></i>
-                            </div>
-                        </div>
-                        <div class="trend card-up"><i class="fa-solid fa-arrow-trend-up"> 8.5 % </i> Up from yesterday
-                        </div>
-                    </div>
+                <div class="logo">
+                    <i class="fa-solid fa-users"></i>
                 </div>
             </div>
+            <div class="trend card-up"><i class="fa-solid fa-arrow-trend-up"> 8.5 % </i> Up from yesterday
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 cc">
+        <div class="card">
+            <div class="cards">
+                <div class="card-text">
+                    <p>Total Booked</p>
+                    <h5><?php echo $total_booked; ?></h5>
+                </div>
+                <div class="logo">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+            </div>
+            <div class="trend card-up"><i class="fa-solid fa-arrow-trend-up"> 1.3 % </i> Up from yesterday
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 cc">
+        <div class="card">
+            <div class="cards">
+                <div class="card-text">
+                    <p>Total Sales</p>
+                    <h5>₱<?php echo number_format($total_sales, 2); ?></h5>
+                </div>
+                <div class="logo">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                </div>
+            </div>
+            <div class="trend card-down"><i class="fa-solid fa-arrow-trend-down"> 4.3 % </i> Down from yesterday</div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 cc">
+        <div class="card">
+            <div class="cards">
+                <div class="card-text">
+                    <p>Total Pending</p>
+                    <h5><?php echo $total_pending; ?></h5>
+                </div>
+                <div class="logo">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+            </div>
+            <div class="trend card-up"><i class="fa-solid fa-arrow-trend-up"> 8.5 % </i> Up from yesterday
+            </div>
+        </div>
+    </div>
+</div>
+
            
             <div class="flex-container">
             <div class="chart-container">
