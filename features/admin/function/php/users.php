@@ -46,7 +46,7 @@ if (!$result) {
 }
 
 // Get the total number of records
-$totalSql = "SELECT COUNT(*) as total FROM users";
+$totalSql = "SELECT COUNT(*) as total FROM users WHERE role = 'user'";
 $totalResult = $conn->query($totalSql);
 $totalRows = $totalResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $recordsPerPage);
