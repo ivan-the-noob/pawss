@@ -203,8 +203,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
                 </button>
             </div>
             <?php
-require '../../../../db.php';
-$sql_users = "SELECT COUNT(*) AS total_users FROM users";
+require '../../../../db.php';   
+$sql_users = "SELECT COUNT(*) AS total_users FROM users WHERE role = 'user'";
 $result_users = $conn->query($sql_users);
 $total_users = $result_users->fetch_assoc()['total_users'];
 
