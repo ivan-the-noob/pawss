@@ -149,15 +149,7 @@ $conn->close();
                     <a href="features/users/web/api/appointment.php"><button class="btn btn-primary mb-2">Book an
                             appointment</button>
                     </a>
-                    <div class="satisfied-customers d-flex mt-4">
-                        <div class="profile-pics">
-                            <img src="assets/img/satisfied.png" alt="Profile" class="profile">
-                        </div>
-                        <div class="text">
-                            <p class="number mb-0" style="font-weight: 800">900+</p>
-                            <p class="label">Satisfied pet owners</p>
-                        </div>
-                    </div>
+                  
 
                 </div>
             </div>

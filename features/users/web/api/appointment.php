@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $ownerName = htmlspecialchars($_POST['ownerName']);
   $contactNum = htmlspecialchars($_POST['contactNum']);
   $email = htmlspecialchars($_POST['ownerEmail']);
-  $barangay = htmlspecialchars($_POST['barangayDropdown']);
+  $barangay = isset($_POST['barangayDropdown']) ? htmlspecialchars($_POST['barangayDropdown']) : null;
   $petType = htmlspecialchars($_POST['petType']);
   $breed = htmlspecialchars($_POST['breed']);
   $age = htmlspecialchars($_POST['age']);
