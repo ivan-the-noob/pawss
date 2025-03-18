@@ -273,7 +273,7 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
         <div class="card">
             <div class="cards">
                 <div class="card-text">
-                    <p>Total Pending</p>
+                    <p>Total Checkout</p>
                     <h5><?php echo $total_pending; ?></h5>
                 </div>
                 <div class="logo">
