@@ -174,35 +174,41 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
 
             <?php
 
-            require '../../../../db.php';
+                require '../../../../db.php';
 
-            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["product_img"])) {
-                $productName = $_POST['product_name'];
-                $description = $_POST['description'];
-                $cost = $_POST['cost'];
-                $type = $_POST['type'];
-                $quantity = $_POST['quantity'];
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["product_img"])) {
+                    $productName = $_POST['product_name'];
+                    $description = $_POST['description'];
+                    $cost = $_POST['cost'];
+                    $type = $_POST['type'];
+                    $quantity = $_POST['quantity'];
 
-                $targetDir = "../../../../assets/img/product/";
-                $imageName = basename($_FILES["product_img"]["name"]);
-                $targetFilePath = $targetDir . $imageName;
+                    $targetDir = "../../../../assets/img/product/";
+                    $imageName = basename($_FILES["product_img"]["name"]);
+                    $targetFilePath = $targetDir . $imageName;
 
-                if (move_uploaded_file($_FILES["product_img"]["tmp_name"], $targetFilePath)) {
-                    $sql = "INSERT INTO product (product_img, product_name, description, cost, type, quantity) VALUES ('$imageName', '$productName', '$description', '$cost', '$type', '$quantity')";
+                    if (move_uploaded_file($_FILES["product_img"]["tmp_name"], $targetFilePath)) {
+                        $sql = "INSERT INTO product (product_img, product_name, description, cost, type, quantity) 
+                                VALUES ('$imageName', '$productName', '$description', '$cost', '$type', '$quantity')";
 
-                    if ($conn->query($sql) === TRUE) {
-                        echo "New product added successfully!";
+                        if ($conn->query($sql) === TRUE) {
+
+                            // Add notification
+                            $notifMessage = "New product has been arrived! Check it now!";
+                            $notifSql = "INSERT INTO notification (message) VALUES ('$notifMessage')";
+                            $conn->query($notifSql);
+
+                            echo "New product added successfully!";
+                        } else {
+                            echo "Error: " . $sql . "<br>" . $conn->error;
+                        }
                     } else {
-                        echo "Error: " . $sql . "<br>" . $conn->error;
+                        echo "Sorry, there was an error uploading your file.";
                     }
-                } else {
-                    echo "Sorry, there was an error uploading your file.";
                 }
-            }
 
-            $products = $conn->query("SELECT * FROM product");
+                $products = $conn->query("SELECT * FROM product");
             ?>
-            
 
 
             <!--Category List Modal (add new)-->

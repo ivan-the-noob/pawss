@@ -72,6 +72,7 @@ echo "<script>
           <li class="nav-item">
             <a class="nav-link" href="#">Profile</a>
           </li>
+          
         </ul>
 
         <div class="d-flex ml-auto">

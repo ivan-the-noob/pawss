@@ -143,10 +143,6 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     </tbody>
                 </table>
                 <!--Appointment Request Table End-->
-
-
-
-
             </div>
             <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
                 <li class="page-item">

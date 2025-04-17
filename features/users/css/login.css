@@ -129,3 +129,10 @@ input{
     font-weight: bold;
 }
 
+.dropdown-menu .dropdown-item {
+    white-space: normal;  
+    overflow: hidden;   
+    word-wrap: break-word; 
+    max-width: 280px;   
+    }
+

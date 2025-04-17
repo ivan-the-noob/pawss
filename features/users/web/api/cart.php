@@ -140,6 +140,51 @@ if (isset($_SESSION['email'])) {
                                         local_shipping
                                     </span>
                                 </a>
+                                <div class="dropdown">
+                                    <a href="#" class="header-cart " data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="material-symbols-outlined">
+                                        notifications
+                                        </span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                        <?php
+                                        include '../../../../db.php'; 
+
+                                        $query = "SELECT message FROM notification ORDER BY id DESC";
+                                        $result = $conn->query($query);
+
+                                        if ($result && $result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                $message = $row['message'];
+
+                                                $classes = 'dropdown-item bg-white shadow-sm px-3 py-2 rounded';
+                                                $style = 'box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);';
+
+                                                if (trim($message) == "Your appointment has been approved!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Your checkout has been approved") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Your item has been picked up by courier. Please ready payment for COD.") {
+                                                    $classes .= ' text-info mx-auto';
+                                                } else if (trim($message) == "Your profile info has been updated.") {
+                                                    $classes .= ' text-info mx-auto';
+                                                } else if (trim($message) == "New services offered! Check it now!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "New product has been arrived! Check it now!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                }
+
+                                                echo "<li><a class=\"$classes\" href=\"#\" style=\"$style\">$message</a></li>";
+                                                echo "<li><hr class=\"dropdown-divider\"></li>";
+                                            }
+                                        } else {
+                                            echo "<li><a class=\"dropdown-item bg-white shadow-sm\" href=\"#\">No notifications</a></li>";
+                                        }
+
+                                        ?>
+                                    </ul>
+
+                                </div>
                             </div>
                             </div>
 

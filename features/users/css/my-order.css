@@ -322,6 +322,13 @@ box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
   .img-fluid{
     height: 10vh !important;
   }
+  
+  .dropdown-menu .dropdown-item {
+    white-space: normal;  
+    overflow: hidden;   
+    word-wrap: break-word; 
+    max-width: 280px;   
+    }
 
 /*Container Section End*/
 

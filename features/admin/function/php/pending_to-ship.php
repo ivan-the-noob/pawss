@@ -140,7 +140,7 @@ if (isset($_GET['message'])) {
                         </div>
                         <div class="form-group mt-2 mb-2">
                             <label for="modalMap">Location:</label>
-                            <div id="map" style="height: 300px; wi form-orderdth: 100%;" class="map"></div>
+                            <div id="map" style="height: 300px; width: 100%;" class="map"></div>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -165,22 +165,22 @@ if (isset($_GET['message'])) {
                 </div>
                 <!-- Hidden Inputs -->
                 <form id="appointmentForm" action="../../function/php/approve_to-ship.php" method="POST">
-                <input type="hidden" name="id" id="hiddenId">
-                <input type="hidden" name="name" id="hiddenName">
-                <input type="hidden" name="email" id="hiddenEmail">
-                <input type="hidden" name="contact_num" id="hiddenContactNum">
-                <input type="hidden" name="address_search" id="hiddenAddressSearch">
-                <input type="hidden" name="payment_method" id="hiddenPaymentMethod">
-                <input type="hidden" name="screenshot" id="hiddenScreenshot">
-                <input type="hidden" name="reference_id" id="hiddenReferenceId">
-                <input type="hidden" name="product_name" id="hiddenProductName">
-                <input type="hidden" name="cost" id="hiddenCost">
-                <input type="hidden" name="sub_total" id="hiddenSubTotal">
-                <input type="hidden" name="shipping_fee" id="hiddenShippingFee">
-                <input type="hidden" name="total_amount" id="hiddenTotalAmount">
-                <input type="hidden" name="product_img" id="hiddenProductImg">
-                <input type="hidden" name="status" id="hiddenStatus">
-                <input type="hidden" name="quantity" id="hiddenQuantity">
+                    <input type="hidden" name="id" id="hiddenId">
+                    <input type="hidden" name="name" id="hiddenName">
+                    <input type="hidden" name="email" id="hiddenEmail">
+                    <input type="hidden" name="contact_num" id="hiddenContactNum">
+                    <input type="hidden" name="address_search" id="hiddenAddressSearch">
+                    <input type="hidden" name="payment_method" id="hiddenPaymentMethod">
+                    <input type="hidden" name="screenshot" id="hiddenScreenshot">
+                    <input type="hidden" name="reference_id" id="hiddenReferenceId">
+                    <input type="hidden" name="product_name" id="hiddenProductName">
+                    <input type="hidden" name="cost" id="hiddenCost">
+                    <input type="hidden" name="sub_total" id="hiddenSubTotal">
+                    <input type="hidden" name="shipping_fee" id="hiddenShippingFee">
+                    <input type="hidden" name="total_amount" id="hiddenTotalAmount">
+                    <input type="hidden" name="product_img" id="hiddenProductImg">
+                    <input type="hidden" name="status" id="hiddenStatus">
+                    <input type="hidden" name="quantity" id="hiddenQuantity">
 
                     <div class="modal-footer">
                     <button type="button" class="btn btn-danger" onclick="submitDeclineForm()">Decline</button>

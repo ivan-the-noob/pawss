@@ -13,6 +13,14 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmgygVeipMUsrtGeZPZ9UzXRmcVdheIqw&libraries=places"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
+<style>
+  .dropdown-menu .dropdown-item {
+    white-space: normal;  
+    overflow: hidden;   
+    word-wrap: break-word; 
+    max-width: 280px;   
+    }
+</style>
 <?php
 session_start();
 
@@ -94,6 +102,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $log_stmt->execute();
       $log_stmt->close();
 
+        $notificationMessage = "Your appointment has been approved!";
+        $notificationSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+        $notificationStmt = $conn->prepare($notificationSql);
+        $notificationStmt->bind_param("ss", $email, $notificationMessage);
+        $notificationStmt->execute();
+        $notificationStmt->close();
+      header("Location: my-app.php?status=success");
+       exit();
+
       // Success message
   } else {
       echo "Error: " . $stmt->error . "<br>";
@@ -158,6 +175,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         local_shipping
                                     </span>
                                 </a>
+                                <div class="dropdown">
+                                    <a href="#" class="header-cart " data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="material-symbols-outlined">
+                                        notifications
+                                        </span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                        <?php
+                                        include '../../../../db.php'; 
+
+                                        $query = "SELECT message FROM notification ORDER BY id DESC";
+                                        $result = $conn->query($query);
+
+                                        if ($result && $result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                $message = $row['message'];
+
+                                                $classes = 'dropdown-item bg-white shadow-sm px-3 py-2 rounded';
+                                                $style = 'box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);';
+
+                                                if (trim($message) == "Your appointment has been approved!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Your checkout has been approved") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Your item has been picked up by courier. Please ready payment for COD.") {
+                                                    $classes .= ' text-info mx-auto';
+                                                } else if (trim($message) == "Your profile info has been updated.") {
+                                                    $classes .= ' text-info mx-auto';
+                                                } else if (trim($message) == "New services offered! Check it now!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "New product has been arrived! Check it now!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                }
+
+                                                echo "<li><a class=\"$classes\" href=\"#\" style=\"$style\">$message</a></li>";
+                                                echo "<li><hr class=\"dropdown-divider\"></li>";
+                                            }
+                                        } else {
+                                            echo "<li><a class=\"dropdown-item bg-white shadow-sm\" href=\"#\">No notifications</a></li>";
+                                        }
+
+                                    
+                                        ?>
+                                    </ul>
+
+                                </div>
                             </div>
                             </div>
 
@@ -177,7 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="col-md-8 col-11 app">
         <div class="appoints">
           <button>Appointment Availability</button>
-          <a href="my-app.php" class="appoint">My Appointment</a>
+          <a href="my-app.php" class="appoint text-decoration-underline">My Appointment</a>
         </div>
         <div class="card card-outline card-primary rounded-0 shadow" id="appointmentSection">
           <div class="card-body">
@@ -314,7 +377,6 @@ $conn->close();
 
 <!-- HTML Select Element -->
 <div class="form-group">
-    <label for="service" class="form-label">Service</label>
     <select class="form-control" id="service" name="service" required onchange="updatePayment()">
         <!-- Clinic Services -->
         <optgroup label="Clinic Services" class="clinic-services">

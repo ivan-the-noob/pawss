@@ -107,6 +107,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 ?>
 
+<?php
+$showSuccess = false;
+if (isset($_GET['status']) && $_GET['status'] === 'success') {
+    $showSuccess = true;
+}
+?>
+
+<?php if ($showSuccess): ?>
+  <div id="successToast" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #28a745;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 9999;
+    font-size: 16px;
+  ">
+    Successfully booked!
+  </div>
+
+  <script>
+    setTimeout(() => {
+      const toast = document.getElementById('successToast');
+      if (toast) {
+        toast.style.transition = 'opacity 0.5s ease';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 500);
+      }
+    }, 3000);
+  </script>
+<?php endif; ?>
+
 <body onload="initAutocomplete()">
 <div class="navbar-container">
 <nav class="navbar navbar-expand-lg navbar-light">
@@ -161,6 +196,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         local_shipping
                                     </span>
                                 </a>
+                                <div class="dropdown">
+                                    <a href="#" class="header-cart " data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="material-symbols-outlined">
+                                        notifications
+                                        </span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                        <?php
+                                        include '../../../../db.php'; 
+
+                                        $query = "SELECT message FROM notification ORDER BY id DESC";
+                                        $result = $conn->query($query);
+
+                                        if ($result && $result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                $message = $row['message'];
+
+                                                $classes = 'dropdown-item bg-white shadow-sm px-3 py-2 rounded';
+                                                $style = 'box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);';
+
+                                                if (trim($message) == "Your appointment has been approved!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Your checkout has been approved") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Your item has been picked up by courier. Please ready payment for COD.") {
+                                                    $classes .= ' text-info mx-auto';
+                                                } else if (trim($message) == "Your profile info has been updated.") {
+                                                    $classes .= ' text-info mx-auto';
+                                                } else if (trim($message) == "New services offered! Check it now!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "New product has been arrived! Check it now!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                }
+
+                                                echo "<li><a class=\"$classes\" href=\"#\" style=\"$style\">$message</a></li>";
+                                                echo "<li><hr class=\"dropdown-divider\"></li>";
+                                            }
+                                        } else {
+                                            echo "<li><a class=\"dropdown-item bg-white shadow-sm\" href=\"#\">No notifications</a></li>";
+                                        }
+
+                                        ?>
+                                    </ul>
+
+                                </div>
                             </div>
                             </div>
 
@@ -180,7 +260,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="col-md-8 col-11 app">
         <div class="appoints">
           <button>Appointment Availability</button>
-          <a href="appointment.php" class="appoint" id="toggleViewBtn">My Calendar</a>
+          <a href="appointment.php" class="appoint text-decoration-underline" id="toggleViewBtn">My Calendar</a>
         </div>
         
       </div>

@@ -213,10 +213,22 @@ $sql_booked = "SELECT COUNT(*) AS total_booked FROM appointment";
 $result_booked = $conn->query($sql_booked);
 $total_booked = $result_booked->fetch_assoc()['total_booked'];
 
-// 3. Get Total Sales
-$sql_sales = "SELECT SUM(payment) AS total_sales FROM appointment";
+
+$total_sales = 0;
+
+if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
+    $start_date = $_GET['start_date'];
+    $end_date = $_GET['end_date'];
+
+    $sql_sales = "SELECT SUM(payment) AS total_sales FROM appointment 
+                  WHERE DATE(appointment_date) BETWEEN '$start_date' AND '$end_date'";
+} else {
+    $sql_sales = "SELECT SUM(payment) AS total_sales FROM appointment";
+}
+
 $result_sales = $conn->query($sql_sales);
-$total_sales = $result_sales->fetch_assoc()['total_sales'];
+$total_sales = $result_sales->fetch_assoc()['total_sales'] ?? 0;
+
 
 // 4. Get Total Pending
 $sql_pending = "SELECT COUNT(*) AS total_checkout FROM checkout";
@@ -257,7 +269,9 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
     </div>
     <div class="col-12 col-md-6 col-lg-3 cc">
         <div class="card">
+       
             <div class="cards">
+           
                 <div class="card-text">
                     <p>Total Sales</p>
                     <h5>₱<?php echo number_format($total_sales, 2); ?></h5>
@@ -267,6 +281,22 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
                 </div>
             </div>
             <div class="trend card-down"><i class="fa-solid fa-arrow-trend-down"> 4.3 % </i> Down from yesterday</div>
+            <form method="GET" class="mb-3">
+                <div class="row">
+                    <div class="col-md-5 m-1">
+                        <label for="start_date">From:</label>
+                        <input type="date"id="start_date" style="height : 50%; width: 130%;" name="start_date" value="<?php echo $_GET['start_date'] ?? ''; ?>">
+                    </div>
+                    <div class="col-md-5 m-1">
+                    <label for="end_date">To:</label>
+                    <input type="date"id="end_date" style="height: 50%; width: 130%; " name="end_date" value="<?php echo $_GET['end_date'] ?? ''; ?>">
+                    </div>
+                </div>               
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary" style="height: 50%;">Filter</button>
+                </div>
+            </form>
+           
         </div>
     </div>
     <div class="col-12 col-md-6 col-lg-3 cc">
@@ -290,37 +320,40 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
             <div class="flex-container">
             <div class="chart-container">
     <div class="mt-2 chart-button">
-        <div class="d-flex gap-2 justify-content-center">
-            <!-- Replace select dropdown with a date input -->
-            <input type="date" id="dateSelect" class="form-control">
-            <button id="searchBtn" class="btn btn-primary">Search</button>
-            <button id="exportBtn" class="btn btn-success">Export</button> <!-- Export Button -->
-        </div>
+    <div class="d-flex gap-2 justify-content-center mb-3">
+        <input type="date" id="startDate" class="form-control">
+        <input type="date" id="endDate" class="form-control">
+        <button id="searchBtn" class="btn btn-primary">Search</button>
+        <button id="exportBtn" class="btn btn-success">Export</button>
+    </div>
     </div>
     <canvas id="salesChart"></canvas>
 </div>
 
 <script>
-   function fetchData(selectedDate = '') {
-    const url = selectedDate
-        ? `../../function/php/fetch_sales_data.php?date=${selectedDate}`
-        : `../../function/php/fetch_sales_data.php`;
+  function fetchData(startDate = '', endDate = '') {
+  const urlParams = new URLSearchParams();
+  if (startDate) urlParams.append('start_date', startDate);
+  if (endDate) urlParams.append('end_date', endDate);
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            const labels = data.map(item => {
-                const [year, month] = item.month.split('-');
-                const date = new Date(year, month - 1);
-                return date.toLocaleString('default', { month: 'short' });  // Only show the month name
-            });
+  const url = `../../function/php/fetch_sales_data.php?${urlParams.toString()}`;
 
-            const salesData = data.map(item => item.total_sales);
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      console.log("Fetched data:", data);
+      const labels = data.map(item => {
+        const [year, month] = item.month.split('-');
+        const date = new Date(year, month - 1);
+        return date.toLocaleString('default', { month: 'short' });
+      });
 
-            updateChart(labels, salesData);
-        })
-        .catch(error => console.error('Error fetching data:', error));
+      const salesData = data.map(item => item.total_sales);
+      updateChart(labels, salesData);
+    })
+    .catch(error => console.error('Error fetching data:', error));
 }
+
 
 
     function updateChart(labels, salesData) {
@@ -335,26 +368,23 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
         salesChart.update();
     }
 
-    function fetchAdditionalData(selectedDate = '') {
-        const url = selectedDate
-            ? `../../function/php/fetch_appointment_data.php?date=${selectedDate}`
-            : `../../function/php/fetch_appointment_data.php`;
+
+    function fetchAdditionalData(startDate = '', endDate = '') {
+        const urlParams = new URLSearchParams();
+        if (startDate) urlParams.append('start_date', startDate);
+        if (endDate) urlParams.append('end_date', endDate);
+
+        const url = `../../function/php/fetch_appointment_data.php?${urlParams.toString()}`;
 
         return fetch(url)
             .then(response => response.json())
-            .then(data => {
-                if (data.length === 0) {
-                    console.log('No appointment data found.');
-                }
-                return data;
-            })
             .catch(error => {
                 console.error('Error fetching appointment data:', error);
             });
     }
 
     function fetchAndExportData() {
-        fetch('path_to_your_api_or_backend_endpoint')
+        fetch('../../function/php/fetch_appointment_data.php')
             .then(response => response.json())
             .then(data => {
                 if (data && data.data && Array.isArray(data.data)) {
@@ -472,19 +502,23 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
     });
 
     document.getElementById('searchBtn').addEventListener('click', () => {
-        const selectedDate = document.getElementById('dateSelect').value;
-        fetchData(selectedDate);
-    });
+  const startDate = document.getElementById('startDate').value;
+  const endDate = document.getElementById('endDate').value;
+  fetchData(startDate, endDate); // ✅ now this will send both dates
+});
+
+ 
 
     document.getElementById('exportBtn').addEventListener('click', () => {
-        const selectedDate = document.getElementById('dateSelect').value;
-        fetchAdditionalData(selectedDate).then(additionalData => {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        fetchAdditionalData(startDate, endDate).then(additionalData => {
             const labels = salesChart.data.labels;
             const salesData = salesChart.data.datasets[0].data;
             exportToExcel(labels, salesData, additionalData);
         });
     });
-
     fetchData();
 </script>
 

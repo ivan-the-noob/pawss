@@ -25,9 +25,11 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
   <link rel="stylesheet" href="../../css/about-us.css">
 
 </head>
+
 
 <body>
 <div class="navbar-container">
@@ -86,6 +88,54 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
                                         local_shipping
                                     </span>
                                 </a>
+                                <div class="dropdown">
+                                    <a href="#" class="header-cart " data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="material-symbols-outlined">
+                                        notifications
+                                        </span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                        <?php
+                                        include '../../../../db.php'; 
+
+                                        $query = "SELECT message FROM notification ORDER BY id DESC";
+                                        $result = $conn->query($query);
+
+                                        if ($result && $result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                $message = $row['message'];
+
+                                                $classes = 'dropdown-item bg-white shadow-sm px-3 py-2 rounded';
+                                                $style = 'box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);';
+
+                                                if (trim($message) == "Your appointment has been approved!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Your checkout has been approved") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Your item has been picked up by courier. Please ready payment for COD.") {
+                                                    $classes .= ' text-info mx-auto';
+                                                } else if (trim($message) == "Your profile info has been updated.") {
+                                                    $classes .= ' text-info mx-auto';
+                                                } else if (trim($message) == "New services offered! Check it now!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "New product has been arrived! Check it now!") {
+                                                    $classes .= ' text-success mx-auto';
+                                                }
+
+                                                echo "<li><a class=\"$classes\" href=\"#\" style=\"$style\">$message</a></li>";
+                                                echo "<li><hr class=\"dropdown-divider\"></li>";
+                                            }
+                                        } else {
+                                            echo "<li><a class=\"dropdown-item bg-white shadow-sm\" href=\"#\">No notifications</a></li>";
+                                        }
+
+                                  
+                                        ?>
+                                    </ul>
+
+                                </div>
+                                
+                               
                             </div>
                             </div>
 
@@ -302,6 +352,6 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
 <script src="../../function/script/chatbot_questionslide.js"></script>
 <script src="../../function/script/chatbot-toggle.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
 
 </html>

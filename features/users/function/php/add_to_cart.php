@@ -31,6 +31,14 @@ if ($result->num_rows > 0) {
     $updateStmt->bind_param("idis", $newQuantity, $newTotalPrice, $productId, $email);
 
     if ($updateStmt->execute()) {
+        // Insert into notification table
+        $notificationMessage = "Your checkout has been approved";
+        $notificationSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+        $notificationStmt = $conn->prepare($notificationSql);
+        $notificationStmt->bind_param("ss", $email, $notificationMessage);
+        $notificationStmt->execute();
+        $notificationStmt->close();
+
         header("Location: ../../web/api/cart.php?message=Product quantity updated successfully.");
     } else {
         header("Location: ../../web/api/cart.php?message=Error updating product quantity: " . $conn->error);
@@ -43,6 +51,14 @@ if ($result->num_rows > 0) {
     $insertStmt->bind_param("isidiss", $productId, $productName, $productPrice, $quantity, $totalPrice, $productImage, $email);
 
     if ($insertStmt->execute()) {
+        // Insert into notification table
+        $notificationMessage = "Your checkout has been approved";
+        $notificationSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+        $notificationStmt = $conn->prepare($notificationSql);
+        $notificationStmt->bind_param("ss", $email, $notificationMessage);
+        $notificationStmt->execute();
+        $notificationStmt->close();
+
         header("Location: ../../web/api/cart.php?message=Product added to cart successfully.");
     } else {
         header("Location: ../../web/api/cart.php?message=Error adding product to cart: " . $conn->error);

@@ -10,6 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("s", $email);
         
         if ($stmt->execute()) {
+            $notificationMessage = "Your profile info has been updated.";
+            $notificationSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+            $notificationStmt = $conn->prepare($notificationSql);
+            $notificationStmt->bind_param("ss", $email, $notificationMessage);
+            $notificationStmt->execute();
+            $notificationStmt->close();
+            
             header("Location: ../../web/api/to-ship.php");
             exit;  
         } else {

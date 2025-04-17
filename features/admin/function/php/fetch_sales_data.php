@@ -1,20 +1,20 @@
 <?php
 require '../../../../db.php';
 
-// Check if a specific date is selected
-$selectedDate = isset($_GET['date']) ? $_GET['date'] : '';
+$startDate = isset($_GET['start_date']) ? $_GET['start_date'] : '';
+$endDate = isset($_GET['end_date']) ? $_GET['end_date'] : '';
 
-// If a specific date is selected, modify the query to filter by that date
-if ($selectedDate) {
+if ($startDate && $endDate) {
+    // Filter by date range
     $query = "
         SELECT DATE_FORMAT(appointment_date, '%Y-%m') AS month, SUM(payment) AS total_sales
         FROM appointment
-        WHERE DATE(appointment_date) = '$selectedDate'
+        WHERE appointment_date BETWEEN '$startDate' AND '$endDate'
         GROUP BY month
         ORDER BY month ASC
     ";
 } else {
-    // Default query for all months (no filtering by date)
+    // Default: fetch all data
     $query = "
         SELECT DATE_FORMAT(appointment_date, '%Y-%m') AS month, SUM(payment) AS total_sales
         FROM appointment
@@ -33,18 +33,36 @@ while ($row = $result->fetch_assoc()) {
 
 $conn->close();
 
-// Generate all months for the current year
-$currentYear = date('Y');
+// Determine the range of months to return
 $months = [];
-for ($i = 1; $i <= 12; $i++) {
-    $month = sprintf('%s-%02d', $currentYear, $i); // Format: YYYY-MM
-    $months[] = [
-        'month' => $month,
-        'total_sales' => $data[$month] ?? 0, // Use 0 if no data exists for the month
-    ];
+
+if ($startDate && $endDate) {
+    // Generate months between start and end
+    $start = new DateTime(date('Y-m-01', strtotime($startDate)));
+    $end = new DateTime(date('Y-m-01', strtotime($endDate)));
+    $end->modify('+1 month'); // include the last month
+
+    while ($start < $end) {
+        $month = $start->format('Y-m');
+        $months[] = [
+            'month' => $month,
+            'total_sales' => $data[$month] ?? 0
+        ];
+        $start->modify('+1 month');
+    }
+} else {
+    // All months of current year (default behavior)
+    $currentYear = date('Y');
+    for ($i = 1; $i <= 12; $i++) {
+        $month = sprintf('%s-%02d', $currentYear, $i);
+        $months[] = [
+            'month' => $month,
+            'total_sales' => $data[$month] ?? 0
+        ];
+    }
 }
 
-// Return the data as JSON
+// Return JSON
 header('Content-Type: application/json');
 echo json_encode($months);
 ?>

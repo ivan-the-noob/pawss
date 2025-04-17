@@ -194,6 +194,7 @@ body {
     border: 1px solid #cabebe;
     display: flex;
     margin-top: 8px;
+    min-height: 33vh;
    
 }
 .card h5 {
