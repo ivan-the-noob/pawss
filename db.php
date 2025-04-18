@@ -7,7 +7,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "paws";
+$dbname = "u373116035_digitalpaws";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

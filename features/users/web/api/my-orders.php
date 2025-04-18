@@ -17,6 +17,7 @@
 
 </head>
 
+
 <?php
 session_start();
 $email = isset($_SESSION['email']) ? $_SESSION['email'] : null;
@@ -153,6 +154,45 @@ if (isset($_SESSION['email'])) {
 
 
 <body>
+<style>
+    #successMessage {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #28a745;  /* Green background for success */
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 1000;
+        display: none; /* Initially hidden */
+    }
+    .alert {
+        font-size: 16px;
+        font-weight: bold;
+    }
+</style>
+
+<?php
+if (isset($_GET['status']) && $_GET['status'] == 'order-success') {
+    // Output the success message
+    echo "<div id='successMessage' class='alert alert-success'>Order Successfully!</div>";
+}
+?>
+
+<script>
+    window.onload = function() {
+        const successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            // Show the success message
+            successMessage.style.display = 'block';
+            
+            // Set a timer to remove the message after 3 seconds
+            setTimeout(function() {
+                successMessage.style.display = 'none';
+            }, 3000); // 3000 milliseconds = 3 seconds
+        }
+    };
+</script>
   <div class="container mt-4">
     <div class="row">
       <h5>My Orders</h5>
@@ -231,10 +271,10 @@ if (isset($_SESSION['email'])) {
         <div class="card p-3 mt-4">
             <div class="d-flex gap-1 mb-3 justify-content-end">
                 <p class="p-2 pending">Pending</p>
-                <button type="button" class="update" data-bs-toggle="modal" data-bs-target="#updateModal">
-                Update
+                <button type="button" class="success-btn" data-bs-toggle="modal" data-bs-target="#buyAgainModal">
+                    Buy Again
                 </button>
-                <button class="cancel" data-id="<?php echo $orders[0]['id']; ?>">Cancel</button>
+                <button class="cancel btn btn-danger" data-id="<?php echo $orders[0]['id']; ?>">Cancel</button>
             </div>
             <div class="row align-items-center">
                 <div class="col-md-12">
@@ -254,52 +294,47 @@ if (isset($_SESSION['email'])) {
                                 <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
                             </div>
                             <div class="col-md-3 text-end">
-                            <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['cost'] * $order['quantity'], 2); ?></span></p>
-
+                                <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['cost'] * $order['quantity'], 2); ?></span></p>
                             </div>
                         </div>
                         <hr>
-                        <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="updateModalLabel">Update Orders</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- Display Orders as Cards -->
-                                    <div class="row">
-                                    <?php foreach ($orders as $order): ?>
-                                        <div class="col-md-4">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">Order ID: <?= $order['id'] ?></h5>
-                                                    <p class="card-text">Product: <?= $order['product_name'] ?></p>
-                                                    <p class="card-text">Current Quantity: <?= $order['quantity'] ?></p>
-                                                    <!-- Quantity Input -->
-                                                    <form action="../../function/php/update_checkout.php" method="post">
-                                                        <input type="hidden" name="id" value="<?= $order['id'] ?>"> <!-- Use 'id' as the hidden field -->
-                                                        <div class="form-group">
-                                                            <label for="quantity_<?= $order['id'] ?>">Update Quantity</label>
-                                                            <input type="number" class="form-control" id="quantity_<?= $order['id'] ?>" name="quantity" value="<?= $order['quantity'] ?>" min="1" required>
-                                                        </div>
-                                                        <button type="submit" class="btn btn-primary">Update</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
-                                </div>
-                            </div>
-                            </div>
                     <?php endforeach; ?>
                     <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalShippingFee, 2); ?></span></p>
                     <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalSubTotal + $totalShippingFee, 2); ?></span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buy Again Modal -->
+        <div class="modal fade" id="buyAgainModal" tabindex="-1" aria-labelledby="buyAgainModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="buyAgainModalLabel">Buy Again</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                    <?php foreach ($orders as $order): ?>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" class="card-img-top" alt="Product Image">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?php echo htmlspecialchars($order['product_name']); ?></h5>
+                                    <form action="../../function/php/buyagain.php" method="post">
+                                        <input type="hidden" name="id" value="<?= $order['id'] ?>">
+                                        <div class="form-group mb-2">
+                                            <label for="quantity_<?= $order['id'] ?>">Quantity</label>
+                                            <input type="number" class="form-control" id="quantity_<?= $order['id'] ?>" name="quantity" value="1" min="1" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-success w-100">Buy Again</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -307,6 +342,27 @@ if (isset($_SESSION['email'])) {
         <p>No items in the cart for this email.</p>
     <?php endif; ?>   
 </div>
+
+<script>
+document.querySelectorAll('.cancel').forEach(button => {
+    button.addEventListener('click', function() {
+        const orderId = this.getAttribute('data-id'); 
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '../../function/php/update_order_status.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                console.log(xhr.responseText); 
+                showSection('cancelled-orders'); 
+            } else {
+                console.log('Error:', xhr.statusText);
+            }
+        };
+        xhr.send('id=' + orderId + '&status=Cancel'); 
+    });
+});
+</script>
+
 
 
 

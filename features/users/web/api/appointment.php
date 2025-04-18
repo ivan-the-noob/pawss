@@ -35,6 +35,21 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
     exit();
 }
 
+
+$today = date('Y-m-d');
+
+$sql = "SELECT COUNT(*) as total FROM appointment WHERE email = ? AND DATE(created_at) = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ss", $email, $today);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+if (($row['total'] ?? 0) >= 3) {
+    header("Location: ../../../../index.php");
+    exit();
+}
+
 // Handle POST request for booking an appointment
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $ownerName = htmlspecialchars($_POST['ownerName']);
@@ -47,7 +62,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $service = htmlspecialchars($_POST['service']);
   $payment = htmlspecialchars($_POST['payment']);
   $paymentOption = htmlspecialchars($_POST['paymentOption']);  // New field
-  $appointmentDate = htmlspecialchars($_POST['appointment_date']);
+  $appointmentDateRaw = htmlspecialchars($_POST['appointment_date']);
+  $date = new DateTime($appointmentDateRaw);
+  $date->modify('+1 day');
+  $appointmentDate = $date->format('Y-m-d');  
   $latitude = htmlspecialchars($_POST['latitude']);
   $longitude = htmlspecialchars($_POST['longitude']);
   $addInfo = htmlspecialchars($_POST['add-info']);
@@ -267,6 +285,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p>Appointment Schedule</p>
             <div id="modalContent" class="col-6"></div>
             <input type="hidden" id="appointment_date" name="appointment_date" value="">
+            <script>
+  // When a date is clicked in the calendar
+  document.querySelectorAll('.calendar-day').forEach(day => {
+    day.addEventListener('click', function () {
+      const clickedDate = this.getAttribute('data-date'); // format: "YYYY-MM-DD"
+
+      const date = new Date(clickedDate);
+      date.setDate(date.getDate() + 1); // Add 1 day
+
+      const adjustedDate = date.toISOString().split('T')[0]; // Get "YYYY-MM-DD"
+      document.getElementById('appointment_date').value = adjustedDate;
+
+      console.log('Adjusted Appointment Date:', adjustedDate);
+    });
+  });
+</script>
+
           </div>
          
         </div>
@@ -310,31 +345,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             
           <div class="col-md-6">
-              <h6>Address Information</h6>
-              <div class="form-group">
-              <div class="form-group mt-3" id= "autocomplete-wrapper">
-                <input id="autocomplete" placeholder="Can't find your location? Search here." type="text" class="form-control">
-              </div>
-                <select id="barangayDropdown" class="form-control w-50 mt-2 mb-2" name="barangayDropdown" disabled>
-                  <option value="">Select Barangay</option>
-                </select>
-              </div>
-              <div id="modalMap" style="height: 400px;"></div>
-              <input type="text" class="form-control mt-2" id="addInfo" name="add-info" placeholder="Street Name, Building, House No." required>
-              <input type="hidden" id="latitude" name="latitude">
-              <input type="hidden" id="longitude" name="longitude">
-             
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Pet Information -->
-            <div class="col-md-6 mt-3">
-              
-            </div>
-            
-            <div class="col-md-6 mt-3">
-              <h6>Services</h6>
+          <h6>Services</h6>
               <?php
 require '../../../../db.php';
 
@@ -375,32 +386,45 @@ try {
 $conn->close();
 ?>
 
+
+
 <!-- HTML Select Element -->
 <div class="form-group">
     <select class="form-control" id="service" name="service" required onchange="updatePayment()">
         <!-- Clinic Services -->
-        <optgroup label="Clinic Services" class="clinic-services">
+        <optgroup label="Clinic Services">
+        <option value="">Select a service</option>
             <?php foreach ($clinic_services as $service): ?>
-                <option value="<?php echo htmlspecialchars($service['service_name']); ?>" 
-                        data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
-                        data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
+                <option 
+                    value="<?php echo htmlspecialchars($service['service_name']); ?>" 
+                    data-type="clinic"
+                    data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
+                    data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
                     <?php echo htmlspecialchars($service['service_name']); ?> - 
                     ₱<?php echo htmlspecialchars($service['cost']); ?>  
                 </option>
             <?php endforeach; ?>
         </optgroup>
+
         <!-- Home Services -->
-        <optgroup label="Home Services" class="home-services">
+        <optgroup label="Home Services">
+           
             <?php foreach ($home_services as $service): ?>
-                <option value="<?php echo htmlspecialchars($service['service_name']); ?>" 
-                        data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
-                        data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
+                <option 
+                    value="<?php echo htmlspecialchars($service['service_name']); ?>" 
+                    data-type="home"
+                    data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
+                    data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
                     <?php echo htmlspecialchars($service['service_name']); ?> - 
                     ₱<?php echo htmlspecialchars($service['cost']); ?>  
                 </option>
             <?php endforeach; ?>
+            
         </optgroup>
+
     </select>
+
+    
 </div>
 
 
@@ -418,38 +442,43 @@ $conn->close();
       <input type="radio" id="onStore" name="paymentOption" value="onStore" onchange="togglePaymentFields()"> On Store
     </div>
 
-<!-- GCash Payment Fields (Initially hidden) -->
-<div id="gcashFields" style="display:none;">
-    <div class="form-group">
-        <img src="../../../../assets/img/gcash/gcash.jpg" alt="" style="width: 100%;">
-        <label for="gcashImage" class="form-label">GCash Image</label>
-        <input type="file" class="form-control" id="gcashImage" name="gcash_image" accept="image/*">
-    </div>
-    <div class="form-group">
-        <label for="gcashReference" class="form-label">GCash Reference Number</label>
-        <input type="text" class="form-control" id="gcashReference" name="gcash_reference" placeholder="Enter GCash Reference Number">
-    </div>
-</div>
+        <!-- GCash Payment Fields (Initially hidden) -->
+        <div id="gcashFields" style="display:none;">
+            <div class="form-group">
+                <img src="../../../../assets/img/gcash/gcash.jpg" alt="" style="width: 100%;">
+                <label for="gcashImage" class="form-label">GCash Image</label>
+                <input type="file" class="form-control" id="gcashImage" name="gcash_image" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="gcashReference" class="form-label">GCash Reference Number</label>
+                <input type="text" class="form-control" id="gcashReference" name="gcash_reference" placeholder="Enter GCash Reference Number">
+            </div>
+        </div>
+        <div class="add-info" style="display: none;">
+            <h6 style="margin-top: 76px;">Address Information</h6>
+              <div class="form-group">
+              <div class="form-group mt-3" id= "autocomplete-wrapper">
+                <input id="autocomplete" placeholder="Can't find your location? Search here." type="text" class="form-control">
+              </div>
+                <select id="barangayDropdown" class="form-control w-50 mt-2 mb-2" name="barangayDropdown" disabled>
+                  <option value="">Select Barangay</option>
+                </select>
+              </div>
+              <div id="modalMap" style="height: 400px;"></div>
+              <input type="text" class="form-control mt-2" id="addInfo" name="add-info" placeholder="Street Name, Building, House No." >
+              <input type="hidden" id="latitude" name="latitude">
+              <input type="hidden" id="longitude" name="longitude">
+        </div>
+   
 
-<script>
-    function togglePaymentFields() {
-    var gcashFields = document.getElementById('gcashFields');
-    var gcashOption = document.getElementById('gcash').checked;
 
-    if (gcashOption) {
-        gcashFields.style.display = 'block';
-    } else {
-        gcashFields.style.display = 'none'; 
-    }
 
-    console.log('GCash Fields Display:', gcashFields.style.display);  // Debug line to check visibility
-}
-</script>
-<div class="form-group mt-3">
-        <button type="submit" class="btn btn-primary book-save">Book Appointment</button>
-    </div>
+        <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary book-save">Book Appointment</button>
+            </div>
 
             </div>
+                        
           </div>
         </form>
       </div>
@@ -457,16 +486,48 @@ $conn->close();
   </div>
 </div>
 
+
 <script>
-    function updatePayment() {
-        var serviceSelect = document.getElementById('service');
-        var selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-        var payment = selectedOption.getAttribute('data-payment');
-        document.getElementById('totalPayment').textContent = '₱' + payment;
-        document.getElementById('payment').value = payment;
+function togglePaymentFields() {
+    var gcashChecked = document.getElementById('gcash').checked;
+    var gcashFields = document.getElementById('gcashFields');
+
+    if (gcashChecked) {
+        gcashFields.style.display = 'block';
+    } else {
+        gcashFields.style.display = 'none'; 
     }
+
+    console.log('GCash Fields Display:', gcashFields.style.display);
+}
 </script>
 
+<script>
+    function updatePayment() {
+        const serviceSelect = document.getElementById('service');
+        const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+
+        const addInfoDiv = document.querySelector('.add-info');
+        const type = selectedOption.getAttribute('data-type');
+        const payment = selectedOption.getAttribute('data-payment');
+
+        // Show/hide address info
+        if (type === 'home') {
+            addInfoDiv.style.display = 'block';
+        } else {
+            addInfoDiv.style.display = 'none';
+        }
+
+        // Update total payment
+        if (payment) {
+            document.getElementById('totalPayment').textContent = '₱' + parseFloat(payment).toFixed(2);
+            document.getElementById('payment').value = payment;
+        } else {
+            document.getElementById('totalPayment').textContent = '₱0.00';
+            document.getElementById('payment').value = '';
+        }
+    }
+</script>
 
 
 

@@ -309,20 +309,20 @@ if (isset($_SESSION['email'])) {
                             <div class="card payment-method">
                                 <div class="card-body">
                                 <h5 class="card-title">Payment Method</h5>
-                    <div class="form-check d-flex justify-content-between align-items-center mb-3 form-payment">
-                        <div>
-                            <input type="radio" id="payment-cash" name="paymentMethod" value="cash" class="form-check-input">
-                            <label for="payment-cash" class="form-check-label">Cash on delivery</label>
-                        </div>
-                        <span class="cod">COD</span>
-                    </div>
+                                    <div class="form-check d-flex justify-content-between align-items-center mb-3 form-payment">
+                                        <div>
+                                            <input type="radio" id="payment-cash" name="paymentMethod" value="cash" class="form-check-input" required>
+                                            <label for="payment-cash" class="form-check-label">Cash on delivery</label>
+                                        </div>
+                                        <span class="cod">COD</span>
+                                    </div>
 
-                    <div class="form-check d-flex justify-content-between align-items-center mb-3 form-payment">
-                        <div>
-                            <input type="radio" id="payment-gcash" name="paymentMethod" value="gcash" class="form-check-input">
-                            <label for="payment-gcash" class="form-check-label">Gcash</label>
-                        </div>
-                    </div>
+                                    <div class="form-check d-flex justify-content-between align-items-center mb-3 form-payment">
+                                        <div>
+                                            <input type="radio" id="payment-gcash" name="paymentMethod" value="gcash" class="form-check-input" required>
+                                            <label for="payment-gcash" class="form-check-label">Gcash</label>
+                                        </div>
+                                    </div>
 
 
                                     <div id="gcash-details" style="display: none;">

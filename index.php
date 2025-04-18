@@ -10,6 +10,10 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
 
 require 'db.php';
 
+
+
+
+
 $cartItems = [];
 
 if (!empty($email)) {
@@ -26,6 +30,8 @@ if (!empty($email)) {
 
     $stmt->close(); // Close the prepared statement
 }
+
+
 
 $conn->close();
 
@@ -82,16 +88,16 @@ $conn->close();
                             <a class="nav-link" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#about-us">Services</a>
+                            <a class="nav-link" href="#services">Services</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#services">About Us</a>
+                        <a class="nav-link" href="#about-us">About Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#services">Booking</a>
+                            <a class="nav-link" href="features/users/web/api/my-app.php">Booking</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#services">Contact Us</a>
+                            <a class="nav-link" href="#contact-us">Contact Us</a>
                         </li>
                     </ul>
                     <div class="d-flex ml-auto">
@@ -203,9 +209,59 @@ $conn->close();
                     <p class="mb-4 fs-5 mt-2" style="width: 70%;">Welcome to Happy Vet Animal Clinic & Grooming Center, your one-stop destination for
                         pet
                         grooming and care.</p>
-                    <a href="features/users/web/api/appointment.php"><button class="btn btn-primary mb-2">Book an
-                            appointment</button>
-                    </a>
+                        <?php
+                        include 'db.php'; 
+
+                            $email = $_SESSION['email'] ?? null;
+                            $today = date('Y-m-d');
+
+                            $sql = "SELECT COUNT(*) as total FROM appointment 
+                                    WHERE email = ? AND DATE(created_at) = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("ss", $email, $today);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $row = $result->fetch_assoc();
+
+                            $bookingCount = $row['total'];
+                        ?>
+                        <?php if ($bookingCount >= 3): ?>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#limitModal">
+                            Book an Appointment
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="limitModal" tabindex="-1" aria-labelledby="limitModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="limitModalLabel">Booking Limit Reached</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                You have reached the maximum of 3 bookings for today. Please come back tomorrow.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Okay</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
+
+                    <?php else: ?>
+                        <?php if (!isset($_SESSION['email'])): ?>
+                            <a href="features/users/web/api/login.php">
+                                <button class="btn btn-primary mb-2">Book an appointment</button>
+                            </a>
+                        <?php else: ?>
+                            <a href="features/users/web/api/appointment.php">
+                                <button class="btn btn-primary mb-2">Book an appointment</button>
+                            </a>
+                        <?php endif; ?>
+                    <?php endif; ?>
+
                   
 
                 </div>
@@ -214,7 +270,7 @@ $conn->close();
     </section>
     </div>
 
-    <div class="wave-container1" id="about-us">
+    <div class="wave-container1">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 160" class="wave1">
             <path fill="none" stroke="#EA6B35" stroke-width="4"
                 d="M0,64L60,74.7C120,85,240,107,360,106.7C480,107,600,85,720,69.3C840,53,960,43,1080,48C1200,53,1320,75,1380,85.3L1440,96" />
@@ -395,7 +451,7 @@ $conn->close();
 
 
 
-    <section class="about-section">
+    <section class="about-section" id="about-us">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
@@ -588,7 +644,7 @@ if (isset($_GET['status'])) {
 
 
 
-    <div class="container contact-section">
+    <div class="container contact-section" id="contact-us">
         <div class="row align-items-center">
             <div class="col-lg-4 col-md-6 contact-card">
                 <h3>Contact Us</h3>

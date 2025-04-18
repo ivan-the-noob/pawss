@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->error) {
         echo "Final Error: " . $stmt->error;
     } else {
-        Header('Location:../../web/api/cart.php');
+        Header('Location:../../web/api/my-orders.php');
         exit();
     }
 
