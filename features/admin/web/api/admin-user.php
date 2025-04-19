@@ -140,26 +140,8 @@ $conn->close();
                             <input type="text" id="search-input" class="form-control" placeholder="Search...">
                         </div>
                     </div>
-
-                    <script>
-                        $(document).ready(function() {
-                            $('#search-input').on('keyup', function() {
-                                var searchTerm = $(this).val().trim();
-
-                                $.ajax({
-                                    url: '../../function/php/search/search_users.php',
-                                    type: 'POST',
-                                    data: {
-                                        search: searchTerm
-                                    },
-                                    success: function(data) {
-                                        $('#tableBody').html(data);
-                                    }
-                                });
-                            });
-                        });
-                    </script>
-
+                  
+                   
                     <button type="button" class=" btn-new" data-toggle="modal" data-target="#addCategoryModal">
                         Add new
                     </button>
@@ -356,6 +338,19 @@ $conn->close();
 
 
                 </table>
+                <script>
+window.onload = function () {
+    document.getElementById('search-input').addEventListener('keyup', function () {
+        const input = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+
+        rows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            row.style.display = rowText.includes(input) ? '' : 'none';
+        });
+    });
+};
+</script>
                 <?php if (!empty($error)): ?>
                     <small class="text-danger"><?php echo $error; ?></small>
                 <?php endif; ?>

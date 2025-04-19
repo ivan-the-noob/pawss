@@ -162,9 +162,21 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     <div class="search">
                         <div class="search-bars">
                             <i class="fa fa-magnifying-glass"></i>
-                            <input type="text" class="form-control" placeholder="Search...">
+                            <input type="text" id="search-input" class="form-control" placeholder="Search...">
                         </div>
                     </div>
+                    <script>
+                        document.getElementById('search-input').addEventListener('keyup', function () {
+                            const input = this.value.toLowerCase();
+                            const rows = document.querySelectorAll('#productTableBody tr');
+
+                            rows.forEach(row => {
+                                const rowText = row.textContent.toLowerCase();
+                                row.style.display = rowText.includes(input) ? '' : 'none';
+                            });
+                        });
+                    </script>
+                                    
                     <button type="button" class="btn-new mb-3" data-toggle="modal" data-target="#addProductModal">
                         Add New Product
                     </button>
@@ -279,7 +291,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="productTableBody">
                                         <?php if ($products->num_rows > 0): ?>
                                             <?php while ($product = $products->fetch_assoc()): ?>
                                                 <tr>

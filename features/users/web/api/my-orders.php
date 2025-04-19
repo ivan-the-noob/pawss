@@ -352,8 +352,13 @@ document.querySelectorAll('.cancel').forEach(button => {
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onload = function() {
             if (xhr.status == 200) {
-                console.log(xhr.responseText); 
-                showSection('cancelled-orders'); 
+                const response = xhr.responseText.trim();
+                if (response === 'success') {
+                    alert('Order cancelled successfully!');
+                    showSection('cancelled-orders');
+                } else {
+                    alert('Failed to cancel: ' + response);
+                }
             } else {
                 console.log('Error:', xhr.statusText);
             }

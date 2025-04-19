@@ -69,8 +69,7 @@ if (!$result) {
             data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
             data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>
             View</button>";
-        echo "<button type='submit' class='btn btn-primary'>Approve</button>";
-        echo "<button type='button' class='btn btn-danger' onclick='submitDeclineForm(" . htmlspecialchars($details['id']) . ")'>Decline</button>";
+        
     
 
         echo "</td>";
@@ -145,7 +144,7 @@ if (isset($_GET['message'])) {
                         </div>
                         <div class="form-group mt-2 mb-2">
                             <label for="modalMap">Location:</label>
-                            <div id="map" style="height: 300px; wi form-orderdth: 100%;" class="map"></div>
+                            <div id="map" style="height: 300px; width: 100%;" class="map"></div>
                         </div>
                     </div>
                     <div class="col-md-4">
