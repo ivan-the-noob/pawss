@@ -308,7 +308,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
         <div class="col-md-12 col-24">
           <div class="card card-outline card-primary rounded-0 shadow">
             <div class="card-header rounded-0">
-              <h4 class="card-title text-center">Booked History</h4>
+              <h4 class="card-title text-center">Booking History</h4>
             </div>
             <div class="tab-bar">
                 <button id="currentBtn" class="btn btn-link underlined">Appointment</button>
