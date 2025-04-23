@@ -419,7 +419,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                                 if ($row['status'] == 'finish') {
                                     echo 'green';
                                 }
-                            ?>; color: #fff;">
+                            ?>; color: #000;">
                             <?php 
                                 if ($row['status'] == 'finish') {
                                     echo 'Finished';  
