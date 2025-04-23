@@ -319,6 +319,14 @@
 .appointment{
     background-color: #FBF9FA;
 }
+.underlined {
+    text-decoration: underline;
+}
+
+.underlined.active {
+    font-weight: bold; 
+    color: #007bff; 
+}
 .appoints{
     display: flex;
     justify-content: space-between;

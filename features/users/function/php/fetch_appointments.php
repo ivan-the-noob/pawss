@@ -14,7 +14,10 @@ $result = $conn->query($sql);
 $blockedDates = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $blockedDates[] = $row['date'];
+        // Subtract one day from the blocked date
+        $date = new DateTime($row['date']);
+        $date->modify('-1 day');
+        $blockedDates[] = $date->format('Y-m-d'); // Store the modified date
     }
 }
 

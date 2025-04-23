@@ -120,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $log_stmt->execute();
       $log_stmt->close();
 
-        $notificationMessage = "Your appointment has been approved!";
+        $notificationMessage = "Successfully Booked! Please wait for admin to accept your appointment";
         $notificationSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
         $notificationStmt = $conn->prepare($notificationSql);
         $notificationStmt->bind_param("ss", $email, $notificationMessage);
@@ -199,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         notifications
                                         </span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px; height: 400px; overflow-y: auto;">
                                         <?php
                                         include '../../../../db.php'; 
 
@@ -212,10 +212,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                                 $classes = 'dropdown-item bg-white shadow-sm px-3 py-2 rounded';
                                                 $style = 'box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);';
-
+                                                
                                                 if (trim($message) == "Your appointment has been approved!") {
                                                     $classes .= ' text-success mx-auto';
                                                 } else if (trim($message) == "Your checkout has been approved") {
+                                                    $classes .= ' text-success mx-auto';
+                                                } else if (trim($message) == "Successfully Booked! Please wait for confirmation") {
                                                     $classes .= ' text-success mx-auto';
                                                 } else if (trim($message) == "Your item has been picked up by courier. Please ready payment for COD.") {
                                                     $classes .= ' text-info mx-auto';
@@ -457,6 +459,24 @@ $conn->close();
         <div class="add-info" style="display: none;">
             <h6 style="margin-top: 76px;">Address Information</h6>
               <div class="form-group">
+              <?php
+                require '../../../../db.php';
+                    $email = $_SESSION['email']; // make sure session email is set
+
+                    $addressValue = '';
+
+                    $query = $conn->prepare("SELECT address_search, home_street FROM users WHERE email = ?");
+                    $query->bind_param("s", $email);
+                    $query->execute();
+                    $result = $query->get_result();
+
+                    if ($row = $result->fetch_assoc()) {
+                        $addressValue = !empty($row['address_search']) ? $row['address_search'] : $row['home_street'];
+                    }
+                ?>
+              <input type="text" class="form-control mt-2 mb-1" id="addInfo" name="add-info"
+  placeholder="Street Name, Building, House No." required
+  value="<?php echo htmlspecialchars($addressValue); ?>">
               <div class="form-group mt-3" id= "autocomplete-wrapper">
                 <input id="autocomplete" placeholder="Can't find your location? Search here." type="text" class="form-control">
               </div>
@@ -465,7 +485,7 @@ $conn->close();
                 </select>
               </div>
               <div id="modalMap" style="height: 400px;"></div>
-              <input type="text" class="form-control mt-2" id="addInfo" name="add-info" placeholder="Street Name, Building, House No." >
+             
               <input type="hidden" id="latitude" name="latitude">
               <input type="hidden" id="longitude" name="longitude">
         </div>

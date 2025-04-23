@@ -116,8 +116,8 @@ if (isset($_SESSION['email'])) {
                                  <img src="../../../../assets/img/<?php echo htmlspecialchars($_SESSION['profile_picture']); ?>" alt="Profile Image" class="profile">
                                 </button>
                                 <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
-                                    <li><a class="dropdown-item" href="../../features/users/web/api/dashboard.php">Profile</a></li>
-                                    <li><a class="dropdown-item" href="../../function/authentication/logout.php">Logout</a></li>
+                                    <li><a class="dropdown-item" href="dashboard.php">Profile</a></li>
+                                    <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                                 </ul>
                             </div>
                           <?php 
@@ -146,7 +146,7 @@ if (isset($_SESSION['email'])) {
                                         notifications
                                         </span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                    <ul class="dropdown-menu dropdown-menu-end"  style="width: 300px; height: 400px; overflow-y: auto;">
                                         <?php
                                         include '../../../../db.php'; 
 
@@ -264,8 +264,13 @@ if (isset($_SESSION['email'])) {
                 <div class="card-box" id="card-box">
                     <p class="p-3">Check Out Now</p>
                 </div>
-                <div class="check-out">
-                    <button id="checkoutButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderDetailsModal">Checkout</button>
+                <div class="d-flex gap-1">
+                    <div class="check-out mt-2 w-100">
+                        <button id="deleteSelectedButton" class="btn btn-danger" style="background-color: red;">Delete </button>
+                    </div>
+                    <div class="check-out mt-2 w-100">
+                        <button id="checkoutButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderDetailsModal">Checkout</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -536,80 +541,76 @@ document.addEventListener("DOMContentLoaded", function () {
     const productCard = document.getElementById("product-card");
     const subtotalDisplay = document.getElementById("total-cost-2");
     const subtotalInput = document.querySelector('input[name="sub-total"]');
+    const deleteSelectedButton = document.getElementById("deleteSelectedButton");
 
     let subtotal = 0;
 
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener("change", function () {
             const itemData = JSON.parse(this.dataset.item);
-
             if (this.checked) {
-                const card = document.createElement("div");
-                card.classList.add("card", "p-3", "mt-2", "card-contents");
-                card.dataset.itemId = itemData.id;
-
-                card.innerHTML = `
-                    <div class="card-body" style="padding: 0;">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-2">
-                                    <img src="../../../../assets/img/product/${itemData.product_image}" 
-                                         style="width: 30px; height: 30px; display: flex; margin: auto; border-radius: 3px;" 
-                                         alt="Product Image">
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title mb-1">${itemData.product_name}</h5>
-                                    <p class="mb-1">${itemData.quantity}x</p>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <p class="fw-bold">Price: <span class="price">₱${parseFloat(itemData.total_price).toFixed(2)}</span></p>
-                            </div>
-                        </div>
-                        <hr>
-                    </div>
-                `;
-
-                cardBox.appendChild(card);
-                createProductCard(itemData);
-
+                addItemToCard(itemData);
                 subtotal += parseFloat(itemData.total_price);
                 updateSubtotal();
-
-                // Update hidden inputs with arrays
                 updateHiddenInputs(itemData, "add");
             } else {
-                const cardToRemove = cardBox.querySelector(`div[data-item-id="${itemData.id}"]`);
-                if (cardToRemove) {
-                    cardBox.removeChild(cardToRemove);
-                }
-
-                const productCardToRemove = productCard.querySelector(`div[data-item-id="${itemData.id}"]`);
-                if (productCardToRemove) {
-                    productCard.removeChild(productCardToRemove);
-                }
-
+                removeItemFromCard(itemData);
                 subtotal -= parseFloat(itemData.total_price);
                 updateSubtotal();
-
                 updateHiddenInputs(itemData, "remove");
             }
         });
     });
 
-    function createProductCard(itemData) {
-        const card = document.createElement("div");
-        card.classList.add("card", "p-3", "mt-2", "product-card-item");
-        card.dataset.itemId = itemData.id;
+    deleteSelectedButton.addEventListener("click", function () {
+        let selectedItems = [];
 
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const itemData = JSON.parse(checkbox.dataset.item);
+                selectedItems.push(itemData.id);
+            }
+        });
+
+        if (selectedItems.length > 0) {
+            // Call PHP to delete from DB
+            fetch('../../function/php/delete_cart_item.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ids: selectedItems })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to reflect changes after deletion
+                    location.reload();
+                } else {
+                    alert("Failed to delete item(s) from cart.");
+                    console.error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Delete error:", error);
+            });
+        } else {
+            alert("Please select at least one item to delete.");
+        }
+    });
+
+    function addItemToCard(itemData) {
+        const card = document.createElement("div");
+        card.classList.add("card", "p-3", "mt-2", "card-contents");
+        card.dataset.itemId = itemData.id;
         card.innerHTML = `
             <div class="card-body" style="padding: 0;">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="col-md-2">
                             <img src="../../../../assets/img/product/${itemData.product_image}" 
-                                 style="width: 30px; height: 30px; display: flex; margin: auto; border-radius: 3px;" 
-                                 alt="Product Image">
+                                style="width: 30px; height: 30px; display: flex; margin: auto; border-radius: 3px;" 
+                                alt="Product Image">
                         </div>
                         <div class="d-flex justify-content-between">
                             <h5 class="card-title mb-1">${itemData.product_name}</h5>
@@ -623,7 +624,42 @@ document.addEventListener("DOMContentLoaded", function () {
                 <hr>
             </div>
         `;
+        cardBox.appendChild(card);
+        createProductCard(itemData);
+    }
 
+    function removeItemFromCard(itemData) {
+        const cardToRemove = cardBox.querySelector(`div[data-item-id="${itemData.id}"]`);
+        if (cardToRemove) cardBox.removeChild(cardToRemove);
+        const productCardToRemove = productCard.querySelector(`div[data-item-id="${itemData.id}"]`);
+        if (productCardToRemove) productCard.removeChild(productCardToRemove);
+    }
+
+    function createProductCard(itemData) {
+        const card = document.createElement("div");
+        card.classList.add("card", "p-3", "mt-2", "product-card-item");
+        card.dataset.itemId = itemData.id;
+        card.innerHTML = `
+            <div class="card-body" style="padding: 0;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <img src="../../../../assets/img/product/${itemData.product_image}" 
+                                style="width: 30px; height: 30px; display: flex; margin: auto; border-radius: 3px;" 
+                                alt="Product Image">
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title mb-1">${itemData.product_name}</h5>
+                            <p class="mb-1">${itemData.quantity}x</p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <p class="fw-bold">Price: <span class="price">₱${parseFloat(itemData.total_price).toFixed(2)}</span></p>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        `;
         productCard.appendChild(card);
     }
 
@@ -636,61 +672,19 @@ document.addEventListener("DOMContentLoaded", function () {
         const productNames = document.querySelector('input[name="product_name[]"]');
         const productImages = document.querySelector('input[name="product_img[]"]');
         const quantities = document.querySelector('input[name="quantity[]"]');
-        const costs = document.querySelector('input[name="cost[]"]'); // New field for cost
-
-        if (action === "add") {
-            // Convert existing values to arrays, append new data
-            if (productNames) {
-                const updatedNames = JSON.parse(productNames.value || "[]");
-                updatedNames.push(itemData.product_name);
-                productNames.value = JSON.stringify(updatedNames);
-            }
-
-            if (productImages) {
-                const updatedImages = JSON.parse(productImages.value || "[]");
-                updatedImages.push(itemData.product_image);
-                productImages.value = JSON.stringify(updatedImages);
-            }
-
-            if (quantities) {
-                const updatedQuantities = JSON.parse(quantities.value || "[]");
-                updatedQuantities.push(itemData.quantity);
-                quantities.value = JSON.stringify(updatedQuantities);
-            }
-
-            if (costs) {
-                const updatedCosts = JSON.parse(costs.value || "[]");
-                updatedCosts.push(itemData.total_price); // Add the price to the cost array
-                costs.value = JSON.stringify(updatedCosts);
-            }
-        } else if (action === "remove") {
-            if (productNames) {
-                const updatedNames = JSON.parse(productNames.value || "[]").filter(name => name !== itemData.product_name);
-                productNames.value = JSON.stringify(updatedNames);
-            }
-
-            if (productImages) {
-                const updatedImages = JSON.parse(productImages.value || "[]").filter(image => image !== itemData.product_image);
-                productImages.value = JSON.stringify(updatedImages);
-            }
-
-            if (quantities) {
-                const updatedQuantities = JSON.parse(quantities.value || "[]").filter(qty => qty !== itemData.quantity);
-                quantities.value = JSON.stringify(updatedQuantities);
-            }
-
-            if (costs) {
-                const updatedCosts = JSON.parse(costs.value || "[]").filter(cost => cost !== itemData.total_price);
-                costs.value = JSON.stringify(updatedCosts);
-            }
-        }
+        const costs = document.querySelector('input[name="cost[]"]');
+        const updateField = (field, val) => {
+            let arr = JSON.parse(field.value || "[]");
+            if (action === "add") arr.push(val);
+            else arr = arr.filter(v => v !== val);
+            field.value = JSON.stringify(arr);
+        };
+        if (productNames) updateField(productNames, itemData.product_name);
+        if (productImages) updateField(productImages, itemData.product_image);
+        if (quantities) updateField(quantities, itemData.quantity);
+        if (costs) updateField(costs, itemData.total_price);
     }
-
 });
-
-
-
-
 </script>
 
 

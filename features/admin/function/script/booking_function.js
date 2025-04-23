@@ -3,6 +3,7 @@ function showGcashImage(imageUrl) {
     document.getElementById('gcashImage').src = fullImageUrl;
 }
 
+
 function updateStatus(button, status) {
 var appointmentId = button.getAttribute('data-id'); 
 console.log("Appointment ID: " + appointmentId + ", Status: " + status);

@@ -25,23 +25,23 @@ document.addEventListener('DOMContentLoaded', function () {
           today.setHours(0, 0, 0, 0); // Reset the time of 'today' to midnight
           var maxDate = new Date(today);
           maxDate.setDate(today.getDate() + 14); // Set maxDate to 14 days from today
-
           var dateString = date.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+          var currentHour = new Date().getHours(); // Get current hour
 
-          // If the date is in the past, set opacity to 70% and disable clicking
-          if (date < today) {
-            dayCell.style.opacity = '1';  // Set opacity to 70% for past dates
-            dayCell.style.pointerEvents = 'none';  // Disable interaction (non-clickable)
+          // If the date is in the past OR it's today and time is 5PM or later
+          if (date < today || (date.getTime() === today.getTime() && currentHour >= 17)) {
+            dayCell.style.opacity = '1';  
+            dayCell.style.pointerEvents = 'none';  
             dayCell.style.cursor = 'default';
-            dayCell.style.color = 'black';  // Change cursor to default (non-interactive)
-            dayCell.style.backgroundColor = '#FBF9FA';  // Ensure past dates don't have a green background
+            dayCell.style.color = 'black';  
+            dayCell.style.backgroundColor = '#FBF9FA';  
           } 
           // If the date is beyond 14 days from today, make it non-clickable
           else if (date > maxDate) {
-            dayCell.style.opacity = '1'; // Reduce opacity for future dates beyond 14 days
-            dayCell.style.pointerEvents = 'none'; // Disable interaction with future dates
-            dayCell.style.cursor = 'default'; // Change cursor to default
-            dayCell.style.backgroundColor = '#FBF9FA'; // Ensure the background is cleared for dates outside the valid range
+            dayCell.style.opacity = '1';
+            dayCell.style.pointerEvents = 'none';
+            dayCell.style.cursor = 'default';
+            dayCell.style.backgroundColor = '#FBF9FA';
           } 
           // Dates within the valid range (today to maxDate) remain interactive
           else {
@@ -50,15 +50,15 @@ document.addEventListener('DOMContentLoaded', function () {
               var options = { year: 'numeric', month: 'long', day: 'numeric' };
               var formattedDate = new Date(info.date).toLocaleDateString('en-US', options);
               document.getElementById('modalContent').textContent = formattedDate;
-              
+
               // Set the selected date in the hidden input field
-              document.getElementById('appointment_date').value = dateString;  // Set the value of the hidden input field with dateString
-              
+              document.getElementById('appointment_date').value = dateString;
+
               var modal = new bootstrap.Modal(document.getElementById('dayModal'));
               modal.show();
             });
 
-            // Set background color for available dates (future dates within valid range)
+            // Set background color for available dates
             dayCell.style.backgroundColor = 'green'; 
             dayCell.addEventListener('mouseenter', function() {
               dayCell.style.backgroundColor = 'lightgreen';  
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
           }
 
-          // Check if the date is blocked (e.g., if it is in the blockedDates array)
+          // Check if the date is blocked
           if (blockedDates.includes(dateString)) {
             dayCell.style.backgroundColor = 'red';
             dayCell.style.pointerEvents = 'none'; 

@@ -118,7 +118,7 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                                         notifications
                                         </span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                    <ul class="dropdown-menu dropdown-menu-end"  style="width: 300px; height: 400px; overflow-y: auto;">
                                         <?php
                                         include '../../../../db.php'; 
 

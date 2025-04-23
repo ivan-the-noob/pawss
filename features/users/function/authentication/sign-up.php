@@ -1,5 +1,5 @@
 <?php
-session_start();  // Start the session to store error messages
+
 include '../../../../db.php';
 
 // Check if the form is submitted via POST

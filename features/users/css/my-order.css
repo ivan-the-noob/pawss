@@ -306,7 +306,7 @@ box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
   .completed-orders{
     background-color: green;
     border: 1px solid #EDEBEB;
-    width: 80%;
+    width: 150px;
     margin-left: auto;
     border-radius: 24px;
     display: flex;

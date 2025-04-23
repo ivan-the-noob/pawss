@@ -135,7 +135,7 @@ if (isset($_SESSION['email'])) {
                                         notifications
                                         </span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                    <ul class="dropdown-menu dropdown-menu-end"  style="width: 300px; height: 400px; overflow-y: auto;">
                                         <?php
                                         include '../../../../db.php'; 
 

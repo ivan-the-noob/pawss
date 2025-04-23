@@ -202,7 +202,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                                         notifications
                                         </span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                                    <ul class="dropdown-menu dropdown-menu-end"  style="width: 300px; height: 400px; overflow-y: auto;">
                                         <?php
                                         include '../../../../db.php'; 
 
@@ -268,6 +268,38 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
    
   </section>
   <!--Appointment Section End-->
+  <?php if (isset($_GET['rated']) && $_GET['rated'] == 'success'): ?>
+  <div id="ratingToast" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+    animation: fadeOut 0.5s ease-out 2.5s forwards;
+  ">
+    Rated successfully!
+  </div>
+
+  <script>
+    setTimeout(() => {
+      const toast = document.getElementById('ratingToast');
+      if (toast) toast.style.display = 'none';
+    }, 3000);
+  </script>
+
+  <style>
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+    }
+  </style>
+<?php endif; ?>
 
     <!--Book-History Section-->
   <section class="booked-history" id="bookedHistorySection">
@@ -279,10 +311,11 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
               <h4 class="card-title text-center">Booked History</h4>
             </div>
             <div class="tab-bar">
-              <button id="currentBtn">Current Appointment</button>
-              <button class="none"> |</button>
-              <button id="pastBtn">Past Appointment</button>
+                <button id="currentBtn" class="btn btn-link underlined">Appointment</button>
+                <button class="none"> |</button>
+                <button id="pastBtn" class="btn btn-link underlined">History</button>
             </div>
+
             <div class="card-body">
               <ul class="list-group" id="historyList">
                 <?php 
@@ -297,9 +330,10 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
                         <div>
                             <h5 class="mb-1">Appointment</h5>
-                          <p class="mb-1">Service: <?php echo $row['service']; ?></p>
-                          <p class="mb-1">Pet: <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
-                          <p>Owner: <?php echo $row['owner_name']; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Service:</span> <?php echo $row['service']; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Pet:</span> <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Owner:</span><?php echo $row['owner_name']; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Address:</span><?php echo $row['add_info']; ?></p>
                         </div>
                         <div class="mt-3 mt-md-0 text-md-right">
                         <p class="mb-1 status" style="background-color: 
@@ -307,30 +341,62 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                                 if ($row['status'] == 'pending') {
                                     echo '#007bff';
                                 } elseif ($row['status'] == 'waiting') {
-                                    echo 'ffc107';
+                                    echo '#ffc107'; // Yellow background for waiting status
                                 } elseif ($row['status'] == 'on-going') {
-                                    echo 'g28a745';
+                                    echo '#28a745'; // Green background for on-going
                                 }
-                            ?>; color: #fff;">
-                            <?php echo $row['status']; ?>
+                            ?>; color: #000;">
+                            <?php 
+                                if ($row['status'] == 'waiting') {
+                                    echo 'Confirmed'; // Display "Confirmed" for waiting status
+                                } else {
+                                    echo ucfirst($row['status']); // Capitalize the first letter of other statuses
+                                }
+                            ?>
                         </p>
 
-                          <p class="mb-1">Date: <?php echo $row['appointment_date']; ?></p>
-                          <a href="appointment.php?cancel=<?php echo $row['id']; ?>"><button class="btn btn-primary">Cancel</button></a>
+                          <p class="mb-1"><span class="fw-bold">Date of Appointment:</span> <?php echo $row['appointment_date']; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Booked Time:</span>  <?php echo date('g:i A', strtotime($row['created_at'])); ?> </p>
+                          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal<?php echo $row['id']; ?>">
+                            Cancel
+                          </button>
+
+                          <!-- Modal -->
+                          <div class="modal fade" id="cancelModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="cancelModalLabel<?php echo $row['id']; ?>" aria-hidden="true">
+                            <div class="modal-dialog modal-md modal-dialog-centered">
+                              <form action="../../function/php/appointment_cancel.php" method="POST">
+                                <input type="hidden" name="appointment_id" value="<?php echo $row['id']; ?>">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="cancelModalLabel<?php echo $row['id']; ?>">Cancel Appointment</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="mb-3">
+                                      <label for="cancel_reason<?php echo $row['id']; ?>" class="form-label">Reason for Cancellation</label>
+                                      <textarea class="form-control" name="cancel_reason" id="cancel_reason<?php echo $row['id']; ?>" rows="3" required></textarea>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+  
+                                    <button type="submit" name="cancel_appointment" class="btn btn-danger">Confirm Cancel</button>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </li>
                     <?php
                   }
-                } else {
-                  echo "<p>No appointments found</p>";
-                }
+                } 
                 
                 $conn->close();
                 ?>
                <?php 
                 require '../../../../db.php';
-                $sql = "SELECT * FROM appointment WHERE status = 'finish'";
+                $sql = "SELECT * FROM appointment WHERE status IN ('cancel', 'finish')";
                 $result = $conn->query($sql);
                 
                 if ($result->num_rows > 0) {
@@ -340,21 +406,80 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
                         <div>
                             <h5 class="mb-1">Appointment</h5>
-                          <p class="mb-1">Service: <?php echo $row['service']; ?></p>
-                          <p class="mb-1">Pet: <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
-                          <p>Owner: <?php echo $row['owner_name']; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Service:</span> <?php echo $row['service']; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Pet:</span> <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Owner:</span> <?php echo $row['owner_name']; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Address:</span><?php echo $row['add_info']; ?></p>
                         </div>
                         <div class="mt-3 mt-md-0 text-md-right">
+
+                        <div class="d-flex gap-1">
                         <p class="mb-1 status" style="background-color: 
                             <?php 
                                 if ($row['status'] == 'finish') {
                                     echo 'green';
                                 }
                             ?>; color: #fff;">
-                            <?php echo $row['status']; ?>
+                            <?php 
+                                if ($row['status'] == 'finish') {
+                                    echo 'Finished';  
+                                } else {
+                                    echo ucfirst($row['status']); // Capitalize other statuses
+                                }
+                            ?>
                         </p>
+                        <?php if ($row['is_rated'] == 0): ?>
+                          <button class="btn btn-warning btn-sm text-white fw-bold" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                            Rate our service
+                          </button>
+                        <?php endif; ?>
+                       
 
-                          <p class="mb-1">Date: <?php echo $row['appointment_date']; ?></p>
+                        <!-- Rating Modal -->
+                        <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <form action="../../function/php/submit_rating.php" method="POST">
+                            <input type="hidden" name="appointment_id" value="<?php echo $row['id']; ?>">
+
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="ratingModalLabel">Rate Our Service</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                
+                                <div class="modal-body">
+                                  <!-- Star Rating -->
+                                  <div class="mb-3 text-center">
+                                    <input type="hidden" name="rating" id="ratingValue">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                      <i class="fa-regular fa-star fa-2x star" data-value="<?php echo $i; ?>" style="cursor:pointer; color: #ccc;"></i>
+                                    <?php endfor; ?>
+                                  </div>
+
+                                  <!-- Comment -->
+                                  <div class="mb-3">
+                                    <label for="comment" class="form-label fw-bold">Comments (optional)</label>
+                                    <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Tell us what you think..."></textarea>
+                                  </div>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-warning text-white fw-bold">Submit</button>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+
+                      </div>
+
+                        <p class="mb-1"><span class="fw-bold">Date of Appointment:</span> <?php echo $row['appointment_date']; ?></p>
+                        <p class="mb-1"><span class="fw-bold">Booked Time:</span>  <?php echo date('g:i A', strtotime($row['created_at'])); ?> </p>
+                        <?php if ($row['status'] == 'cancel'): ?>
+                            <p class="mb-1"><span class="fw-bold">Cancel reason:</span> <?php echo $row['cancel_reason']; ?></p>
+                        <?php endif; ?>
+
                       
                         
                         </div>
@@ -362,13 +487,32 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                     </li>
                     <?php
                   }
-                } else {
-                  echo "<p>No appointments found</p>";
-                }
+                } 
                 
                 $conn->close();
                 ?>
-                
+
+                <script>
+                  const stars = document.querySelectorAll('.star');
+                  const ratingValue = document.getElementById('ratingValue');
+
+                  stars.forEach((star, index) => {
+                    star.addEventListener('click', () => {
+                      ratingValue.value = star.dataset.value;
+                      stars.forEach((s, i) => {
+                        s.classList.remove('fa-solid');
+                        s.classList.add('fa-regular');
+                        s.style.color = '#ccc';
+                        if (i < star.dataset.value) {
+                          s.classList.remove('fa-regular');
+                          s.classList.add('fa-solid');
+                          s.style.color = '#ffc107';
+                        }
+                      });
+                    });
+                  });
+                </script>
+
               </ul>
               <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center mt-3" id="paginationControls">
