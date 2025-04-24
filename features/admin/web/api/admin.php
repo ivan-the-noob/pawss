@@ -203,38 +203,48 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
                 </button>
             </div>
             <?php
-require '../../../../db.php';   
+require '../../../../db.php';
+
+// Set default dates to today's date if no dates are selected
+$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d');
+$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
+
+// 1. Get Total Users (not date-based)
 $sql_users = "SELECT COUNT(*) AS total_users FROM users WHERE role = 'user'";
 $result_users = $conn->query($sql_users);
 $total_users = $result_users->fetch_assoc()['total_users'];
 
-// 2. Get Total Booked
-$sql_booked = "SELECT COUNT(*) AS total_booked FROM appointment";
+// 2. Get Total Booked with date filter
+$sql_booked = "SELECT COUNT(*) AS total_booked FROM appointment WHERE DATE(appointment_date) BETWEEN '$start_date' AND '$end_date'";
 $result_booked = $conn->query($sql_booked);
 $total_booked = $result_booked->fetch_assoc()['total_booked'];
 
-
-$total_sales = 0;
-
-if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
-    $start_date = $_GET['start_date'];
-    $end_date = $_GET['end_date'];
-
-    $sql_sales = "SELECT SUM(payment) AS total_sales FROM appointment 
-                  WHERE DATE(appointment_date) BETWEEN '$start_date' AND '$end_date'";
-} else {
-    $sql_sales = "SELECT SUM(payment) AS total_sales FROM appointment";
-}
-
+// 3. Get Total Sales with date filter
+$sql_sales = "SELECT SUM(payment) AS total_sales FROM appointment WHERE DATE(appointment_date) BETWEEN '$start_date' AND '$end_date'";
 $result_sales = $conn->query($sql_sales);
 $total_sales = $result_sales->fetch_assoc()['total_sales'] ?? 0;
 
-
-// 4. Get Total Pending
-$sql_pending = "SELECT COUNT(*) AS total_checkout FROM checkout";
-$result_pending = $conn->query($sql_pending);
-$total_pending = $result_pending->fetch_assoc()['total_checkout'];
+// 4. Get Total Checkout with date filter
+$sql_checkout = "SELECT COUNT(*) AS total_checkout FROM checkout WHERE DATE(created_at) BETWEEN '$start_date' AND '$end_date'";
+$result_checkout = $conn->query($sql_checkout);
+$total_checkout = $result_checkout->fetch_assoc()['total_checkout'];
 ?>
+
+<!-- Date Filter Form -->
+<div class="container row col-md-12 d-flex justify-content-end align-items-end">
+    <form method="GET" action="">
+        <div class="col-md-5 m-1 d-flex">
+            <label for="start_date">From:</label>
+            <input type="date" class="form-control" name="start_date" value="<?php echo $start_date; ?>">
+        </div>
+        <div class="col-md-5 m-1 d-flex gap-2">
+            <label for="end_date">To:</label>
+            <input type="date" class="form-control" name="end_date" value="<?php echo $end_date; ?>">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </form>
+</div>
+                
 
 <div class="row card-box">
     <div class="col-12 col-md-6 col-lg-3 cc">
@@ -281,21 +291,8 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
                 </div>
             </div>
             <div class="trend card-down"><i class="fa-solid fa-arrow-trend-down"> 4.3 % </i> Down from yesterday</div>
-            <form method="GET" class="mb-3">
-                <div class="row">
-                    <div class="col-md-5 m-1">
-                        <label for="start_date">From:</label>
-                        <input type="date"id="start_date" style="height : 50%; width: 130%;" name="start_date" value="<?php echo $_GET['start_date'] ?? ''; ?>">
-                    </div>
-                    <div class="col-md-5 m-1">
-                    <label for="end_date">To:</label>
-                    <input type="date"id="end_date" style="height: 50%; width: 130%; " name="end_date" value="<?php echo $_GET['end_date'] ?? ''; ?>">
-                    </div>
-                </div>               
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary" style="height: 50%;">Filter</button>
-                </div>
-            </form>
+
+                
            
         </div>
     </div>
@@ -304,7 +301,7 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
             <div class="cards">
                 <div class="card-text">
                     <p>Total Checkout</p>
-                    <h5><?php echo $total_pending; ?></h5>
+                    <h5><?php echo $total_checkout; ?></h5>
                 </div>
                 <div class="logo">
                     <i class="fa-solid fa-clock"></i>
@@ -321,9 +318,7 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
             <div class="chart-container">
     <div class="mt-2 chart-button">
     <div class="d-flex gap-2 justify-content-center mb-3">
-        <input type="date" id="startDate" class="form-control">
-        <input type="date" id="endDate" class="form-control">
-        <button id="searchBtn" class="btn btn-primary">Search</button>
+ 
         <button id="exportBtn" class="btn btn-success">Export</button>
     </div>
     </div>
@@ -331,196 +326,67 @@ $total_pending = $result_pending->fetch_assoc()['total_checkout'];
 </div>
 
 <script>
-  function fetchData(startDate = '', endDate = '') {
-  const urlParams = new URLSearchParams();
-  if (startDate) urlParams.append('start_date', startDate);
-  if (endDate) urlParams.append('end_date', endDate);
-
-  const url = `../../function/php/fetch_sales_data.php?${urlParams.toString()}`;
-
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      console.log("Fetched data:", data);
-      const labels = data.map(item => {
-        const [year, month] = item.month.split('-');
-        const date = new Date(year, month - 1);
-        return date.toLocaleString('default', { month: 'short' });
-      });
-
-      const salesData = data.map(item => item.total_sales);
-      updateChart(labels, salesData);
-    })
-    .catch(error => console.error('Error fetching data:', error));
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param) || '';
 }
 
-
-
-    function updateChart(labels, salesData) {
-        salesChart.data.labels = labels;
-        salesChart.data.datasets[0].data = salesData;
-        salesChart.data.datasets[0].spanGaps = true;
-        salesChart.data.datasets[0].fill = '-1';
-
-        salesChart.options.scales.y.min = 0;
-        salesChart.options.scales.y.max = 100000;
-
-        salesChart.update();
-    }
-
-
-    function fetchAdditionalData(startDate = '', endDate = '') {
-        const urlParams = new URLSearchParams();
-        if (startDate) urlParams.append('start_date', startDate);
-        if (endDate) urlParams.append('end_date', endDate);
-
-        const url = `../../function/php/fetch_appointment_data.php?${urlParams.toString()}`;
-
-        return fetch(url)
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error fetching appointment data:', error);
+function fetchData(start, end) {
+    const url = `../../function/php/fetch_sales_data.php?start_date=${start}&end_date=${end}`;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            const labels = data.map(item => {
+                const [year, month] = item.month.split('-');
+                const date = new Date(year, month - 1);
+                return date.toLocaleString('default', { month: 'short' });
             });
-    }
+            const salesData = data.map(item => item.total_sales);
+            updateChart(labels, salesData);
+        })
+        .catch(err => console.error('Fetch error:', err));
+}
 
-    function fetchAndExportData() {
-        fetch('../../function/php/fetch_appointment_data.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.data && Array.isArray(data.data)) {
-                    exportToExcel(data.labels, data.salesData, data.data);
-                } else {
-                    console.error("Error: No valid data found or unexpected response format");
-                    alert("No appointment data found.");
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching appointment data:', error);
-                alert('Error fetching appointment data.');
-            });
-    }
+function updateChart(labels, salesData) {
+    salesChart.data.labels = labels;
+    salesChart.data.datasets[0].data = salesData;
+    salesChart.update();
+}
 
-    function exportToExcel(labels, salesData, additionalData) {
-        const selectedDate = document.getElementById('dateSelect').value;
-
-        if (selectedDate) {
-            const selectedIndex = labels.findIndex(label => label.toLowerCase().includes(selectedDate.toLowerCase()));
-
-            if (selectedIndex !== -1) {
-                labels = [labels[selectedIndex]];
-                salesData = [salesData[selectedIndex]];
-            }
-
-            additionalData = additionalData.filter(item => {
-                const appointmentDate = item.appointment_date.slice(0, 10); // Only consider the date part (YYYY-MM-DD)
-                return appointmentDate === selectedDate;
-            });
-        }
-
-        const worksheetData = labels.map((label, index) => [label, formatCurrency(salesData[index])]);
-        const worksheet = XLSX.utils.aoa_to_sheet([['Date', 'Sales (₱)'], ...worksheetData]);
-
-        const additionalDataHeaders = ['Owner Name', 'Email', 'Payment Option', 'Payment', 'Appointment Date'];
-        const additionalDataRows = Array.isArray(additionalData)
-            ? additionalData.map(item => [
-                item.owner_name,
-                item.email,
-                item.payment_option,
-                formatCurrency(item.payment),
-                item.appointment_date
-            ])
-            : [];
-
-        const finalData = [
-            ...worksheetData,
-            [],
-            ...[additionalDataHeaders],
-            ...additionalDataRows
-        ];
-
-        const finalWorksheet = XLSX.utils.aoa_to_sheet([['Date', 'Sales (₱)'], ...worksheetData, [], additionalDataHeaders, ...additionalDataRows]);
-
-        const colWidth = 15;
-
-        finalWorksheet['!cols'] = [
-            { wch: colWidth },
-            { wch: colWidth },
-            { wch: colWidth },
-            { wch: colWidth },
-            { wch: colWidth },
-            { wch: colWidth },
-            { wch: colWidth },
-        ];
-
-        const finalWorkbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(finalWorkbook, finalWorksheet, 'Sales and Appointment Data');
-
-        XLSX.writeFile(finalWorkbook, 'sales_and_appointment_data.xlsx');
-    }
-
-    function formatCurrency(value) {
-        return new Intl.NumberFormat().format(value);
-    }
-
-    const ctx = document.getElementById('salesChart').getContext('2d');
-    const salesChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Total Sales',
-                data: [],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 2,
-                tension: 0.4
-            }]
+const ctx = document.getElementById('salesChart').getContext('2d');
+const salesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Total Sales',
+            data: [],
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderWidth: 2,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
         },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                }
-            },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Date'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Sales Amount (₱)'
-                    }
-                }
-            }
+        scales: {
+            x: { title: { display: true, text: 'Month' } },
+            y: { title: { display: true, text: 'Sales (₱)' }, beginAtZero: true }
         }
-    });
-
-    document.getElementById('searchBtn').addEventListener('click', () => {
-  const startDate = document.getElementById('startDate').value;
-  const endDate = document.getElementById('endDate').value;
-  fetchData(startDate, endDate); // ✅ now this will send both dates
+    }
 });
 
- 
-
-    document.getElementById('exportBtn').addEventListener('click', () => {
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-
-        fetchAdditionalData(startDate, endDate).then(additionalData => {
-            const labels = salesChart.data.labels;
-            const salesData = salesChart.data.datasets[0].data;
-            exportToExcel(labels, salesData, additionalData);
-        });
-    });
-    fetchData();
+// Initial chart load using query params
+const start = getQueryParam('start_date');
+const end = getQueryParam('end_date');
+if (start && end) {
+    fetchData(start, end);
+}
 </script>
+
 
                 <div class="global-container">
                 <?php 

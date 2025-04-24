@@ -1,20 +1,29 @@
 <?php
-
 session_start();
-if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
-    $email = $_SESSION['email'];
-    $profile_picture = $_SESSION['profile_picture'];
-} else {
-    $email = null;
-}
+
+$email = $_SESSION['email'] ?? null;
+$profile_picture = 'default.png'; // default fallback
 
 require 'db.php';
 
+// ✅ Fetch profile picture from the database
+if ($email) {
+    $stmt = $conn->prepare("SELECT profile_picture FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
+    if ($result && $row = $result->fetch_assoc()) {
+        $profile_picture = $row['profile_picture'] ?? 'default.png';
+    }
 
+    $stmt->close();
+}
+
+// ✅ Fetch cart items
 $cartItems = [];
 
-if (!empty($email)) {
+if ($email) {
     $stmt = $conn->prepare("SELECT product_name, total_price, quantity FROM cart WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
@@ -26,14 +35,12 @@ if (!empty($email)) {
         }
     }
 
-    $stmt->close(); // Close the prepared statement
+    $stmt->close();
 }
 
-
-
 $conn->close();
-
 ?>
+
 
 
 <!DOCTYPE html>
@@ -142,49 +149,62 @@ $conn->close();
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" style="width: 300px; height: 400px; overflow-y: auto;">
                                     <?php
-include 'db.php'; 
+                                        include 'db.php';
+                                       
 
-$query = "SELECT message, created_at FROM notification ORDER BY id DESC";
-$result = $conn->query($query);
+                                        $email = $_SESSION['email'] ?? '';
 
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $message = $row['message'];
-        $created_at = $row['created_at'];
+                                        if ($email) {
+                                            $query = "SELECT message, created_at FROM notification WHERE email = ? ORDER BY id DESC";
+                                            $stmt = $conn->prepare($query);
+                                            $stmt->bind_param("s", $email);
+                                            $stmt->execute();
+                                            $result = $stmt->get_result();
 
-        // Format the created_at date as "April 4, 5:00 PM"
-        $formatted_date = date('F j, g:i a', strtotime($created_at));
+                                            if ($result && $result->num_rows > 0) {
+                                                while ($row = $result->fetch_assoc()) {
+                                                    $message = $row['message'];
+                                                    $created_at = $row['created_at'];
 
-        // Apply styles for the message
-        $classes = 'dropdown-item bg-white shadow-sm px-3 py-2 rounded';
-        $style = 'box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);';
+                                                    // Format the created_at date as "April 4, 5:00 PM"
+                                                    $formatted_date = date('F j, g:i a', strtotime($created_at));
 
-        if (trim($message) == "Your appointment has been approved!") {
-            $classes .= ' text-success';
-        } else if (trim($message) == "Your checkout has been approved") {
-            $classes .= ' text-success';
-        } else if (trim($message) == "Your item has been picked up by courier. Please ready payment for COD.") {
-            $classes .= ' text-info';
-        } else if (trim($message) == "Your profile info has been updated.") {
-            $classes .= ' text-info';
-        } else if (trim($message) == "New services offered! Check it now!") {
-            $classes .= ' text-success';
-        } else if (trim($message) == "New product has been arrived! Check it now!") {
-            $classes .= ' text-success';
-        }
+                                                    // Apply styles for the message
+                                                    $classes = 'dropdown-item bg-white shadow-sm px-3 py-2 rounded';
+                                                    $style = 'box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);';
 
-        // Display the message with the date below
-        echo "<li><a class=\"$classes\" href=\"#\" style=\"$style\">";
-        echo "<span>$message</span>";
-        echo "<div style=\"font-size: 0.9em; color: black; margin-top: 5px;\">$formatted_date</div></a></li>";
-        echo "<li><hr class=\"dropdown-divider\"></li>";
-    }
-} else {
-    echo "<li><a class=\"dropdown-item bg-white shadow-sm\" href=\"#\">No notifications</a></li>";
-}
+                                                    if (trim($message) == "Your appointment has been approved!") {
+                                                        $classes .= ' text-success';
+                                                    } else if (trim($message) == "Your checkout has been approved") {
+                                                        $classes .= ' text-success';
+                                                    } else if (trim($message) == "Your item has been picked up by courier. Please ready payment for COD.") {
+                                                        $classes .= ' text-info';
+                                                    } else if (trim($message) == "Your profile info has been updated.") {
+                                                        $classes .= ' text-info';
+                                                    } else if (trim($message) == "New services offered! Check it now!") {
+                                                        $classes .= ' text-success';
+                                                    } else if (trim($message) == "New product has been arrived! Check it now!") {
+                                                        $classes .= ' text-success';
+                                                    }
 
-$conn->close();
-?>
+                                                    // Display the message with the date below
+                                                    echo "<li><a class=\"$classes d-flex flex-column mx-auto\" href=\"#\" style=\"$style\">";
+                                                    echo "<span>$message</span>";
+                                                    echo "<div style=\"font-size: 0.9em; color: black; margin-top: 5px;\">$formatted_date</div></a></li>";
+                                                    echo "<li><hr class=\"dropdown-divider\"></li>";
+                                                }
+                                            } else {
+                                                echo "<li><a class=\"dropdown-item bg-white shadow-sm\" href=\"#\">No notifications</a></li>";
+                                            }
+
+                                            $stmt->close();
+                                        } else {
+                                            echo "<li><a class=\"dropdown-item bg-white shadow-sm\" href=\"#\">Please log in to see notifications</a></li>";
+                                        }
+
+                                        $conn->close();
+                                        ?>
+
 
                                     </ul>
 

@@ -48,11 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($stmt->execute()) {
+        // Insert notification after successful checkout
+        $notificationMessage = "Check Out Successfully, wait for confirmation.";
+        $notifSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+        $notifStmt = $conn->prepare($notifSql);
+        $notifStmt->bind_param("ss", $email, $notificationMessage);
+        $notifStmt->execute();
+        $notifStmt->close();
+    
         header("Location: ../../web/api/my-orders.php");
         exit();
-    } else {
-        echo "Error: " . $stmt->error;
     }
+    
 
     $stmt->close();
     $conn->close();
