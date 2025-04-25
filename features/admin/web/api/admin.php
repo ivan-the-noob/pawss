@@ -385,6 +385,22 @@ const end = getQueryParam('end_date');
 if (start && end) {
     fetchData(start, end);
 }
+
+document.getElementById('exportBtn').addEventListener('click', function () {
+    const labels = salesChart.data.labels;
+    const data = salesChart.data.datasets[0].data;
+
+    const rows = [['Month', 'Total Sales']];
+    for (let i = 0; i < labels.length; i++) {
+        rows.push([labels[i], data[i]]);
+    }
+
+    const worksheet = XLSX.utils.aoa_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Data');
+
+    XLSX.writeFile(workbook, 'sales_data.xlsx');
+});
 </script>
 
 
