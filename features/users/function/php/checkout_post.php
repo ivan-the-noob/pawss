@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $shipping_fee = isset($_POST['shipping-fee']) ? $_POST['shipping-fee'] : 0;
     $total_amount = isset($_POST['total-amount']) ? $_POST['total-amount'] : 0;
     
-
     // Add 'from_cart' value: true if the order is from the cart
     $from_cart = isset($_POST['from_cart']) && $_POST['from_cart'] == 'true' ? 1 : 0;
 
@@ -60,6 +59,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!$stmt->execute()) {
             echo "Error: " . $stmt->error;
         }
+
+        // After inserting the checkout, update the product quantity
+        $updateProductSql = "SELECT quantity FROM product WHERE product_name = ?";
+        $updateProductStmt = $conn->prepare($updateProductSql);
+        $updateProductStmt->bind_param("s", $product_name);
+        $updateProductStmt->execute();
+        $updateProductResult = $updateProductStmt->get_result();
+
+        if ($updateProductResult->num_rows > 0) {
+            $productRow = $updateProductResult->fetch_assoc();
+            $newQuantity = $productRow['quantity'] - $quantity;
+
+            if ($newQuantity >= 0) {
+                // Update the product quantity in the product table
+                $updateQuantitySql = "UPDATE product SET quantity = ? WHERE product_name = ?";
+                $updateQuantityStmt = $conn->prepare($updateQuantitySql);
+                $updateQuantityStmt->bind_param("is", $newQuantity, $product_name);
+                $updateQuantityStmt->execute();
+                $updateQuantityStmt->close();
+            } else {
+                echo "Error: Not enough stock for product: $product_name";
+            }
+        }
+
+        $updateProductStmt->close();
     }
 
     if ($stmt->error) {

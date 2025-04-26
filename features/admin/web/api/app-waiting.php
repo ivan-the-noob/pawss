@@ -10,6 +10,8 @@
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     $limit = 10; 
     $offset = ($page - 1) * $limit;
+    
+    // Query to fetch the waiting appointments
     $sql = "SELECT * FROM appointment WHERE status = 'waiting'";
 
     if ($search) {
@@ -19,6 +21,8 @@
 
     $sql .= " LIMIT $limit OFFSET $offset";
     $result = $conn->query($sql);
+
+    // Query to get the total number of waiting appointments
     $countSql = "SELECT COUNT(*) as total FROM appointment WHERE status = 'waiting'";
     if ($search) {
         $countSql .= " AND (owner_name LIKE '%" . $conn->real_escape_string($search) . "%' 
@@ -27,6 +31,9 @@
     $totalResult = $conn->query($countSql);
     $totalRow = $totalResult->fetch_assoc();
     $totalPages = ceil($totalRow['total'] / $limit);
+
+    // Check if the total data count is greater than or equal to 10
+    $showPagination = $totalRow['total'] > 10;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,8 +89,8 @@
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="checkoutDropdown">
                     <li><a class="dropdown-item" href="pending_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending CheckOut</span></a></li>
-                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship CheckOut</span></a></li>
-                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive CheckOut</span></a></li>
+                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship</span></a></li>
+                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive</span></a></li>
                     <li><a class="dropdown-item" href="delivered_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Delivered</span></a></li>
                     <li><a class="dropdown-item" href="decline.php"><i class="fa-solid fa-calendar-check"></i> <span>Declined</span></a></li>
                 </ul>
@@ -181,7 +188,19 @@
                                 echo "<td>{$row['payment']}</td>";
                                 echo "<td>{$row['payment_option']}</td>";
                                 echo "<td>
-                                <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' onclick='viewAdditionalInfo({$row['id']}, \"{$row['barangay']}\", \"{$row['pet_type']}\", \"{$row['breed']}\", \"{$row['age']}\", \"{$row['service']}\", \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", \"{$row['add_info']}\")'>View</button>
+                                <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' 
+                                onclick='viewAdditionalInfo(
+                                    {$row['id']}, 
+                                    \"" . addslashes($row['barangay']) . "\", 
+                                    \"" . addslashes($row['pet_type']) . "\", 
+                                    \"" . addslashes($row['breed']) . "\", 
+                                    \"" . addslashes($row['age']) . "\", 
+                                    \"" . addslashes($row['service']) . "\", 
+                                    \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
+                                    \"" . addslashes($row['add_info']) . "\", 
+                                    \"" . addslashes($row['contact_number']) . "\",
+                                    \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
+                                )'>View</button>
                                         <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#locationModal' onclick='showMap({$row['latitude']}, {$row['longitude']})'>Location</button>
                                         <button class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#gcashModal' onclick='showGcashImage(\"" . addslashes($row['gcash_image']) . "\")'>Receipt</button>
                                     </td>";
@@ -205,28 +224,36 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <!-- Show all the information here -->
-                            <p><strong>Barangay:</strong> <span id="barangayDetail"></span></p>
-                            <p><strong>Pet Type:</strong> <span id="petTypeDetail"></span></p>
-                            <p><strong>Breed:</strong> <span id="breedDetail"></span></p>
-                            <p><strong>Age:</strong> <span id="ageDetail"></span></p>
-                            <p><strong>Service:</strong> <span id="serviceDetail"></span></p>
-                            <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
-                            <p><strong>Additional Info:</strong> <span id="additionalInfoDetail"></span></p>
-                        </div>
-                        <script>
-                            // Function to populate the modal with Barangay, Pet Type, Breed, Age, Service, Appointment Date, and Additional Info
-                            function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo) {
-                                // Set the text inside the modal's elements
-                                document.getElementById('barangayDetail').innerText = barangay;
-                                document.getElementById('petTypeDetail').innerText = petType;
-                                document.getElementById('breedDetail').innerText = breed;
-                                document.getElementById('ageDetail').innerText = age;
-                                document.getElementById('serviceDetail').innerText = service;
-                                document.getElementById('appointmentDateDetail').innerText = appointmentDate;
-                                document.getElementById('additionalInfoDetail').innerText = additionalInfo;
-                            }
-                        </script>
+                        <p class="d-none"><strong>Barangay:</strong> <span id="barangayDetail"></span></p>
+                        <p><strong>Pet Type:</strong> <span id="petTypeDetail"></span></p>
+                        <p><strong>Breed:</strong> <span id="breedDetail"></span></p>
+                        <p><strong>Age:</strong> <span id="ageDetail"></span></p>
+                        <p><strong>Service:</strong> <span id="serviceDetail"></span></p>
+                        <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
+                        <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
+                        <p><strong>Contact Number:</strong> <span id="contact_numberDetail"></span></p>
+                        <p><strong>Time of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
+                    </div>
+                    <script>
+                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_number, created_at) {
+                        document.getElementById('barangayDetail').innerText = barangay;
+                        document.getElementById('petTypeDetail').innerText = petType;
+                        document.getElementById('breedDetail').innerText = breed;
+                        document.getElementById('ageDetail').innerText = age;
+                        document.getElementById('serviceDetail').innerText = service;
+                        document.getElementById('appointmentDateDetail').innerText = appointmentDate;
+                        document.getElementById('additionalInfoDetail').innerText = additionalInfo;
+                        document.getElementById('contact_numberDetail').innerText = contact_number;
+
+                        // Format the time from created_at to show only the time (HH:MM AM/PM)
+                        const timeOfBooked = new Date(created_at).toLocaleString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                        document.getElementById('timeOfBookedDetail').innerText = timeOfBooked;
+                    }
+                </script>
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -263,23 +290,25 @@
             </div>
                 </table>
             </div>
-            <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                <li class="page-item prev <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-                    <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" data-page="prev">&lt;</a>
-                </li>
-                <ul class="pagination" id="pageNumbers">
-                    <?php
-                    for ($i = 1; $i <= $totalPages; $i++) {
-                        echo "<li class='page-item " . ($i == $page ? 'active' : '') . "'>
-                                <a class='page-link' href='?page=$i&search=" . urlencode($search) . "'>$i</a>
-                            </li>";
-                    }
-                    ?>
+            <?php if ($showPagination): ?>
+                <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+                    <li class="page-item prev <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" data-page="prev">&lt;</a>
+                    </li>
+                    <ul class="pagination" id="pageNumbers">
+                        <?php
+                        for ($i = 1; $i <= $totalPages; $i++) {
+                            echo "<li class='page-item " . ($i == $page ? 'active' : '') . "'>
+                                    <a class='page-link' href='?page=$i&search=" . urlencode($search) . "'>$i</a>
+                                </li>";
+                        }
+                        ?>
+                    </ul>
+                    <li class="page-item next <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" data-page="next">&gt;</a>
+                    </li>
                 </ul>
-                <li class="page-item next <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
-                    <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" data-page="next">&gt;</a>
-                </li>
-            </ul>
+            <?php endif; ?>
         </div>
     </div>
 </body>

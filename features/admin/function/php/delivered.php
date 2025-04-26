@@ -1,13 +1,53 @@
 <?php
 include '../../../../db.php';
 
+// Pagination setup
+$limit = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
+// Count total rows
+$countResult = $conn->query("SELECT COUNT(DISTINCT email) AS total FROM checkout WHERE status = 'received-order'");
+$totalRows = ($countResult && $row = $countResult->fetch_assoc()) ? $row['total'] : 0;
+$totalPages = ceil($totalRows / $limit);
+
+// Fetch the rows with LIMIT
 $sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id 
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
-        WHERE c.status = 'received-order'";
+        WHERE c.status = 'received-order'
+        ORDER BY c.id DESC
+        LIMIT $limit OFFSET $offset";
 $result = $conn->query($sql);
 
+?>
+
+<!-- Table content and pagination controls -->
+<table>
+    <!-- Your table headers and data display here -->
+</table>
+
+<!-- Pagination Controls -->
+<?php if ($totalRows > $limit): ?>
+    <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+        <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
+            <a class="page-link" href="?page=<?php echo max(1, $page - 1); ?>">&lt;</a>
+        </li>
+
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+
+        <li class="page-item <?php if ($page >= $totalPages) echo 'disabled'; ?>">
+            <a class="page-link" href="?page=<?php echo min($totalPages, $page + 1); ?>">&gt;</a>
+        </li>
+    </ul>
+<?php endif; ?>
+
+<!-- Fetch Data and Display it -->
+<?php
 if (!$result) {
     echo "Error: " . $conn->error;
 } else {
@@ -55,18 +95,18 @@ if (!$result) {
         echo "<td>" . htmlspecialchars($details['email']) . "</td>";
         echo "<td>";
         echo "<button class='btn btn-info' data-toggle='modal' data-target='#viewModal'
-        data-id='" . htmlspecialchars($details['id']) . "'
-        data-name='" . htmlspecialchars($details['name']) . "'
-        data-email='" . htmlspecialchars($details['email']) . "'
-        data-contact-num='" . htmlspecialchars($details['contact_num']) . "'
-        data-address-search='" . htmlspecialchars($details['address_search']) . "'
-        data-payment-method='" . htmlspecialchars($details['payment_method']) . "'
-        data-products='" . htmlspecialchars(json_encode($details['products'])) . "'
-        data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "'
-        data-total-amount='" . htmlspecialchars($details['total_amount']) . "'
-        data-latitude='" . htmlspecialchars($details['latitude']) . "'
-        data-longitude='" . htmlspecialchars($details['longitude']) . "'
-        data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
+        data-id='" . htmlspecialchars($details['id']) . "' 
+        data-name='" . htmlspecialchars($details['name']) . "' 
+        data-email='" . htmlspecialchars($details['email']) . "' 
+        data-contact-num='" . htmlspecialchars($details['contact_num']) . "' 
+        data-address-search='" . htmlspecialchars($details['address_search']) . "' 
+        data-payment-method='" . htmlspecialchars($details['payment_method']) . "' 
+        data-products='" . htmlspecialchars(json_encode($details['products'])) . "' 
+        data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "' 
+        data-total-amount='" . htmlspecialchars($details['total_amount']) . "' 
+        data-latitude='" . htmlspecialchars($details['latitude']) . "' 
+        data-longitude='" . htmlspecialchars($details['longitude']) . "' 
+        data-screenshot='" . htmlspecialchars($details['screenshot']) . "' 
         data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>View</button>";
         echo "</td>";
         echo "</tr>";
@@ -74,6 +114,9 @@ if (!$result) {
     }
 }
 
+?>
+
+<?php
 if (isset($_GET['message'])) {
     $message = htmlspecialchars($_GET['message']);
     echo "
@@ -103,6 +146,7 @@ if (isset($_GET['message'])) {
     ";
 }
 ?>
+
 
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
@@ -140,7 +184,7 @@ if (isset($_GET['message'])) {
                         </div>
                         <div class="form-group mt-2 mb-2">
                             <label for="modalMap">Location:</label>
-                            <div id="map" style="height: 300px; wi form-orderdth: 100%;" class="map"></div>
+                            <div id="map" style="height: 300px; width: 100%;" class="map"></div>
                         </div>
                     </div>
                     <div class="col-md-4">

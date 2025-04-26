@@ -1,21 +1,30 @@
 <?php
 include '../../../../db.php';
 
+$limit = 10;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
 
+// Fetch all relevant checkout data
 $sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id 
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
-        WHERE c.status = 'orders'";
+        WHERE c.status = 'orders'
+        ORDER BY c.created_at DESC";
 $result = $conn->query($sql);
 
 if (!$result) {
     echo "Error: " . $conn->error;
 } else {
-    $data = [];
+    $groupedData = [];
+
     while ($row = $result->fetch_assoc()) {
         $email = $row['email'];
-        if (!isset($data[$email])) {
-            $data[$email] = [
+        $createdAt = date('Y-m-d H:i:s', strtotime($row['created_at']));
+        $key = $email . '|' . $createdAt;
+
+        if (!isset($groupedData[$key])) {
+            $groupedData[$key] = [
                 'id' => $row['id'],
                 'name' => $row['name'],
                 'email' => $row['email'],
@@ -23,16 +32,17 @@ if (!$result) {
                 'address_search' => $row['address_search'],
                 'payment_method' => $row['payment_method'],
                 'shipping_fee' => $row['shipping_fee'],
-                'latitude' => $row['latitude'], 
-                'longitude' => $row['longitude'], 
+                'latitude' => $row['latitude'],
+                'longitude' => $row['longitude'],
                 'screenshot' => $row['screenshot'],
                 'reference_id' => $row['reference_id'],
+                'created_at' => $createdAt,
                 'products' => [],
-                'total_amount' => 0, 
+                'total_amount' => 0,
             ];
         }
 
-        $data[$email]['products'][] = [
+        $groupedData[$key]['products'][] = [
             'product_name' => $row['product_name'],
             'product_img' => $row['product_img'],
             'quantity' => $row['quantity'],
@@ -40,15 +50,20 @@ if (!$result) {
             'sub_total' => $row['sub_total'],
         ];
 
-        $data[$email]['total_amount'] += $row['sub_total'];
+        $groupedData[$key]['total_amount'] += $row['sub_total'];
     }
 
-    foreach ($data as $email => &$details) {
+    foreach ($groupedData as &$details) {
         $details['total_amount'] += $details['shipping_fee'];
     }
 
-    $count = 1;
-    foreach ($data as $email => $details) {
+    // Total data and pagination
+    $totalRows = count($groupedData);
+    $totalPages = ceil($totalRows / $limit);
+    $paginatedData = array_slice($groupedData, $offset, $limit, true);
+
+    $count = $offset + 1;
+    foreach ($paginatedData as $details) {
         echo "<tr>";
         echo "<td>$count</td>";
         echo "<td>" . htmlspecialchars($details['name']) . "</td>";
@@ -69,15 +84,13 @@ if (!$result) {
             data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
             data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>
             View</button>";
-        
-    
-
         echo "</td>";
         echo "</tr>";
         $count++;
     }
 }
 
+// SweetAlert
 if (isset($_GET['message'])) {
     $message = htmlspecialchars($_GET['message']);
     echo "
@@ -91,7 +104,7 @@ if (isset($_GET['message'])) {
         });
     </script>
     ";
-} else if (isset($_GET['delete_message'])) {
+} elseif (isset($_GET['delete_message'])) {
     $deleteMessage = htmlspecialchars($_GET['delete_message']);
     echo "
     <script src='https://unpkg.com/sweetalert/dist/sweetalert.min.js'></script>
@@ -107,6 +120,7 @@ if (isset($_GET['message'])) {
     ";
 }
 ?>
+
 
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">

@@ -1,21 +1,26 @@
 <?php
 include '../../../../db.php';
 
+$limit = 10;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
 
-$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id 
+$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id, c.created_at
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
-        WHERE c.status = 'to-ship'";
+        WHERE c.status = 'to-ship'
+        ORDER BY c.created_at DESC";
 $result = $conn->query($sql);
 
-if (!$result) {
-    echo "Error: " . $conn->error;
-} else {
-    $data = [];
+$data = [];
+if ($result) {
     while ($row = $result->fetch_assoc()) {
         $email = $row['email'];
-        if (!isset($data[$email])) {
-            $data[$email] = [
+        $createdAt = date('Y-m-d H:i:s', strtotime($row['created_at']));
+        $key = $email . '|' . $createdAt;
+
+        if (!isset($data[$key])) {
+            $data[$key] = [
                 'id' => $row['id'],
                 'name' => $row['name'],
                 'email' => $row['email'],
@@ -23,16 +28,17 @@ if (!$result) {
                 'address_search' => $row['address_search'],
                 'payment_method' => $row['payment_method'],
                 'shipping_fee' => $row['shipping_fee'],
-                'latitude' => $row['latitude'], 
-                'longitude' => $row['longitude'], 
+                'latitude' => $row['latitude'],
+                'longitude' => $row['longitude'],
                 'screenshot' => $row['screenshot'],
                 'reference_id' => $row['reference_id'],
+                'created_at' => $createdAt,
                 'products' => [],
-                'total_amount' => 0, 
+                'total_amount' => 0,
             ];
         }
 
-        $data[$email]['products'][] = [
+        $data[$key]['products'][] = [
             'product_name' => $row['product_name'],
             'product_img' => $row['product_img'],
             'quantity' => $row['quantity'],
@@ -40,20 +46,24 @@ if (!$result) {
             'sub_total' => $row['sub_total'],
         ];
 
-        $data[$email]['total_amount'] += $row['sub_total'];
+        $data[$key]['total_amount'] += $row['sub_total'];
     }
 
-    foreach ($data as $email => &$details) {
+    foreach ($data as &$details) {
         $details['total_amount'] += $details['shipping_fee'];
     }
 
-    $count = 1;
-    foreach ($data as $email => $details) {
+    $totalRows = count($data);
+    $totalPages = ceil($totalRows / $limit);
+    $paginatedData = array_slice($data, $offset, $limit, true);
+
+    $count = $offset + 1;
+    foreach ($paginatedData as $details) {
         echo "<tr>";
         echo "<td>$count</td>";
         echo "<td>" . htmlspecialchars($details['name']) . "</td>";
         echo "<td>" . htmlspecialchars($details['email']) . "</td>";
-        echo "<td>";
+        echo "<td class='d-flex gap-2 justify-content-center'>";
         echo "<button class='btn btn-info' data-toggle='modal' data-target='#viewModal'
         data-id='" . htmlspecialchars($details['id']) . "'
         data-name='" . htmlspecialchars($details['name']) . "'
@@ -72,8 +82,30 @@ if (!$result) {
         echo "</tr>";
         $count++;
     }
+} else {
+    echo "Error: " . $conn->error;
 }
+?>
 
+<?php if ($totalRows > $limit): ?>
+    <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+        <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
+            <a class="page-link" href="?page=<?php echo $page - 1; ?>">&lt;</a>
+        </li>
+
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+
+        <li class="page-item <?php if ($page >= $totalPages) echo 'disabled'; ?>">
+            <a class="page-link" href="?page=<?php echo $page + 1; ?>">&gt;</a>
+        </li>
+    </ul>
+<?php endif; ?>
+
+<?php
 if (isset($_GET['message'])) {
     $message = htmlspecialchars($_GET['message']);
     echo "
@@ -87,12 +119,12 @@ if (isset($_GET['message'])) {
         });
     </script>
     ";
-} else if (isset($_GET['delete_message'])) {
+} elseif (isset($_GET['delete_message'])) {
     $deleteMessage = htmlspecialchars($_GET['delete_message']);
     echo "
     <script src='https://unpkg.com/sweetalert/dist/sweetalert.min.js'></script>
     <script>
-       swal({
+        swal({
             title: 'Appointment Deleted!',
             text: '$deleteMessage',
             icon: 'error',
@@ -103,6 +135,8 @@ if (isset($_GET['message'])) {
     ";
 }
 ?>
+
+
 
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">

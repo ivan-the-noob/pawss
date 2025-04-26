@@ -1,32 +1,43 @@
 <?php
-    session_start();
-    if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-        header("Location: ../../../users/web/api/login.php");
-        exit();
-    }
+session_start();
+if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../../../users/web/api/login.php");
+    exit();
+}
 
-    require '../../../../db.php';
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
-    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $limit = 10; 
-    $offset = ($page - 1) * $limit;
-    $sql = "SELECT * FROM appointment WHERE status = 'pending'";
+require '../../../../db.php';
 
-    if ($search) {
-        $sql .= " AND (owner_name LIKE '%" . $conn->real_escape_string($search) . "%' 
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = 10;
+$offset = ($page - 1) * $limit;
+
+// Updated query: join appointment with users to get contact_number
+$sql = "SELECT appointment.*, users.contact_number 
+        FROM appointment 
+        LEFT JOIN users ON appointment.email = users.email 
+        WHERE appointment.status = 'pending'";
+
+if ($search) {
+    $sql .= " AND (appointment.owner_name LIKE '%" . $conn->real_escape_string($search) . "%' 
+                OR appointment.email LIKE '%" . $conn->real_escape_string($search) . "%')";
+}
+
+$sql .= " LIMIT $limit OFFSET $offset";
+$result = $conn->query($sql);
+
+// Count total for pagination
+$countSql = "SELECT COUNT(*) as total 
+             FROM appointment 
+             WHERE status = 'pending'";
+if ($search) {
+    $countSql .= " AND (owner_name LIKE '%" . $conn->real_escape_string($search) . "%' 
                     OR email LIKE '%" . $conn->real_escape_string($search) . "%')";
-    }
-
-    $sql .= " LIMIT $limit OFFSET $offset";
-    $result = $conn->query($sql);
-    $countSql = "SELECT COUNT(*) as total FROM appointment WHERE status = 'pending'";
-    if ($search) {
-        $countSql .= " AND (owner_name LIKE '%" . $conn->real_escape_string($search) . "%' 
-                        OR email LIKE '%" . $conn->real_escape_string($search) . "%')";
-    }
-    $totalResult = $conn->query($countSql);
-    $totalRow = $totalResult->fetch_assoc();
-    $totalPages = ceil($totalRow['total'] / $limit);
+}
+$totalResult = $conn->query($countSql);
+$totalRow = $totalResult->fetch_assoc();
+$totalPages = ceil($totalRow['total'] / $limit);
+$showPagination = $totalRow['total'] > 10;
 ?>
 
 <!DOCTYPE html>
@@ -84,8 +95,8 @@
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="checkoutDropdown">
                     <li><a class="dropdown-item" href="pending_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending CheckOut</span></a></li>
-                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship CheckOut</span></a></li>
-                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive CheckOut</span></a></li>
+                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship</span></a></li>
+                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive</span></a></li>
                     <li><a class="dropdown-item" href="delivered_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Delivered</span></a></li>
                     <li><a class="dropdown-item" href="decline.php"><i class="fa-solid fa-calendar-check"></i> <span>Declined</span></a></li>
                 </ul>
@@ -183,9 +194,18 @@
                                 echo "<td>" . (!empty($row['gcash_image']) ? $row['payment_option'] : "On store") . "</td>";
                                 echo "<td>
                                 <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' 
-                                    onclick='viewAdditionalInfo({$row['id']}, \"{$row['barangay']}\", \"{$row['pet_type']}\", 
-                                    \"{$row['breed']}\", \"{$row['age']}\", \"{$row['service']}\", \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
-                                    \"{$row['add_info']}\")'>View</button>
+                                onclick='viewAdditionalInfo(
+                                    {$row['id']}, 
+                                    \"" . addslashes($row['barangay']) . "\", 
+                                    \"" . addslashes($row['pet_type']) . "\", 
+                                    \"" . addslashes($row['breed']) . "\", 
+                                    \"" . addslashes($row['age']) . "\", 
+                                    \"" . addslashes($row['service']) . "\", 
+                                    \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
+                                    \"" . addslashes($row['add_info']) . "\", 
+                                    \"" . addslashes($row['contact_number']) . "\",
+                                    \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
+                                )'>View</button>
                         
                                 <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#locationModal' 
                                     onclick='showMap({$row['latitude']}, {$row['longitude']})'>Location</button>";
@@ -212,21 +232,22 @@
                 </table>
                 <!-- View Modal -->
                 <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="viewModalLabel">Additional Information</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Show all the information here -->
-                        <p><strong>Barangay:</strong> <span id="barangayDetail"></span></p>
+                        <p class="d-none"><strong>Barangay:</strong> <span id="barangayDetail"></span></p>
                         <p><strong>Pet Type:</strong> <span id="petTypeDetail"></span></p>
                         <p><strong>Breed:</strong> <span id="breedDetail"></span></p>
                         <p><strong>Age:</strong> <span id="ageDetail"></span></p>
                         <p><strong>Service:</strong> <span id="serviceDetail"></span></p>
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
-                        <p><strong>Additional Info:</strong> <span id="additionalInfoDetail"></span></p>
+                        <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
+                        <p><strong>Contact Number:</strong> <span id="contact_numberDetail"></span></p>
+                        <p><strong>Time of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -234,10 +255,10 @@
                     </div>
                 </div>
                 </div>
+            
+         
                 <script>
-                    // Function to populate the modal with Barangay, Pet Type, Breed, Age, Service, Appointment Date, and Additional Info
-                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo) {
-                        // Set the text inside the modal's elements
+                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_number, created_at) {
                         document.getElementById('barangayDetail').innerText = barangay;
                         document.getElementById('petTypeDetail').innerText = petType;
                         document.getElementById('breedDetail').innerText = breed;
@@ -245,6 +266,15 @@
                         document.getElementById('serviceDetail').innerText = service;
                         document.getElementById('appointmentDateDetail').innerText = appointmentDate;
                         document.getElementById('additionalInfoDetail').innerText = additionalInfo;
+                        document.getElementById('contact_numberDetail').innerText = contact_number;
+
+                        // Format the time from created_at to show only the time (HH:MM AM/PM)
+                        const timeOfBooked = new Date(created_at).toLocaleString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                        document.getElementById('timeOfBookedDetail').innerText = timeOfBooked;
                     }
                 </script>
 
@@ -275,23 +305,25 @@
                 </div>
             </div>
             </div>
-            <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                <li class="page-item prev <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-                    <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" data-page="prev">&lt;</a>
-                </li>
-                <ul class="pagination" id="pageNumbers">
-                    <?php
-                    for ($i = 1; $i <= $totalPages; $i++) {
-                        echo "<li class='page-item " . ($i == $page ? 'active' : '') . "'>
-                                <a class='page-link' href='?page=$i&search=" . urlencode($search) . "'>$i</a>
-                            </li>";
-                    }
-                    ?>
+            <?php if ($showPagination): ?>
+                <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+                    <li class="page-item prev <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" data-page="prev">&lt;</a>
+                    </li>
+                    <ul class="pagination" id="pageNumbers">
+                        <?php
+                        for ($i = 1; $i <= $totalPages; $i++) {
+                            echo "<li class='page-item " . ($i == $page ? 'active' : '') . "'>
+                                    <a class='page-link' href='?page=$i&search=" . urlencode($search) . "'>$i</a>
+                                </li>";
+                        }
+                        ?>
+                    </ul>
+                    <li class="page-item next <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" data-page="next">&gt;</a>
+                    </li>
                 </ul>
-                <li class="page-item next <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
-                    <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" data-page="next">&gt;</a>
-                </li>
-            </ul>
+            <?php endif; ?>
         </div>
     </div>
 </body>

@@ -1,10 +1,39 @@
 <?php
-session_start();
-if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../../../users/web/api/login.php");
-    exit();
-}
+    session_start();
+    if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        header("Location: ../../../users/web/api/login.php");
+        exit();
+    }
 
+    require '../../../../db.php';
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $limit = 10; 
+    $offset = ($page - 1) * $limit;
+    
+    // Query to fetch the finished appointments
+    $sql = "SELECT * FROM appointment WHERE status = 'finish'";
+
+    if ($search) {
+        $sql .= " AND (owner_name LIKE '%" . $conn->real_escape_string($search) . "%' 
+                    OR email LIKE '%" . $conn->real_escape_string($search) . "%')";
+    }
+
+    $sql .= " LIMIT $limit OFFSET $offset";
+    $result = $conn->query($sql);
+
+    // Query to get the total number of finished appointments
+    $countSql = "SELECT COUNT(*) as total FROM appointment WHERE status = 'cancel'";
+    if ($search) {
+        $countSql .= " AND (owner_name LIKE '%" . $conn->real_escape_string($search) . "%' 
+                        OR email LIKE '%" . $conn->real_escape_string($search) . "%')";
+    }
+    $totalResult = $conn->query($countSql);
+    $totalRow = $totalResult->fetch_assoc();
+    $totalPages = ceil($totalRow['total'] / $limit);
+
+    // Check if the total data count is greater than or equal to 10
+    $showPagination = $totalRow['total'] > 10;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,8 +88,8 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="checkoutDropdown">
                     <li><a class="dropdown-item" href="pending_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending CheckOut</span></a></li>
-                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship CheckOut</span></a></li>
-                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive CheckOut</span></a></li>
+                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship</span></a></li>
+                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive</span></a></li>
                     <li><a class="dropdown-item" href="delivered_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Delivered</span></a></li>
                     <li><a class="dropdown-item" href="decline.php"><i class="fa-solid fa-calendar-check"></i> <span>Declined</span></a></li>
                 </ul>
@@ -143,16 +172,25 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     </tbody>
                 </table>
             </div>
+            <?php if ($showPagination): ?>
             <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                <li class="page-item">
-                    <a class="page-link" href="#" data-page="prev">
-                        < </a>
+                <li class="page-item prev <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                    <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" data-page="prev">&lt;</a>
                 </li>
-                <li class="page-item" id="pageNumbers"></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" data-page="next">></a>
+                <ul class="pagination" id="pageNumbers">
+                    <?php
+                    for ($i = 1; $i <= $totalPages; $i++) {
+                        echo "<li class='page-item " . ($i == $page ? 'active' : '') . "'>
+                                <a class='page-link' href='?page=$i&search=" . urlencode($search) . "'>$i</a>
+                            </li>";
+                    }
+                    ?>
+                </ul>
+                <li class="page-item next <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                    <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" data-page="next">&gt;</a>
                 </li>
             </ul>
+        <?php endif; ?>
         </div>
     </div>
 </body>

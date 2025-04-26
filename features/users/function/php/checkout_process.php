@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $totalAmount = $_POST['total-amount'];
     $email = $_SESSION['email'] ?? ''; 
 
-    $sql = "SELECT product_img FROM product WHERE product_name = ?";
+    // Fetch product image
+    $sql = "SELECT product_img, quantity FROM product WHERE product_name = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $productName);  
     $stmt->execute();
@@ -28,38 +29,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $productImg = $row['product_img']; 
+        $availableQuantity = $row['quantity'];
     } else {
         $productImg = 'default_image.jpg'; 
+        $availableQuantity = 0; 
     }
 
-    $sql = "INSERT INTO checkout (name, contact_num, address_search, payment_method, screenshot, reference_id, product_name, quantity, cost, sub_total, shipping_fee, total_amount, product_img, email)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Check if enough stock is available
+    if ($availableQuantity >= $quantity) {
+        // Insert checkout record
+        $sql = "INSERT INTO checkout (name, contact_num, address_search, payment_method, screenshot, reference_id, product_name, quantity, cost, sub_total, shipping_fee, total_amount, product_img, email)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param(
+            "ssssssssssssss", 
+            $name, $contactNum, $addressSearch, $paymentMethod, $screenshot, 
+            $referenceId, $productName, $quantity, $cost, $subTotal, 
+            $shippingFee, $totalAmount, $productImg, $email
+        );
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param(
-        "ssssssssssssss", 
-        $name, $contactNum, $addressSearch, $paymentMethod, $screenshot, 
-        $referenceId, $productName, $quantity, $cost, $subTotal, 
-        $shippingFee, $totalAmount, $productImg, $email
-    );
+        if ($screenshot) {
+            move_uploaded_file($_FILES['screenshot']['tmp_name'], '../../../../assets/img/check-out/' . $screenshot);
+        }
 
-    if ($screenshot) {
-        move_uploaded_file($_FILES['screenshot']['tmp_name'], '../../../../assets/img/check-out/' . $screenshot);
+        if ($stmt->execute()) {
+            // Update product quantity in product table
+            $newQuantity = $availableQuantity - $quantity;
+            $updateSql = "UPDATE product SET quantity = ? WHERE product_name = ?";
+            $updateStmt = $conn->prepare($updateSql);
+            $updateStmt->bind_param("is", $newQuantity, $productName);
+            $updateStmt->execute();
+            $updateStmt->close();
+
+            // Insert notification after successful checkout
+            $notificationMessage = "Check Out Successfully, wait for confirmation.";
+            $notifSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+            $notifStmt = $conn->prepare($notifSql);
+            $notifStmt->bind_param("ss", $email, $notificationMessage);
+            $notifStmt->execute();
+            $notifStmt->close();
+        
+            header("Location: ../../web/api/my-orders.php");
+            exit();
+        }
+    } else {
+        // Not enough stock
+        echo "Not enough stock available for this product.";
     }
-
-    if ($stmt->execute()) {
-        // Insert notification after successful checkout
-        $notificationMessage = "Check Out Successfully, wait for confirmation.";
-        $notifSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
-        $notifStmt = $conn->prepare($notifSql);
-        $notifStmt->bind_param("ss", $email, $notificationMessage);
-        $notifStmt->execute();
-        $notifStmt->close();
-    
-        header("Location: ../../web/api/my-orders.php");
-        exit();
-    }
-    
 
     $stmt->close();
     $conn->close();

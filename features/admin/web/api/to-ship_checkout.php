@@ -60,8 +60,8 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="checkoutDropdown">
                     <li><a class="dropdown-item" href="pending_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending CheckOut</span></a></li>
-                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship CheckOut</span></a></li>
-                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive CheckOut</span></a></li>
+                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship</span></a></li>
+                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive</span></a></li>
                     <li><a class="dropdown-item" href="delivered_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Delivered</span></a></li>
                     <li><a class="dropdown-item" href="decline.php"><i class="fa-solid fa-calendar-check"></i> <span>Declined</span></a></li>
                 </ul>
@@ -111,7 +111,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
         </div>
         <!--Notification and Profile Admin-->
         <div class="app-req">
-            <h3>To Ship CheckOut</h3>
+            <h3>To Ship </h3>
             <div class="walk-in px-lg-5">
                 <div class="mb-3 x d-flex">
                     <div class="search">
@@ -144,16 +144,25 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 </table>
                 <!--Appointment Request Table End-->
             </div>
-            <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                <li class="page-item">
-                    <a class="page-link" href="#" data-page="prev">
-                        < </a>
-                </li>
-                <li class="page-item" id="pageNumbers"></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" data-page="next">></a>
-                </li>
-            </ul>
+            <?php if ($totalRows > $limit): ?>
+                <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+                    <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
+                        <a class="page-link" href="?page=<?php echo max(1, $page - 1); ?>">&lt;</a>
+                    </li>
+
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <li class="page-item <?php if ($page >= $totalPages) echo 'disabled'; ?>">
+                        <a class="page-link" href="?page=<?php echo min($totalPages, $page + 1); ?>">&gt;</a>
+                    </li>
+                </ul>
+            <?php endif; ?>
+
+
         </div>
     </div>
 </body>

@@ -1,11 +1,30 @@
 <?php
 include '../../../../db.php';
 
+// Define the limit of items per page
+$limit = 10;  // Adjust this number as needed
+
+// Get the total number of rows for pagination
+$sqlCount = "SELECT COUNT(*) AS total FROM checkout c WHERE c.status = 'cancel'";
+$resultCount = $conn->query($sqlCount);
+$rowCount = $resultCount->fetch_assoc();
+$totalRows = $rowCount['total'];
+
+// Calculate total pages
+$totalPages = ceil($totalRows / $limit);
+
+// Get the current page number, default is 1 if not set
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Adjust the query to limit results based on the current page
+$offset = ($page - 1) * $limit;
 
 $sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id 
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
-        WHERE c.status = 'cancel'";
+        WHERE c.status = 'cancel'
+        LIMIT $limit OFFSET $offset";
+
 $result = $conn->query($sql);
 
 if (!$result) {
@@ -55,18 +74,18 @@ if (!$result) {
         echo "<td>" . htmlspecialchars($details['email']) . "</td>";
         echo "<td>";
         echo "<button class='btn btn-info' data-toggle='modal' data-target='#viewModal'
-        data-id='" . htmlspecialchars($details['id']) . "'
-        data-name='" . htmlspecialchars($details['name']) . "'
-        data-email='" . htmlspecialchars($details['email']) . "'
-        data-contact-num='" . htmlspecialchars($details['contact_num']) . "'
-        data-address-search='" . htmlspecialchars($details['address_search']) . "'
-        data-payment-method='" . htmlspecialchars($details['payment_method']) . "'
-        data-products='" . htmlspecialchars(json_encode($details['products'])) . "'
-        data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "'
-        data-total-amount='" . htmlspecialchars($details['total_amount']) . "'
-        data-latitude='" . htmlspecialchars($details['latitude']) . "'
-        data-longitude='" . htmlspecialchars($details['longitude']) . "'
-        data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
+        data-id='" . htmlspecialchars($details['id']) . "' 
+        data-name='" . htmlspecialchars($details['name']) . "' 
+        data-email='" . htmlspecialchars($details['email']) . "' 
+        data-contact-num='" . htmlspecialchars($details['contact_num']) . "' 
+        data-address-search='" . htmlspecialchars($details['address_search']) . "' 
+        data-payment-method='" . htmlspecialchars($details['payment_method']) . "' 
+        data-products='" . htmlspecialchars(json_encode($details['products'])) . "' 
+        data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "' 
+        data-total-amount='" . htmlspecialchars($details['total_amount']) . "' 
+        data-latitude='" . htmlspecialchars($details['latitude']) . "' 
+        data-longitude='" . htmlspecialchars($details['longitude']) . "' 
+        data-screenshot='" . htmlspecialchars($details['screenshot']) . "' 
         data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>View</button>";
         echo "</td>";
         echo "</tr>";
@@ -104,6 +123,7 @@ if (isset($_GET['message'])) {
 }
 ?>
 
+
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -140,7 +160,7 @@ if (isset($_GET['message'])) {
                         </div>
                         <div class="form-group mt-2 mb-2">
                             <label for="modalMap">Location:</label>
-                            <div id="map" style="height: 300px; wi form-orderdth: 100%;" class="map"></div>
+                            <div id="map" style="height: 300px; width: 100%;" class="map"></div>
                         </div>
                     </div>
                     <div class="col-md-4">
