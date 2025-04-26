@@ -231,16 +231,16 @@ $total_checkout = $result_checkout->fetch_assoc()['total_checkout'];
 ?>
 
 <!-- Date Filter Form -->
-<div class="container row col-md-12 d-flex justify-content-end align-items-end">
-    <form method="GET" action="">
-        <div class="col-md-5 m-1 d-flex">
+<div class="container row col-md-12 d-flex">
+    <form method="GET" action="" class="container d-flex gap-1  ">
+        <div class="col-md-2 m-1 d-flex">
             <label for="start_date">From:</label>
             <input type="date" class="form-control" name="start_date" value="<?php echo $start_date; ?>">
         </div>
-        <div class="col-md-5 m-1 d-flex gap-2">
+        <div class="col-md-2 m-1 d-flex gap-2">
             <label for="end_date">To:</label>
             <input type="date" class="form-control" name="end_date" value="<?php echo $end_date; ?>">
-            <button type="submit" class="btn btn-primary">Filter</button>
+            <button type="submit" class="btn btn-primary" style="height: 40px;">Filter</button>
         </div>
     </form>
 </div>
