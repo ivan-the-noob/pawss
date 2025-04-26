@@ -63,7 +63,19 @@ $('#viewModal').on('show.bs.modal', function (event) {
     productCardHtml += `
         <div class="row">
             <div class="col-md-12">
-               <p class="card-text d-flex justify-content-end text-align-start"><strong>Shipping Fee:</strong> Via Lalamove</p>
+               <p class="card-text d-flex justify-content-end text-align-start"><strong> <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' 
+                                onclick='viewAdditionalInfo(
+                                    {$row['id']}, 
+                                    \"" . addslashes($row['barangay']) . "\", 
+                                    \"" . addslashes($row['pet_type']) . "\", 
+                                    \"" . addslashes($row['breed']) . "\", 
+                                    \"" . addslashes($row['age']) . "\", 
+                                    \"" . addslashes($row['service']) . "\", 
+                                    \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
+                                    \"" . addslashes($row['add_info']) . "\", 
+                                    \"" . addslashes($row['contact_number']) . "\",
+                                    \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
+                                )'>View</button></strong> Via Lalamove</p>
                <p class="card-text d-flex justify-content-end text-align-start"><strong>Total Amount:</strong> ₱${totalAmount.toFixed(2)}</p>
             </div>
         </div>
