@@ -2,12 +2,12 @@
 include '../../../../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email']; 
+    $id = $_POST['id']; 
 
     $update_query = "UPDATE checkout SET status = 'to-ship' WHERE id = ?";
 
     if ($stmt = $conn->prepare($update_query)) {
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("s", $id);
         
         if ($stmt->execute()) {
             header("Location: ../../web/api/to-ship_checkout.php");
