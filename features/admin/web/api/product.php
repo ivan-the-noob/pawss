@@ -219,7 +219,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     }
                 }
 
-                $products = $conn->query("SELECT * FROM product");
+                // $products = $conn->query("SELECT * FROM product");
             ?>
 
 
