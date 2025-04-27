@@ -2,8 +2,19 @@
 require '../../../../db.php';
 
 try {
-    // Fetch services
-    $sql = "SELECT * FROM service_list";
+    // Pagination settings
+    $perPage = 10; // Number of services per page
+    $page = isset($_GET['page']) ? $_GET['page'] : 1; // Get the current page from the URL, default to 1
+    $offset = ($page - 1) * $perPage; // Calculate the offset
+
+    // Fetch the total number of services to calculate total pages
+    $totalServicesResult = $conn->query("SELECT COUNT(*) AS total FROM service_list");
+    $totalServicesRow = $totalServicesResult->fetch_assoc();
+    $totalServices = $totalServicesRow['total'];
+    $totalPages = ceil($totalServices / $perPage); // Calculate total pages
+
+    // Fetch services with LIMIT and OFFSET for pagination
+    $sql = "SELECT * FROM service_list LIMIT $perPage OFFSET $offset";
     $stmt = $conn->prepare($sql);
 
     if (!$stmt) {
@@ -12,16 +23,13 @@ try {
 
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     $services = [];
     while ($row = $result->fetch_assoc()) {
         $services[] = $row;
     }
     $stmt->close();
-
-
     
-
     // Display service list
     if ($services) {
         foreach ($services as $service) {
@@ -42,6 +50,7 @@ try {
     } else {
         echo "<tr><td colspan='7'>No services found.</td></tr>";
     }
+
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }

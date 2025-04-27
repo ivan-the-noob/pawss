@@ -215,6 +215,7 @@ $conn->close();
                         include '../../function/php/edit_service.php';
                         include '../../function/php/delete_service.php';
 
+
                         ?>
                     </tbody>
                 </table>
@@ -233,16 +234,27 @@ $conn->close();
                 <!--Service List Table End-->
 
             </div>
-            <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                <li class="page-item">
-                    <a class="page-link" href="#" data-page="prev">
-                        < </a>
-                </li>
-                <li class="page-item" id="pageNumbers"></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" data-page="next">></a>
-                </li>
-            </ul>
+           <?php if ($totalServices > $perPage): ?>
+                <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+                    <!-- Previous Button -->
+                    <li class="page-item <?= ($page == 1) ? 'disabled' : '' ?>">
+                        <a class="page-link" href="?page=<?= $page - 1 ?>">‹</a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <!-- Next Button -->
+                    <li class="page-item <?= ($page == $totalPages) ? 'disabled' : '' ?>">
+                        <a class="page-link" href="?page=<?= $page + 1 ?>">›</a>
+                    </li>
+                </ul>
+            <?php endif; ?>
+
 
         </div>
 
