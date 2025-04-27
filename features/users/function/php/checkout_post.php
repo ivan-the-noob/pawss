@@ -4,6 +4,9 @@ require '../../../../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    // Set timezone to Philippines
+    date_default_timezone_set('Asia/Manila');
+
     // Sanitize and retrieve POST data
     $name = $_POST['name'];
     $email = isset($_SESSION['email']) ? $_SESSION['email'] : null; 
@@ -17,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $product_names = json_decode($_POST['product_name'][0], true);
     $quantities = json_decode($_POST['quantity'][0], true);
     $product_imgs = json_decode($_POST['product_img'][0], true);
-    $costs = json_decode($_POST['cost'][0], true); // Added line for cost
+    $costs = json_decode($_POST['cost'][0], true);
 
     $shipping_fee = isset($_POST['shipping-fee']) ? $_POST['shipping-fee'] : 0;
     $total_amount = isset($_POST['total-amount']) ? $_POST['total-amount'] : 0;
@@ -34,23 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // Prepare the SQL statement for insertion
+    // Prepare the SQL statement for insertion (without created_at)
     $stmt = $conn->prepare(
         "INSERT INTO checkout 
         (name, email, contact_num, address_search, payment_method, screenshot, reference_id, 
         product_name, quantity, sub_total, shipping_fee, total_amount, product_img, cost, from_cart)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
 
     foreach ($product_names as $index => $product_name) {
         $quantity = $quantities[$index];
-        $sub_total = $quantity * 49.00; // Example computation (replace with your logic)
+        $sub_total = $costs[$index] * $quantity;
         $product_img = $product_imgs[$index];
-        $cost = $costs[$index]; // Get the cost for the current product
+        $cost = $costs[$index];
 
         // Bind parameters to the SQL statement
         $stmt->bind_param(
-            "ssssssssdddssss", 
+            "ssssssssdddsss", 
             $name, $email, $contact_num, $address_search, $payment_method, 
             $screenshot, $reference_id, $product_name, $quantity, $sub_total, 
             $shipping_fee, $total_amount, $product_img, $cost, $from_cart
@@ -60,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "Error: " . $stmt->error;
         }
 
-        // After inserting the checkout, update the product quantity
+        // Update the product quantity
         $updateProductSql = "SELECT quantity FROM product WHERE product_name = ?";
         $updateProductStmt = $conn->prepare($updateProductSql);
         $updateProductStmt->bind_param("s", $product_name);
@@ -72,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $newQuantity = $productRow['quantity'] - $quantity;
 
             if ($newQuantity >= 0) {
-                // Update the product quantity in the product table
                 $updateQuantitySql = "UPDATE product SET quantity = ? WHERE product_name = ?";
                 $updateQuantityStmt = $conn->prepare($updateQuantitySql);
                 $updateQuantityStmt->bind_param("is", $newQuantity, $product_name);
@@ -89,14 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->error) {
         echo "Final Error: " . $stmt->error;
     } else {
-        // INSERT NOTIFICATION AFTER SUCCESSFUL CHECKOUT
-        $notificationMessage = "Check Out Successfully, wait for confirmation.";
-        $notifSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
-        $notifStmt = $conn->prepare($notifSql);
-        $notifStmt->bind_param("ss", $email, $notificationMessage);
-        $notifStmt->execute();
-        $notifStmt->close();
-
         Header('Location:../../web/api/my-orders.php');
         exit();
     }
