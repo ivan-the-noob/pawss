@@ -264,7 +264,7 @@ $conn->close();
                             <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="limitModalLabel">Booking Limit Reached</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" clas  s="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 You have reached the maximum of 3 bookings for today. Please come back tomorrow.
