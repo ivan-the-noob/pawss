@@ -37,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check if enough stock is available
     if ($availableQuantity >= $quantity) {
-        // Insert checkout record
-        $sql = "INSERT INTO checkout (name, contact_num, address_search, payment_method, screenshot, reference_id, product_name, quantity, cost, sub_total, shipping_fee, total_amount, product_img, email)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // Insert checkout record, including created_at
+        $sql = "INSERT INTO checkout (name, contact_num, address_search, payment_method, screenshot, reference_id, product_name, quantity, cost, sub_total, shipping_fee, total_amount, product_img, email, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
         
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
