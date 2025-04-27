@@ -63,29 +63,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $age = htmlspecialchars($_POST['age']);
     $service = htmlspecialchars($_POST['service']);
     $payment = htmlspecialchars($_POST['payment']);
-    $paymentOption = htmlspecialchars($_POST['paymentOption']);  // New field
+    $paymentOption = htmlspecialchars($_POST['paymentOption']);
     $appointmentDateRaw = htmlspecialchars($_POST['appointment_date']);
-    $date = new DateTime($appointmentDateRaw);
-    $date->modify('+1 day');
-    $appointmentDate = $date->format('Y-m-d');  
     $latitude = htmlspecialchars($_POST['latitude']);
     $longitude = htmlspecialchars($_POST['longitude']);
     $addInfo = htmlspecialchars($_POST['add-info']);
     
     $gcashImage = '';
-    $gcashReference = '';  // Updated to match the correct name
+    $gcashReference = '';
 
     // Handle GCash specific fields if payment method is GCash
     if (isset($_FILES['gcash_image']) && $_FILES['gcash_image']['error'] == 0) {
-        // Validate image file type
         $fileType = strtolower(pathinfo($_FILES['gcash_image']['name'], PATHINFO_EXTENSION));
         if (in_array($fileType, ['jpg', 'jpeg', 'png', 'gif'])) {
-            $uploadDir = '../../../../assets/img/gcash/'; // Set your desired upload directory
-            $gcashImageFileName = basename($_FILES['gcash_image']['name']);  // Extract file name only
-            $gcashImage = $gcashImageFileName;  // Store only the file name
-            if (move_uploaded_file($_FILES['gcash_image']['tmp_name'], $uploadDir . $gcashImageFileName)) {
-                echo "Image uploaded successfully.<br>";
-            } else {
+            $uploadDir = '../../../../assets/img/gcash/';
+            $gcashImageFileName = basename($_FILES['gcash_image']['name']);
+            $gcashImage = $gcashImageFileName;
+            if (!move_uploaded_file($_FILES['gcash_image']['tmp_name'], $uploadDir . $gcashImageFileName)) {
                 echo "Failed to upload image.<br>";
             }
         } else {
@@ -93,51 +87,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Get GCash reference
-    $gcashReference = isset($_POST['gcash_reference']) ? htmlspecialchars($_POST['gcash_reference']) : ''; // Updated to gcash_reference
+    $gcashReference = isset($_POST['gcash_reference']) ? htmlspecialchars($_POST['gcash_reference']) : '';
 
-    // Console log for debugging (optional)
-    echo "<script>console.log('GCash Image: " . $gcashImage . "');</script>";
-    echo "<script>console.log('GCash Reference: " . $gcashReference . "');</script>";
+    // Get current PH time
+    date_default_timezone_set('Asia/Manila');
+    $createdAt = date('Y-m-d H:i:s');
 
-    // Get current time in Philippine Time (for created_at)
-    $createdAt = date('Y-m-d H:i:s');  // Current time in PH Time
+    // Adjust appointment date (plus one day)
+    $date = new DateTime($appointmentDateRaw);
+    $date->modify('+1 day');
+    $appointmentDate = $date->format('Y-m-d');
 
-    // Prepare the SQL statement to insert into the appointment table
+    // Insert into appointment table
     $stmt = $conn->prepare("INSERT INTO appointment 
-                            (owner_name, contact_num, email, barangay, pet_type, breed, age, service, payment, payment_option, appointment_date, latitude, longitude, add_info, gcash_image, gcash_reference, created_at) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-    // Correct bind_param format for 17 parameters
+        (owner_name, contact_num, email, barangay, pet_type, breed, age, service, payment, payment_option, appointment_date, latitude, longitude, add_info, gcash_image, gcash_reference, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssssissssssssss", $ownerName, $contactNum, $email, $barangay, $petType, $breed, $age, $service, $payment, $paymentOption, $appointmentDate, $latitude, $longitude, $addInfo, $gcashImage, $gcashReference, $createdAt);
 
-    // Execute the query and check if successful
     if ($stmt->execute()) {
-        // Log the appointment booking event in the global_reports table
-        $appointmentTime = date("h:i A | m/d/Y"); // Current time of appointment booking
+        // Log to global_reports table
+        $appointmentTime = date("h:i A | m/d/Y");
         $message = "$email booked an appointment at $appointmentTime";
+        $logSql = "INSERT INTO global_reports (message, cur_time) VALUES (?, NOW())";
+        $logStmt = $conn->prepare($logSql);
+        $logStmt->bind_param("s", $message);
+        $logStmt->execute();
+        $logStmt->close();
 
-        // Prepare the SQL statement to insert into the global_reports table
-        $log_sql = "INSERT INTO global_reports (message, cur_time) VALUES (?, NOW())";
-        $log_stmt = $conn->prepare($log_sql);
-        $log_stmt->bind_param("s", $message);
-        $log_stmt->execute();
-        $log_stmt->close();
-
-        // Send notification to the user
+        // Insert notification with created_at
         $notificationMessage = "Successfully Booked! Please wait for admin to accept your appointment";
-        $notificationSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+        $notificationCreatedAt = date('Y-m-d H:i:s');
+        $notificationSql = "INSERT INTO notification (email, message, created_at) VALUES (?, ?, ?)";
         $notificationStmt = $conn->prepare($notificationSql);
-        $notificationStmt->bind_param("ss", $email, $notificationMessage);
+        $notificationStmt->bind_param("sss", $email, $notificationMessage, $notificationCreatedAt);
         $notificationStmt->execute();
         $notificationStmt->close();
 
-        // Redirect to the success page
+        // Redirect to success page
         header("Location: my-app.php?status=success");
         exit();
     } else {
         echo "Error: " . $stmt->error . "<br>";
     }
+
+    $stmt->close();
 }
 ?>
 
