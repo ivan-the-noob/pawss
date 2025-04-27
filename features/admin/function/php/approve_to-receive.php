@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $notificationStmt->execute();
             $notificationStmt->close();
             
-            header("Location: ../../web/api/to-ship.php");
+            header("Location: ../../web/api/to-ship_checkout.php");
             exit;  
         } else {
             header("Location: ../../view_orders.php?message=Error occurred while approving the orders.");
