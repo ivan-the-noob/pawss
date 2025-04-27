@@ -316,7 +316,7 @@ $conn->close();
                                                             (<?php echo htmlspecialchars($user['email']); ?>)</p>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <form action="../../function/php/delete_user.php" method="POST">
+                                                        <form action="../../function/php/delete_user_admin.php" method="POST">
                                                             <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
                                                             <button type="submit" class="btn btn-danger">Yes, Delete</button>
                                                             <button type="button" class="btn btn-secondary"
