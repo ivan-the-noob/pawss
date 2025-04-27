@@ -8,7 +8,7 @@ $offset = ($page - 1) * $limit;
 $sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id, c.created_at
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
-        WHERE c.status = 'to-ship'
+        WHERE c.status = 'to-receive'
         ORDER BY c.created_at DESC";
 $result = $conn->query($sql);
 
