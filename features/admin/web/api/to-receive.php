@@ -112,7 +112,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
         </div>
         <!--Notification and Profile Admin-->
         <div class="app-req">
-            <h3>To Receive CheckOut</h3>
+            <h3>To Receive</h3>
             <div class="walk-in px-lg-5">
                 <div class="mb-3 x d-flex">
                     <div class="search">
