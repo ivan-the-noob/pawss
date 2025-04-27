@@ -198,7 +198,7 @@ if (isset($_GET['message'])) {
                         </div>
                 </div>
                 <!-- Hidden Inputs -->
-                <form id="appointmentForm" action="../../function/php/approve_to-receive.php" method="POST">
+                <form id="appointmentForm" action="../../function/php/approve_order.php" method="POST">
                     <input type="hidden" name="id" id="hiddenId">
                     <input type="hidden" name="name" id="hiddenName">
                     <input type="hidden" name="email" id="hiddenEmail">
