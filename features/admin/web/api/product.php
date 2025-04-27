@@ -220,6 +220,10 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 }
 
                 $products = $conn->query("SELECT * FROM product");
+
+                $total_products = $products->num_rows;
+
+                $showPagination = $total_products > 5; 
             ?>
 
 
@@ -428,16 +432,27 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                             </div>
 
                         </div>
-                        <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                            <li class="page-item">
-                                <a class="page-link" href="#" data-page="prev">
-                                    < </a>
-                            </li>
-                            <li class="page-item" id="pageNumbers"></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" data-page="next">></a>
-                            </li>
-                        </ul>
+                        <?php if ($showPagination): ?>
+                            <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" data-page="prev">
+                                        < </a>
+                                </li>
+                                
+                                <li class="page-item" id="pageNumbers">
+                                    <?php 
+                                    $total_pages = ceil($total_products / $limit); 
+                                    for ($i = 1; $i <= $total_pages; $i++) {
+                                        echo "<a class='page-link' href='?page=$i'>$i</a>";
+                                    }
+                                    ?>
+                                </li>
+
+                                <li class="page-item">
+                                    <a class="page-link" href="#" data-page="next">></a>
+                                </li>
+                            </ul>
+                        <?php endif; ?>
 
                     </div>
 
