@@ -1,37 +1,96 @@
 <?php
 include '../../../../db.php';
 
-// Pagination setup
 $limit = 10;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
 
-// Count total rows
-$countResult = $conn->query("SELECT COUNT(DISTINCT email) AS total FROM checkout WHERE status = 'to-receive'");
-$totalRows = ($countResult && $row = $countResult->fetch_assoc()) ? $row['total'] : 0;
-$totalPages = ceil($totalRows / $limit);
-
-// Fetch the rows with LIMIT
-$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id 
+$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id, c.created_at
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
-        WHERE c.status = 'to-receive'
-        ORDER BY c.id DESC
-        LIMIT $limit OFFSET $offset";
+        WHERE c.status = 'to-ship'
+        ORDER BY c.created_at DESC";
 $result = $conn->query($sql);
 
+$data = [];
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $email = $row['email'];
+        $createdAt = date('Y-m-d H:i:s', strtotime($row['created_at']));
+        $key = $email . '|' . $createdAt;
+
+        if (!isset($data[$key])) {
+            $data[$key] = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'email' => $row['email'],
+                'contact_num' => $row['contact_num'],
+                'address_search' => $row['address_search'],
+                'payment_method' => $row['payment_method'],
+                'shipping_fee' => $row['shipping_fee'],
+                'latitude' => $row['latitude'],
+                'longitude' => $row['longitude'],
+                'screenshot' => $row['screenshot'],
+                'reference_id' => $row['reference_id'],
+                'created_at' => $createdAt,
+                'products' => [],
+                'total_amount' => 0,
+            ];
+        }
+
+        $data[$key]['products'][] = [
+            'product_name' => $row['product_name'],
+            'product_img' => $row['product_img'],
+            'quantity' => $row['quantity'],
+            'cost' => $row['cost'],
+            'sub_total' => $row['sub_total'],
+        ];
+
+        $data[$key]['total_amount'] += $row['sub_total'];
+    }
+
+    foreach ($data as &$details) {
+        $details['total_amount'] += $details['shipping_fee'];
+    }
+
+    $totalRows = count($data);
+    $totalPages = ceil($totalRows / $limit);
+    $paginatedData = array_slice($data, $offset, $limit, true);
+
+    $count = $offset + 1;
+    foreach ($paginatedData as $details) {
+        echo "<tr>";
+        echo "<td>$count</td>";
+        echo "<td>" . htmlspecialchars($details['name']) . "</td>";
+        echo "<td>" . htmlspecialchars($details['email']) . "</td>";
+        echo "<td class='d-flex gap-2 justify-content-center'>";
+        echo "<button class='btn btn-info' data-toggle='modal' data-target='#viewModal'
+        data-id='" . htmlspecialchars($details['id']) . "'
+        data-name='" . htmlspecialchars($details['name']) . "'
+        data-email='" . htmlspecialchars($details['email']) . "'
+        data-contact-num='" . htmlspecialchars($details['contact_num']) . "'
+        data-address-search='" . htmlspecialchars($details['address_search']) . "'
+        data-payment-method='" . htmlspecialchars($details['payment_method']) . "'
+        data-products='" . htmlspecialchars(json_encode($details['products'])) . "'
+        data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "'
+        data-total-amount='" . htmlspecialchars($details['total_amount']) . "'
+        data-latitude='" . htmlspecialchars($details['latitude']) . "'
+        data-longitude='" . htmlspecialchars($details['longitude']) . "'
+        data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
+        data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>View</button>";
+        echo "</td>";
+        echo "</tr>";
+        $count++;
+    }
+} else {
+    echo "Error: " . $conn->error;
+}
 ?>
 
-<!-- Table content and pagination controls -->
-<table>
-    <!-- Your table headers and data display here -->
-</table>
-
-<!-- Pagination Controls -->
 <?php if ($totalRows > $limit): ?>
     <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
         <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
-            <a class="page-link" href="?page=<?php echo max(1, $page - 1); ?>">&lt;</a>
+            <a class="page-link" href="?page=<?php echo $page - 1; ?>">&lt;</a>
         </li>
 
         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
@@ -41,80 +100,10 @@ $result = $conn->query($sql);
         <?php endfor; ?>
 
         <li class="page-item <?php if ($page >= $totalPages) echo 'disabled'; ?>">
-            <a class="page-link" href="?page=<?php echo min($totalPages, $page + 1); ?>">&gt;</a>
+            <a class="page-link" href="?page=<?php echo $page + 1; ?>">&gt;</a>
         </li>
     </ul>
 <?php endif; ?>
-
-<!-- Fetch Data and Display it -->
-<?php
-if (!$result) {
-    echo "Error: " . $conn->error;
-} else {
-    $data = [];
-    while ($row = $result->fetch_assoc()) {
-        $email = $row['email'];
-        if (!isset($data[$email])) {
-            $data[$email] = [
-                'id' => $row['id'],
-                'name' => $row['name'],
-                'email' => $row['email'],
-                'contact_num' => $row['contact_num'],
-                'address_search' => $row['address_search'],
-                'payment_method' => $row['payment_method'],
-                'shipping_fee' => $row['shipping_fee'],
-                'latitude' => $row['latitude'], 
-                'longitude' => $row['longitude'], 
-                'screenshot' => $row['screenshot'],
-                'reference_id' => $row['reference_id'],
-                'products' => [],
-                'total_amount' => 0, 
-            ];
-        }
-
-        $data[$email]['products'][] = [
-            'product_name' => $row['product_name'],
-            'product_img' => $row['product_img'],
-            'quantity' => $row['quantity'],
-            'cost' => $row['cost'],
-            'sub_total' => $row['sub_total'],
-        ];
-
-        $data[$email]['total_amount'] += $row['sub_total'];
-    }
-
-    foreach ($data as $email => &$details) {
-        $details['total_amount'] += $details['shipping_fee'];
-    }
-
-    $count = 1;
-    foreach ($data as $email => $details) {
-        echo "<tr>";
-        echo "<td>$count</td>";
-        echo "<td>" . htmlspecialchars($details['name']) . "</td>";
-        echo "<td>" . htmlspecialchars($details['email']) . "</td>";
-        echo "<td>";
-        echo "<button class='btn btn-info' data-toggle='modal' data-target='#viewModal'
-        data-id='" . htmlspecialchars($details['id']) . "' 
-        data-name='" . htmlspecialchars($details['name']) . "' 
-        data-email='" . htmlspecialchars($details['email']) . "' 
-        data-contact-num='" . htmlspecialchars($details['contact_num']) . "' 
-        data-address-search='" . htmlspecialchars($details['address_search']) . "' 
-        data-payment-method='" . htmlspecialchars($details['payment_method']) . "' 
-        data-products='" . htmlspecialchars(json_encode($details['products'])) . "' 
-        data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "' 
-        data-total-amount='" . htmlspecialchars($details['total_amount']) . "' 
-        data-latitude='" . htmlspecialchars($details['latitude']) . "' 
-        data-longitude='" . htmlspecialchars($details['longitude']) . "' 
-        data-screenshot='" . htmlspecialchars($details['screenshot']) . "' 
-        data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>View</button>";
-        echo "</td>";
-        echo "</tr>";
-        $count++;
-    }
-}
-
-?>
 
 <?php
 if (isset($_GET['message'])) {
@@ -130,12 +119,12 @@ if (isset($_GET['message'])) {
         });
     </script>
     ";
-} else if (isset($_GET['delete_message'])) {
+} elseif (isset($_GET['delete_message'])) {
     $deleteMessage = htmlspecialchars($_GET['delete_message']);
     echo "
     <script src='https://unpkg.com/sweetalert/dist/sweetalert.min.js'></script>
     <script>
-       swal({
+        swal({
             title: 'Appointment Deleted!',
             text: '$deleteMessage',
             icon: 'error',
@@ -146,6 +135,7 @@ if (isset($_GET['message'])) {
     ";
 }
 ?>
+
 
 
 <!-- Bootstrap Modal -->
@@ -209,25 +199,25 @@ if (isset($_GET['message'])) {
                 </div>
                 <!-- Hidden Inputs -->
                 <form id="appointmentForm" action="../../function/php/approve_to-receive.php" method="POST">
-                <input type="hidden" name="id" id="hiddenId">
-                <input type="hidden" name="name" id="hiddenName">
-                <input type="hidden" name="email" id="hiddenEmail">
-                <input type="hidden" name="contact_num" id="hiddenContactNum">
-                <input type="hidden" name="address_search" id="hiddenAddressSearch">
-                <input type="hidden" name="payment_method" id="hiddenPaymentMethod">
-                <input type="hidden" name="screenshot" id="hiddenScreenshot">
-                <input type="hidden" name="reference_id" id="hiddenReferenceId">
-                <input type="hidden" name="product_name" id="hiddenProductName">
-                <input type="hidden" name="cost" id="hiddenCost">
-                <input type="hidden" name="sub_total" id="hiddenSubTotal">
-                <input type="hidden" name="shipping_fee" id="hiddenShippingFee">
-                <input type="hidden" name="total_amount" id="hiddenTotalAmount">
-                <input type="hidden" name="product_img" id="hiddenProductImg">
-                <input type="hidden" name="status" id="hiddenStatus">
-                <input type="hidden" name="quantity" id="hiddenQuantity">
+                    <input type="hidden" name="id" id="hiddenId">
+                    <input type="hidden" name="name" id="hiddenName">
+                    <input type="hidden" name="email" id="hiddenEmail">
+                    <input type="hidden" name="contact_num" id="hiddenContactNum">
+                    <input type="hidden" name="address_search" id="hiddenAddressSearch">
+                    <input type="hidden" name="payment_method" id="hiddenPaymentMethod">
+                    <input type="hidden" name="screenshot" id="hiddenScreenshot">
+                    <input type="hidden" name="reference_id" id="hiddenReferenceId">
+                    <input type="hidden" name="product_name" id="hiddenProductName">
+                    <input type="hidden" name="cost" id="hiddenCost">
+                    <input type="hidden" name="sub_total" id="hiddenSubTotal">
+                    <input type="hidden" name="shipping_fee" id="hiddenShippingFee">
+                    <input type="hidden" name="total_amount" id="hiddenTotalAmount">
+                    <input type="hidden" name="product_img" id="hiddenProductImg">
+                    <input type="hidden" name="status" id="hiddenStatus">
+                    <input type="hidden" name="quantity" id="hiddenQuantity">
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" onclick="submitDeclineForm()">Decline</button>
+                    <button type="button" class="btn btn-danger" onclick="submitDeclineForm()">Decline</button>
                         <button type="submit" class="btn btn-primary">Approve</button>
                     </div>
                 </form>
@@ -237,6 +227,13 @@ if (isset($_GET['message'])) {
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="../../function/script/decline_order.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="../../function/script/decline_order.js"></script>
+<script>
 
+
+
+
+   
+
+</script>
