@@ -8,8 +8,7 @@ $offset = ($page - 1) * $limit; // Calculate the offset for pagination
 $sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
-        WHERE c.status = 'orders'
-        ORDER BY c.created_at DESC";
+        WHERE c.status = 'orders'";
 $result = $conn->query($sql);
 
 $data = [];
