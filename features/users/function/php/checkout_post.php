@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $screenshot = isset($_FILES['screenshot']) ? $_FILES['screenshot']['name'] : null;
     $reference_id = isset($_POST['reference']) ? $_POST['reference'] : null;
 
-    
     // Decode JSON-encoded arrays
     $product_names = json_decode($_POST['product_name'][0], true);
     $quantities = json_decode($_POST['quantity'][0], true);
@@ -90,6 +89,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->error) {
         echo "Final Error: " . $stmt->error;
     } else {
+        // INSERT NOTIFICATION AFTER SUCCESSFUL CHECKOUT
+        $notificationMessage = "Check Out Successfully, wait for confirmation.";
+        $notifSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+        $notifStmt = $conn->prepare($notifSql);
+        $notifStmt->bind_param("ss", $email, $notificationMessage);
+        $notifStmt->execute();
+        $notifStmt->close();
+
         Header('Location:../../web/api/my-orders.php');
         exit();
     }
