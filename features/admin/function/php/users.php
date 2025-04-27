@@ -2,7 +2,7 @@
 include '../../../../db.php';
 
 // Define the number of records per page
-$recordsPerPage = 5;
+$recordsPerPage = 10;
 
 // Determine the current page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
