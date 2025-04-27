@@ -5,8 +5,10 @@ $limit = 10;  // Declare limit for pagination
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1; // Get the current page
 $offset = ($page - 1) * $limit; // Calculate the offset for pagination
 
-$sql = "SELECT * FROM checkout WHERE status = 'orders'";
-
+$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id
+        FROM checkout c 
+        LEFT JOIN users u ON c.email = u.email
+        WHERE c.status = 'orders'";
 $result = $conn->query($sql);
 
 $data = [];
