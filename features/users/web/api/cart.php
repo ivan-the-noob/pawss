@@ -318,7 +318,7 @@ if (isset($_SESSION['email'])) {
                                 <div class="card-body">
                                     <p class="card-title">Customer Information</p>
                                     <div class="context">
-                                        <p class="name" name="name"></p>
+                                        <p name="contact-num"><?php echo $name; ?></p>
                                         <p name="contact-num"><?php echo $contactNumber; ?></p>
                                         <p name="address-search"><?php echo $addressSearch; ?></p>
                                     </div>
