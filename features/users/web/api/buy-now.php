@@ -509,7 +509,7 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
                         <div class="d-flex justify-content-between">
                           <p>Shipping Fee:</p>
                           <p><span id="shippingFee" name="shipping-fee">Via Lalamove</span></p>
-                          <input type="hidden" name="shipping-fee" value="69.00">
+                          <input type="hidden" name="shipping-fee" value="0.00">
                         </div>
                         <div class="d-flex justify-content-between">
                           <h6>Total:</h6>
@@ -639,7 +639,7 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
 
     // Update subtotal and total
     document.getElementById('subtotalAmount').innerText = (parseFloat(productPrice.replace('₱', '').replace(',', '')) * productQuantity).toFixed(2);
-    document.getElementById('totalAmount').innerText = (parseFloat(document.getElementById('subtotalAmount').innerText) + 69.00).toFixed(2); // Adding static shipping fee
+    document.getElementById('totalAmount').innerText = (parseFloat(document.getElementById('subtotalAmount').innerText) + 0.00).toFixed(2); // Adding static shipping fee
 
     document.getElementById('product_img').value = productImage;
 }
