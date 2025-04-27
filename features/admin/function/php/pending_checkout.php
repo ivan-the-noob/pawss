@@ -15,12 +15,10 @@ $result = $conn->query($sql);
 $data = [];
 if ($result) {
     while ($row = $result->fetch_assoc()) {
-        $email = $row['email'];
-        $createdAt = date('Y-m-d H:i:s', strtotime($row['created_at']));
-        $key = $email . '|' . $createdAt;
+        $id = $row['id']; // Using 'id' as the unique key
 
-        if (!isset($data[$key])) {
-            $data[$key] = [
+        if (!isset($data[$id])) {
+            $data[$id] = [
                 'id' => $row['id'],
                 'name' => $row['name'],
                 'email' => $row['email'],
@@ -32,13 +30,13 @@ if ($result) {
                 'longitude' => $row['longitude'],
                 'screenshot' => $row['screenshot'],
                 'reference_id' => $row['reference_id'],
-                'created_at' => $createdAt,
+                'created_at' => date('Y-m-d H:i:s', strtotime($row['created_at'])),
                 'products' => [],
                 'total_amount' => 0,
             ];
         }
 
-        $data[$key]['products'][] = [
+        $data[$id]['products'][] = [
             'product_name' => $row['product_name'],
             'product_img' => $row['product_img'],
             'quantity' => $row['quantity'],
@@ -46,7 +44,7 @@ if ($result) {
             'sub_total' => $row['sub_total'],
         ];
 
-        $data[$key]['total_amount'] += $row['sub_total'];
+        $data[$id]['total_amount'] += $row['sub_total'];
     }
 
     foreach ($data as &$details) {
@@ -86,6 +84,7 @@ if ($result) {
     echo "Error: " . $conn->error;
 }
 ?>
+
 
 <?php if ($totalRows > $limit): ?>
     <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
