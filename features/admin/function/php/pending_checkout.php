@@ -178,7 +178,7 @@ if (isset($_GET['message'])) {
                     </div>
                     
                     <div class="col-md-4">
-                            <div id="productCards" class="row product_order"></div>
+                            <div id="" class="row product_order"></div>
                         </div>
                 </div>
                 <!-- Hidden Inputs -->

@@ -35,7 +35,6 @@ $('#viewModal').on('show.bs.modal', function (event) {
     var latitude = button.data('latitude');
     var longitude = button.data('longitude');
 
-
     var totalSubTotal = 0; 
     var totalQuantity = 0;  
     var productCardHtml = '';  
@@ -43,10 +42,13 @@ $('#viewModal').on('show.bs.modal', function (event) {
     products.forEach(function (product) {
         totalSubTotal += parseFloat(product.sub_total); 
         totalQuantity += product.quantity; 
+        // Ensure the correct image path is being set
+        var productImagePath = `../../../../assets/img/product/${product.product_img}`;
+
         productCardHtml += `
             <div class="row">
                 <div class="col-md-4">
-                    <img src="../../../../assets/img/product/${product.product_img}" class="img-fluid" alt="${product.product_name}">
+                    <img src="${productImagePath}" class="img-fluid" alt="${product.product_name}">
                 </div>
                 <div class="col-md-8">
                     <h5 class="card-title">${product.product_name}</h5>
@@ -69,6 +71,7 @@ $('#viewModal').on('show.bs.modal', function (event) {
         </div>
     `;
 
+    // Update modal fields with the gathered data
     modal.find('#modalId').val(id);
     modal.find('#modalName').val(name);
     modal.find('#modalEmail').val(email);
@@ -83,24 +86,14 @@ $('#viewModal').on('show.bs.modal', function (event) {
     modal.find('#modalTotalAmount').val(totalAmount);
     modal.find('#modalStatus').val(status);
 
-    modal.find('#hiddenId').val(id);
-    modal.find('#hiddenName').val(name);
-    modal.find('#hiddenEmail').val(email);
-    modal.find('#hiddenContactNum').val(contactNum);
-    modal.find('#hiddenAddressSearch').val(addressSearch);
-    modal.find('#hiddenPaymentMethod').val(paymentMethod);
-    modal.find('#hiddenScreenshot').val(screenshot);
-    modal.find('#hiddenReferenceId').val(referenceId);
-    modal.find('#hiddenShippingFee').val(shippingFee);
-    modal.find('#hiddenTotalAmount').val(totalAmount);
-    modal.find('#hiddenStatus').val(status);
-
+    // Set the product cards HTML in the modal
     modal.find('#productCards').html(productCardHtml);
 
     if (latitude && longitude) {
         initMap(latitude, longitude); 
     }
 });
+
 
 
 function initMap(lat, lng) {
