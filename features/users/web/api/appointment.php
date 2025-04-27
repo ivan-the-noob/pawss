@@ -106,10 +106,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Prepare the SQL statement to insert into the appointment table
     $stmt = $conn->prepare("INSERT INTO appointment 
                             (owner_name, contact_num, email, barangay, pet_type, breed, age, service, payment, payment_option, appointment_date, latitude, longitude, add_info, gcash_image, gcash_reference, created_at) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     // Correct bind_param format for 17 parameters
-    $stmt->bind_param("ssssssisssssssssss", $ownerName, $contactNum, $email, $barangay, $petType, $breed, $age, $service, $payment, $paymentOption, $appointmentDate, $latitude, $longitude, $addInfo, $gcashImage, $gcashReference, $createdAt);
+    $stmt->bind_param("ssssssissssssssss", $ownerName, $contactNum, $email, $barangay, $petType, $breed, $age, $service, $payment, $paymentOption, $appointmentDate, $latitude, $longitude, $addInfo, $gcashImage, $gcashReference, $createdAt);
 
     // Execute the query and check if successful
     if ($stmt->execute()) {
