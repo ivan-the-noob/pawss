@@ -27,6 +27,6 @@ if (isset($_POST['id']) && is_numeric($_POST['id'])) {
 
 $conn->close();
 
-header("Location: ../../../admin-user.php");
+header("Location: ../../web/api/admin-user.php");
 exit();
 ?>
