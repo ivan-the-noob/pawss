@@ -68,11 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateStmt->execute();
             $updateStmt->close();
 
-            // Insert notification after successful checkout
+            // Insert notification after successful checkout with current Philippine Time
             $notificationMessage = "Check Out Successfully, wait for confirmation.";
-            $notifSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
+            $createdAt = date('Y-m-d H:i:s');  // Get current time in PHT
+            $notifSql = "INSERT INTO notification (email, message, created_at) VALUES (?, ?, ?)";
             $notifStmt = $conn->prepare($notifSql);
-            $notifStmt->bind_param("ss", $email, $notificationMessage);
+            $notifStmt->bind_param("sss", $email, $notificationMessage, $createdAt);
             $notifStmt->execute();
             $notifStmt->close();
         
