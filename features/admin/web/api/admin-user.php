@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Check if the user is logged in and has the admin role
 if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../../../users/web/api/login.php");
     exit();
@@ -8,40 +9,28 @@ if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
 
 include '../../../../db.php';
 
-
-if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../../../users/web/api/login.php");
-    exit();
-}
-
-try {
-    $stmt = $conn->prepare("SELECT * FROM users WHERE role IN ('admin', 'staff')");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $users = $result->fetch_all(MYSQLI_ASSOC);
-} catch (mysqli_sql_exception $e) {
-    echo "Error: " . $e->getMessage();
-}
-
+// Pagination logic
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $limit = 5; // Number of users per page
 $offset = ($page - 1) * $limit;
 
-// Get the total number of users
-$query = "SELECT COUNT(*) FROM users";
+// Get the total number of users with the role 'admin' or 'staff'
+$query = "SELECT COUNT(*) FROM users WHERE role IN ('admin', 'staff')";
 $result = mysqli_query($conn, $query);
 $total_users = mysqli_fetch_row($result)[0];
 
-// Get the users for the current page
-$query = "SELECT * FROM users LIMIT $limit OFFSET $offset";
+// Get the users for the current page, with the role 'admin' or 'staff'
+$query = "SELECT * FROM users WHERE role IN ('admin', 'staff') LIMIT $limit OFFSET $offset";
 $result = mysqli_query($conn, $query);
 $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 // Calculate total pages
 $total_pages = ceil($total_users / $limit);
 
+// Close the database connection
 $conn->close();
 ?>
+
 
 
 <!DOCTYPE html>
