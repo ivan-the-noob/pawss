@@ -15,10 +15,12 @@ $result = $conn->query($sql);
 $data = [];
 if ($result) {
     while ($row = $result->fetch_assoc()) {
-        $id = $row['id']; // Using 'id' as the unique key
+        $email = $row['email'];
+        $createdAt = date('Y-m-d H:i:s', strtotime($row['created_at'])); // Full timestamp (down to seconds)
+        $key = $email . '|' . $createdAt; // Use full timestamp to prevent duplicates
 
-        if (!isset($data[$id])) {
-            $data[$id] = [
+        if (!isset($data[$key])) {
+            $data[$key] = [
                 'id' => $row['id'],
                 'name' => $row['name'],
                 'email' => $row['email'],
@@ -30,13 +32,13 @@ if ($result) {
                 'longitude' => $row['longitude'],
                 'screenshot' => $row['screenshot'],
                 'reference_id' => $row['reference_id'],
-                'created_at' => date('Y-m-d H:i:s', strtotime($row['created_at'])),
+                'created_at' => $createdAt,
                 'products' => [],
                 'total_amount' => 0,
             ];
         }
 
-        $data[$id]['products'][] = [
+        $data[$key]['products'][] = [
             'product_name' => $row['product_name'],
             'product_img' => $row['product_img'],
             'quantity' => $row['quantity'],
@@ -44,7 +46,7 @@ if ($result) {
             'sub_total' => $row['sub_total'],
         ];
 
-        $data[$id]['total_amount'] += $row['sub_total'];
+        $data[$key]['total_amount'] += $row['sub_total'];
     }
 
     foreach ($data as &$details) {
