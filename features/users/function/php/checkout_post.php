@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $screenshot = isset($_FILES['screenshot']) ? $_FILES['screenshot']['name'] : null;
     $reference_id = isset($_POST['reference']) ? $_POST['reference'] : null;
 
+    
     // Decode JSON-encoded arrays
     $product_names = json_decode($_POST['product_name'][0], true);
     $quantities = json_decode($_POST['quantity'][0], true);

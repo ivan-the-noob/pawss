@@ -1,7 +1,6 @@
 <?php
 
 require '../../../../db.php';
-
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $subTotal = $_POST['sub-total'] ?? 'null';
     $shippingFee = $_POST['shipping-fee'];
     $totalAmount = $_POST['total-amount'];
-    $email = $_SESSION['email'] ?? ''; 
+    $email = $_SESSION['email'] ?? '';
 
-    // Fetch product image
+    // Fetch product image and available quantity
     $sql = "SELECT product_img, quantity FROM product WHERE product_name = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $productName);  
@@ -34,6 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $productImg = 'default_image.jpg'; 
         $availableQuantity = 0; 
     }
+
+    $stmt->close();
 
     // Check if enough stock is available
     if ($availableQuantity >= $quantity) {
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($stmt->execute()) {
-            // Update product quantity in product table
+            // Update product quantity
             $newQuantity = $availableQuantity - $quantity;
             $updateSql = "UPDATE product SET quantity = ? WHERE product_name = ?";
             $updateStmt = $conn->prepare($updateSql);
@@ -62,23 +63,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateStmt->execute();
             $updateStmt->close();
 
-            // Insert notification after successful checkout
+            // Insert notification
             $notificationMessage = "Check Out Successfully, wait for confirmation.";
             $notifSql = "INSERT INTO notification (email, message) VALUES (?, ?)";
             $notifStmt = $conn->prepare($notifSql);
             $notifStmt->bind_param("ss", $email, $notificationMessage);
             $notifStmt->execute();
             $notifStmt->close();
-        
+
             header("Location: ../../web/api/my-orders.php");
             exit();
+        } else {
+            echo "Error during checkout. Please try again.";
         }
+
+        $stmt->close();
     } else {
         // Not enough stock
         echo "Not enough stock available for this product.";
     }
 
-    $stmt->close();
     $conn->close();
 }
 ?>
