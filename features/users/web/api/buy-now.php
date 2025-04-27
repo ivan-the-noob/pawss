@@ -404,9 +404,9 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
                       <div class="card-body">
                         <p class="card-title">Customer Information</p>
                         <div class="context">
-                          <p class="name" name="name"></p>
-                          <p name="contact-num"><?php echo $contactNumber; ?></p>
-                          <p name="address-search"><?php echo $addressSearch; ?></p>
+                          <p class="mb-0" name="contact-num"><?php echo $name; ?></p>
+                          <p class="mb-0" name="contact-num"><?php echo $contactNumber; ?></p>
+                          <p class="mb-0" name="address-search"><?php echo $addressSearch; ?></p>
                         </div>
                         <!-- Hidden inputs for Customer Information -->
                         <input type="hidden" name="name" value="<?php echo $name; ?>">
