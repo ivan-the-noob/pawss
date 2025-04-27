@@ -254,19 +254,7 @@ $conn->close();
                         ?>
                         <?php if ($bookingCount >= 3): ?>
                       
-                      
-
-
-                    <?php else: ?>
-                        <?php if (!isset($_SESSION['email'])): ?>
-                            <a href="features/users/web/api/login.php">
-                                <button class="btn btn-primary mb-2">Book an appointment</button>
-                            </a>
-                        <?php else: ?>
-                            <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#limitModal">
-                            Book an Appointment
-                            </button>
-                              <!-- Modal -->
+                        <!-- Modal -->
                         <div class="modal fade" id="limitModal" tabindex="-1" aria-labelledby="limitModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
@@ -283,7 +271,9 @@ $conn->close();
                             </div>
                         </div>
                         </div>
-                        <?php endif; ?>
+
+
+                   
                     <?php endif; ?>
 
                   
