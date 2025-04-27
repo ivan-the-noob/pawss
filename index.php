@@ -258,7 +258,7 @@ $conn->close();
                         <div class="modal fade" id="limitModal" tabindex="-1" aria-labelledby="limitModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header d-flex justify-content-between">
                                 <h5 class="modal-title" id="limitModalLabel">Booking Limit Reached</h5>
                                 <button type="button" clas  s="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
