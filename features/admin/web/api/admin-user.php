@@ -369,11 +369,13 @@ window.onload = function () {
     </li>
 
     <!-- Dynamically generate page numbers -->
-    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-        <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
-            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-        </li>
-    <?php endfor; ?>
+    <?php if ($total_pages > 1): // Show pagination if there is more than one page ?>
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+    <?php endif; ?>
 
     <li class="page-item">
         <a class="page-link" href="?page=<?php echo min($page + 1, $total_pages); ?>" data-page="next" <?php echo $page == $total_pages ? 'disabled' : ''; ?>>
@@ -383,10 +385,11 @@ window.onload = function () {
 
 <?php if ($total_users <= 5): ?>
     <script>
-        // Hide pagination if there are less than 5 users
+        // Hide pagination if there are less than or equal to 5 users
         document.getElementById('paginationControls').style.display = 'none';
     </script>
 <?php endif; ?>
+
 
         </div>
         <!--Category Table End-->
