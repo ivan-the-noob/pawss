@@ -451,11 +451,11 @@ $conn->close();
                                     </div>
                                     <?php if ($product['quantity'] > 0): ?>
                                         <div class="d-flex justify-content-between item-btn">
-                                        <a href="features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>" class="btn buy-now">BUY NOW!</a>
-                                        <a href="features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>&triggerModal=true" class="btn add-to-cart">
-                                            <span class="material-symbols-outlined">shopping_cart</span>
-                                        </a>
-                                    </div>
+                                            <a href="features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>" class="btn buy-now">BUY NOW!</a>
+                                            <a href="features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>&triggerModal=true" class="btn add-to-cart">
+                                                <span class="material-symbols-outlined">shopping_cart</span>
+                                            </a>
+                                        </div>
                                     <?php else: ?>
                                         <button class="buy-now">Out of Stock!</button>
                                     <?php endif; ?>
@@ -470,7 +470,6 @@ $conn->close();
         </div>
     </div>
 </section>
-
 
 
 

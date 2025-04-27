@@ -1,3 +1,4 @@
+
 let allProducts = []; 
 let currentCategory = ''; 
 
@@ -8,33 +9,34 @@ function loadAllProducts() {
         allProducts.push(product); 
     });
 
+    // Debug: Check all products loaded
+    console.log('All products loaded:', allProducts);
+
     displayLimitedProducts(allProducts, 6);
 }
 
 function filterProducts(type) {
     currentCategory = type;
 
-    // Debugging line to check if the type is correct
+    // Debug: Logging the category being filtered
     console.log(`Filtering for: ${type}`);
 
     const filteredProducts = allProducts.filter(product => {
         const productType = product.dataset.type;
-        console.log(`Product type: ${productType}, Looking for: ${type}`);
+        console.log(`Product type: ${productType}, Looking for: ${type}`);  // Debug log
         return productType === type || type === 'all';
     });
 
-    // Debugging line to ensure filtering is working
-    console.log(`Filtered Products: ${filteredProducts.length}`);
+    // Debug: Logging filtered products
+    console.log(`Filtered Products for ${type}:`, filteredProducts);
 
     displayLimitedProducts(filteredProducts, 6);
 }
 
 function displayLimitedProducts(products, limit) {
-
     allProducts.forEach(product => {
         product.style.display = 'none';
     });
-
 
     let displayedCount = 0;
     products.forEach(product => {
@@ -45,8 +47,7 @@ function displayLimitedProducts(products, limit) {
     });
 }
 
-
 document.addEventListener("DOMContentLoaded", function() {
     loadAllProducts();
-    filterProducts('all');
+    filterProducts('all');  // Initially show all products
 });
