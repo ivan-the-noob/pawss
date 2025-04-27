@@ -296,163 +296,164 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                         </tr>
                                     </thead>
                                     <tbody id="productTableBody">
-                                        <?php if ($products->num_rows > 0): ?>
-                                            <?php while ($product = $products->fetch_assoc()): ?>
-                                                <tr>
-                                                    <td><?= $product['id'] ?></td>
-                                                    <td>
-                                                        <img src="../../../../assets/img/product/<?= htmlspecialchars($product['product_img']) ?>"
-                                                            alt="Product Image" style="width: 50px; height: 50px;">
-                                                    </td>
-                                                    <td><?= htmlspecialchars($product['product_name']) ?></td>
-                                                    <td><?= htmlspecialchars($product['description']) ?></td>
-                                                    <td><?= htmlspecialchars($product['type']) ?></td>
-                                                    <td>PHP <?= htmlspecialchars(number_format($product['cost'], 2)) ?></td>
-                                                    <td><?= htmlspecialchars($product['quantity']) ?></td> <!-- Display Quantity -->
-                                                    <td>
-                                                        <!-- Edit Button -->
-                                                        <button class="btn btn-primary" title="Update" data-bs-toggle="modal"
-                                                            data-bs-target="#editProductModal<?= $product['id'] ?>">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <!-- Delete Button -->
-                                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                                            data-bs-target="#confirmDeleteModal<?= $product['id'] ?>">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
+    <?php
+    // Fetch the products
+    $products = $conn->query("SELECT * FROM product");
+    $total_products = $products->num_rows;
 
-                                                <!--Delete Modal -->
-                                                <div class="modal fade" id="confirmDeleteModal<?= $product['id'] ?>" tabindex="-1"
-                                                    aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                    aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                Are you sure you want to delete this product?
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Cancel</button>
-                                                                <form action="../../function/php/delete_product.php" method="POST"
-                                                                    class="d-inline">
-                                                                    <input type="hidden" name="id" value="<?= $product['id'] ?>">
-                                                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+    // Check if pagination is needed (only show pagination if more than 5 products)
+    $showPagination = $total_products > 5;
 
-                                                <!-- Edit Modal -->
-                                                <div class="modal fade" id="editProductModal<?= $product['id'] ?>" tabindex="-1"
-                                                    aria-labelledby="editProductModalLabel<?= $product['id'] ?>" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content">
-                                                            <form action="../../function/php/update_product.php" method="POST"
-                                                                enctype="multipart/form-data">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="editProductModalLabel<?= $product['id'] ?>">Edit
-                                                                        Product
-                                                                    </h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <input type="hidden" name="id" value="<?= $product['id'] ?>">
-                                                                    <div class="form-group">
-                                                                        <label for="product_img">Image</label>
-                                                                        <input type="file" class="form-control-file" id="product_img"
-                                                                            name="product_img">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="product_name">Name</label>
-                                                                        <input type="text" class="form-control" id="product_name"
-                                                                            name="product_name"
-                                                                            value="<?= htmlspecialchars($product['product_name']) ?>" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="description">Description</label>
-                                                                        <textarea class="form-control" id="description" name="description"
-                                                                            rows="2"
-                                                                            required><?= htmlspecialchars($product['description']) ?></textarea>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="cost">Price</label>
-                                                                        <input type="number" class="form-control" id="cost" name="cost"
-                                                                            value="<?= htmlspecialchars($product['cost']) ?>" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="quantity">Quantity</label>
-                                                                        <!-- Add Quantity Field in Edit Modal -->
-                                                                        <input type="number" class="form-control" id="quantity" name="quantity"
-                                                                            value="<?= htmlspecialchars($product['quantity']) ?>" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="type">Type</label>
-                                                                        <select class="form-control" id="type" name="type" required>
-                                                                            <option value="petfood"
-                                                                                <?= ($product['type'] == 'petfood') ? 'selected' : '' ?>>Pet
-                                                                                Food
-                                                                            </option>
-                                                                            <option value="pettoys"
-                                                                                <?= ($product['type'] == 'pettoys') ? 'selected' : '' ?>>Pet
-                                                                                Toys
-                                                                            </option>
-                                                                            <option value="supplements"
-                                                                                <?= ($product['type'] == 'supplements') ? 'selected' : '' ?>>
-                                                                                Supplements</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary"
-                                                                        data-bs-dismiss="modal">Cancel</button>
-                                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
+    if ($total_products > 0):
+        while ($product = $products->fetch_assoc()):
+    ?>
+            <tr>
+                <td><?= $product['id'] ?></td>
+                <td>
+                    <img src="../../../../assets/img/product/<?= htmlspecialchars($product['product_img']) ?>"
+                        alt="Product Image" style="width: 50px; height: 50px;">
+                </td>
+                <td><?= htmlspecialchars($product['product_name']) ?></td>
+                <td><?= htmlspecialchars($product['description']) ?></td>
+                <td><?= htmlspecialchars($product['type']) ?></td>
+                <td>PHP <?= htmlspecialchars(number_format($product['cost'], 2)) ?></td>
+                <td><?= htmlspecialchars($product['quantity']) ?></td>
+                <td>
+                    <!-- Edit Button -->
+                    <button class="btn btn-primary" title="Update" data-bs-toggle="modal"
+                        data-bs-target="#editProductModal<?= $product['id'] ?>">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <!-- Delete Button -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#confirmDeleteModal<?= $product['id'] ?>">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
 
-                                            <?php endwhile; ?>
-                                        <?php else: ?>
-                                            <tr>
-                                                <td colspan="8" class="text-center">No products found</td>
-                                            </tr>
-                                        <?php endif; ?>
-                                        <?php $conn->close(); ?>
-                                    </tbody>
+            <!-- Delete Modal -->
+            <div class="modal fade" id="confirmDeleteModal<?= $product['id'] ?>" tabindex="-1"
+                aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete this product?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="../../function/php/delete_product.php" method="POST" class="d-inline">
+                                <input type="hidden" name="id" value="<?= $product['id'] ?>">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editProductModal<?= $product['id'] ?>" tabindex="-1"
+                aria-labelledby="editProductModalLabel<?= $product['id'] ?>" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form action="../../function/php/update_product.php" method="POST" enctype="multipart/form-data">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editProductModalLabel<?= $product['id'] ?>">Edit Product</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="id" value="<?= $product['id'] ?>">
+                                <div class="form-group">
+                                    <label for="product_img">Image</label>
+                                    <input type="file" class="form-control-file" id="product_img" name="product_img">
+                                </div>
+                                <div class="form-group">
+                                    <label for="product_name">Name</label>
+                                    <input type="text" class="form-control" id="product_name" name="product_name"
+                                        value="<?= htmlspecialchars($product['product_name']) ?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="2"
+                                        required><?= htmlspecialchars($product['description']) ?></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cost">Price</label>
+                                    <input type="number" class="form-control" id="cost" name="cost"
+                                        value="<?= htmlspecialchars($product['cost']) ?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="quantity">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity"
+                                        value="<?= htmlspecialchars($product['quantity']) ?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="type">Type</label>
+                                    <select class="form-control" id="type" name="type" required>
+                                        <option value="petfood" <?= ($product['type'] == 'petfood') ? 'selected' : '' ?>>Pet Food</option>
+                                        <option value="pettoys" <?= ($product['type'] == 'pettoys') ? 'selected' : '' ?>>Pet Toys</option>
+                                        <option value="supplements" <?= ($product['type'] == 'supplements') ? 'selected' : '' ?>>Supplements</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+    <?php
+        endwhile;
+    else:
+    ?>
+        <tr>
+            <td colspan="8" class="text-center">No products found</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
+
+<?php
+$conn->close();
+?>
+
                                 </table>
                             </div>
 
                         </div>
-                        <?php if ($showPagination): ?>
-                            <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" data-page="prev">
-                                        < </a>
-                                </li>
-                                
-                                <li class="page-item" id="pageNumbers">
-                                    <?php 
-                                    $total_pages = ceil($total_products / $limit); 
-                                    for ($i = 1; $i <= $total_pages; $i++) {
-                                        echo "<a class='page-link' href='?page=$i'>$i</a>";
-                                    }
-                                    ?>
-                                </li>
+                        <?php 
+// Ensure $total_products and $limit are defined
+$total_pages = ceil($total_products / $limit);
+?>
 
-                                <li class="page-item">
-                                    <a class="page-link" href="#" data-page="next">></a>
-                                </li>
-                            </ul>
-                        <?php endif; ?>
+<?php if ($total_pages > 1): ?>
+    <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+        <!-- Previous button -->
+        <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo max($page - 1, 1); ?>" data-page="prev">&lt;</a>
+        </li>
+
+        <!-- Page numbers -->
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+
+        <!-- Next button -->
+        <li class="page-item <?php echo ($page >= $total_pages) ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo min($page + 1, $total_pages); ?>" data-page="next">&gt;</a>
+        </li>
+    </ul>
+<?php endif; ?>
+
 
                     </div>
 
