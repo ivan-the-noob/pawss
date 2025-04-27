@@ -5,7 +5,7 @@ $limit = 10;  // Declare limit for pagination
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1; // Get the current page
 $offset = ($page - 1) * $limit; // Calculate the offset for pagination
 
-$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id, c.created_at
+$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
         WHERE c.status = 'orders'
@@ -18,12 +18,11 @@ if ($result) {
     // Loop through the query results
     while ($row = $result->fetch_assoc()) {
         $email = $row['email'];
-        $createdAt = date('Y-m-d H:i:s', strtotime($row['created_at'])); // Full timestamp (down to seconds)
-        $key = $email . '|' . $createdAt; // Use full timestamp to prevent duplicates
+        $uniqueKey = $row['id']; // Use 'id' as a unique key
 
-        if (!isset($data[$key])) {
+        if (!isset($data[$uniqueKey])) {
             // Initialize the data entry with an empty products array
-            $data[$key] = [
+            $data[$uniqueKey] = [
                 'id' => $row['id'],
                 'name' => $row['name'],
                 'email' => $row['email'],
@@ -35,14 +34,14 @@ if ($result) {
                 'longitude' => $row['longitude'],
                 'screenshot' => $row['screenshot'],
                 'reference_id' => $row['reference_id'],
-                'created_at' => $createdAt,
+                'created_at' => $row['created_at'], // Keep the created_at for display if needed
                 'products' => [], // Initialize products array
                 'total_amount' => 0,
             ];
         }
 
-        // Add product details to the products array
-        $data[$key]['products'][] = [
+        // Add product details to the corresponding entry
+        $data[$uniqueKey]['products'][] = [
             'product_name' => $row['product_name'],
             'product_img' => $row['product_img'],
             'quantity' => $row['quantity'],
@@ -50,19 +49,21 @@ if ($result) {
             'sub_total' => $row['sub_total'],
         ];
 
-        // Calculate the total amount
-        $data[$key]['total_amount'] += $row['sub_total'];
+        // Calculate the total amount for the order
+        $data[$uniqueKey]['total_amount'] += $row['sub_total'];
     }
 
-    // Calculate total amount including shipping fee
     foreach ($data as &$details) {
+        // Include the shipping fee in the total amount
         $details['total_amount'] += $details['shipping_fee'];
     }
 
-    $totalRows = count($data); // Total number of rows in the dataset
-    $totalPages = ceil($totalRows / $limit); // Total number of pages for pagination
-    $paginatedData = array_slice($data, $offset, $limit, true); // Slice the data for the current page
+    // Pagination setup
+    $totalRows = count($data);
+    $totalPages = ceil($totalRows / $limit);
+    $paginatedData = array_slice($data, $offset, $limit, true);
 
+    // Output the paginated data as table rows
     $count = $offset + 1;
     foreach ($paginatedData as $details) {
         echo "<tr>";
