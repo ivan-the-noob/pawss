@@ -219,7 +219,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     }
                 }
 
-                $perPage = 10; // Number of records per page
+                $perPage = 9; // Number of records per page
                 $page = isset($_GET['page']) ? $_GET['page'] : 1; // Get the current page from the URL, default to 1
                 $offset = ($page - 1) * $perPage; // Calculate the offset for pagination
 
