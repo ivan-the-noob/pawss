@@ -341,8 +341,13 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
               <ul class="list-group" id="historyList">
                 <?php 
                 require '../../../../db.php';
-                $sql = "SELECT * FROM appointment WHERE status IN ('pending', 'waiting', 'on-going') ORDER BY appointment_date DESC";
-                $result = $conn->query($sql);
+                $sql = "SELECT * FROM appointment WHERE status IN ('pending', 'waiting', 'on-going') AND email = ? ORDER BY appointment_date DESC";
+
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("s", $email); 
+                
+                $stmt->execute();
+                $result = $stmt->get_result();
                 
                 if ($result->num_rows > 0) {
                   while ($row = $result->fetch_assoc()) {
