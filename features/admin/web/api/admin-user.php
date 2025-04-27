@@ -23,6 +23,23 @@ try {
     echo "Error: " . $e->getMessage();
 }
 
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$limit = 5; // Number of users per page
+$offset = ($page - 1) * $limit;
+
+// Get the total number of users
+$query = "SELECT COUNT(*) FROM users";
+$result = mysqli_query($conn, $query);
+$total_users = mysqli_fetch_row($result)[0];
+
+// Get the users for the current page
+$query = "SELECT * FROM users LIMIT $limit OFFSET $offset";
+$result = mysqli_query($conn, $query);
+$users = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+// Calculate total pages
+$total_pages = ceil($total_users / $limit);
+
 $conn->close();
 ?>
 
@@ -357,15 +374,31 @@ window.onload = function () {
 
             </div>
             <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                <li class="page-item">
-                    <a class="page-link" href="#" data-page="prev">
-                        < </a>
-                </li>
-                <li class="page-item" id="pageNumbers"></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" data-page="next">></a>
-                </li>
-            </ul>
+    <li class="page-item">
+        <a class="page-link" href="?page=<?php echo max($page - 1, 1); ?>" data-page="prev" <?php echo $page == 1 ? 'disabled' : ''; ?>>
+            < </a>
+    </li>
+
+    <!-- Dynamically generate page numbers -->
+    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+        <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+        </li>
+    <?php endfor; ?>
+
+    <li class="page-item">
+        <a class="page-link" href="?page=<?php echo min($page + 1, $total_pages); ?>" data-page="next" <?php echo $page == $total_pages ? 'disabled' : ''; ?>>
+            ></a>
+    </li>
+</ul>
+
+<?php if ($total_users <= 5): ?>
+    <script>
+        // Hide pagination if there are less than 5 users
+        document.getElementById('paginationControls').style.display = 'none';
+    </script>
+<?php endif; ?>
+
         </div>
         <!--Category Table End-->
 </body>
