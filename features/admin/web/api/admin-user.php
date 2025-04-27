@@ -385,7 +385,7 @@ window.onload = function () {
 
 <?php if ($total_users <= 5): ?>
     <script>
-        // Hide pagination if there are less than or equal to 5 users
+        // Hide the entire pagination <ul> if there are fewer than or equal to 5 users
         document.getElementById('paginationControls').style.display = 'none';
     </script>
 <?php endif; ?>
