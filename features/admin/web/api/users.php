@@ -143,31 +143,32 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 </table>
                 <!--Appointment Request Table End-->
             </div>
-            <ul class="pagination justify-content-end mt-3 px-lg-5">
-                <?php 
-                if ($page > 1): ?>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<?= $page - 1 ?>" data-page="prev"><</a>
-                    </li>
-                <?php endif; ?>
+            <?php if ($totalRows >= 9): ?>
+                <ul class="pagination justify-content-end mt-3 px-lg-5">
+                    <?php if ($page > 1): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<?= $page - 1 ?>" data-page="prev"><</a>
+                        </li>
+                    <?php endif; ?>
 
-                <?php
-                $startPage = max(1, $page - 1);
-                $endPage = min($totalPages, $startPage + 2);
+                    <?php
+                    // Determine page range to display
+                    $startPage = max(1, $page - 1);
+                    $endPage = min($totalPages, $startPage + 2);
 
-                for ($i = $startPage; $i <= $endPage; $i++): ?>
-                    <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                    </li>
-                <?php endfor; ?>
+                    for ($i = $startPage; $i <= $endPage; $i++): ?>
+                        <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
 
-                <?php 
-                if ($page < $totalPages): ?>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<?= $page + 1 ?>" data-page="next">></a>
-                    </li>
-                <?php endif; ?>
-            </ul>
+                    <?php if ($page < $totalPages): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<?= $page + 1 ?>" data-page="next">></a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            <?php endif; ?>
 
 
         </div>
