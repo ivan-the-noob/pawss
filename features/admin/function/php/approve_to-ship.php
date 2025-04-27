@@ -2,12 +2,12 @@
     include '../../../../db.php';
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $email = $_POST['email']; 
+        $id = $_POST['id']; 
 
-        $update_query = "UPDATE checkout SET status = 'to-receive' WHERE email = ?";
+        $update_query = "UPDATE checkout SET status = 'to-receive' WHERE id = ?";
 
         if ($stmt = $conn->prepare($update_query)) {
-            $stmt->bind_param("s", $email);
+            $stmt->bind_param("s", $id);
             
             if ($stmt->execute()) {
                 $notificationMessage = "Your item has been picked up by courier. Please ready payment for COD.";
