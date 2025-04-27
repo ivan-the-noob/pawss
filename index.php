@@ -283,9 +283,7 @@ $conn->close();
                                 <button class="btn btn-primary mb-2">Book an appointment</button>
                             </a>
                         <?php else: ?>
-                            <a href="features/users/web/api/appointment.php">
-                                <button class="btn btn-primary mb-2">Book an appointment</button>
-                            </a>
+                         
                         <?php endif; ?>
                     <?php endif; ?>
 
