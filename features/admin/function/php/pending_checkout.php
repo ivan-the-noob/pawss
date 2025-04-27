@@ -60,7 +60,7 @@ if ($result) {
     $count = $offset + 1;
     foreach ($paginatedData as $details) {
         echo "<tr>";
-        echo "<td>$count</td>";
+        echo "<td>" . htmlspecialchars($details['id']) . "</td>";
         echo "<td>" . htmlspecialchars($details['name']) . "</td>";
         echo "<td>" . htmlspecialchars($details['email']) . "</td>";
         echo "<td class='d-flex gap-2 justify-content-center'>";
