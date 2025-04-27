@@ -8,7 +8,7 @@ $offset = ($page - 1) * $limit; // Calculate the offset for pagination
 $sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id, p.product_name, p.product_img, p.quantity, p.cost, p.sub_total
         FROM checkout c
         LEFT JOIN users u ON c.email = u.email
-        LEFT JOIN products p ON c.id = p.id  -- Assuming a products table with checkout_id
+        LEFT JOIN product p ON c.id = p.id  -- Assuming a products table with checkout_id
         WHERE c.status = 'orders'";
 $result = $conn->query($sql);
 
