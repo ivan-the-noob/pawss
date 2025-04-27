@@ -362,33 +362,32 @@ window.onload = function () {
                 <?php endif; ?>
 
             </div>
-            <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-    <li class="page-item">
-        <a class="page-link" href="?page=<?php echo max($page - 1, 1); ?>" data-page="prev" <?php echo $page == 1 ? 'disabled' : ''; ?>>
-            < </a>
-    </li>
+            <?php
+// Check if pagination is needed
+$showPagination = $total_users > 5; // Only show pagination if more than 5 users
 
-    <!-- Dynamically generate page numbers -->
-    <?php if ($total_pages > 1): // Show pagination if there is more than one page ?>
-        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-            </li>
-        <?php endfor; ?>
-    <?php endif; ?>
+if ($showPagination): ?>
+    <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+        <li class="page-item prev <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" data-page="prev">&lt;</a>
+        </li>
+        
+        <ul class="pagination" id="pageNumbers">
+            <?php
+            for ($i = 1; $i <= $total_pages; $i++) {
+                echo "<li class='page-item " . ($i == $page ? 'active' : '') . "'>
+                        <a class='page-link' href='?page=$i&search=" . urlencode($search) . "'>$i</a>
+                    </li>";
+            }
+            ?>
+        </ul>
 
-    <li class="page-item">
-        <a class="page-link" href="?page=<?php echo min($page + 1, $total_pages); ?>" data-page="next" <?php echo $page == $total_pages ? 'disabled' : ''; ?>>
-            ></a>
-    </li>
-</ul>
-
-<?php if ($total_users <= 5): ?>
-    <script>
-        // Hide the entire pagination <ul> if there are fewer than or equal to 5 users
-        document.getElementById('paginationControls').style.display = 'none';
-    </script>
+        <li class="page-item next <?php echo ($page >= $total_pages) ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" data-page="next">&gt;</a>
+        </li>
+    </ul>
 <?php endif; ?>
+
 
 
         </div>
