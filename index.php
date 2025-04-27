@@ -425,8 +425,8 @@ $conn->close();
         <div class="row align-items-start justify-content-center">
             <div class="col-lg-3 col-md-4 col-12 mb-3">
                 <div class="essentials-button d-flex flex-column align-items-start">
-                    <button onclick="filterProducts('petfood')">Pet Food</button>
                     <button onclick="filterProducts('pettoys')">Pet Toys</button>
+                    <button onclick="filterProducts('petfood')">Pet Food</button>
                     <button onclick="filterProducts('supplements')">Supplements</button>
                     <a href="features/users/web/api/product-section.php">Show all</a>
                 </div>
