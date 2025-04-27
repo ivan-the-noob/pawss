@@ -254,7 +254,7 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
 
                     if ($result->num_rows > 0):
                         while ($product = $result->fetch_assoc()): ?>
-                            <div class="col-lg-4 col-md-6 col-12 mb-4 product-item" data-type="<?= strtolower($product['type']) ?>">
+                           <div class="col-lg-4 col-md-6 col-12 mb-4 product-item" data-type="<?= strtolower($product['type']) ?>">
                                 <div class="product">
                                     <div class="product-itemss" style="height: 36vh;">
                                         <img src="../../../../assets/img/product/<?= $product['product_img'] ?>" alt="Product Image">
