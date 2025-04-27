@@ -33,7 +33,6 @@ if ($result) {
                 'longitude' => $row['longitude'],
                 'screenshot' => $row['screenshot'],
                 'reference_id' => $row['reference_id'],
-                'created_at' => $row['created_at'], // Keep the created_at for display if needed
                 'products' => [], // Initialize products array
                 'total_amount' => 0,
             ];
@@ -80,7 +79,7 @@ if ($result) {
         data-products='" . htmlspecialchars(json_encode($details['products'])) . "'
         data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "'
         data-total-amount='" . htmlspecialchars($details['total_amount']) . "'
-        data-latitude='" . htmlspecialchars($details['latitude']) . "'
+        data-latitude='" . htmlspecialchars($details['latitude']) . "' 
         data-longitude='" . htmlspecialchars($details['longitude']) . "'
         data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
         data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>View</button>";
