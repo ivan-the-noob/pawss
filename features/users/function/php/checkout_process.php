@@ -4,7 +4,11 @@ require '../../../../db.php';
 
 session_start();
 
+// Set the default timezone to Philippine Time
 date_default_timezone_set('Asia/Manila');
+
+// Set the MySQL session timezone to Philippine Time (PHT)
+$conn->query("SET time_zone = '+08:00'");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
