@@ -4,6 +4,8 @@ require '../../../../db.php';
 
 session_start();
 
+date_default_timezone_set('Asia/Manila');
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $contactNum = $_POST['contact-num'];
