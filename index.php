@@ -283,7 +283,9 @@ $conn->close();
                                 <button class="btn btn-primary mb-2">Book an appointment</button>
                             </a>
                         <?php else: ?>
-                         
+                            <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#limitModal">
+                            Book an Appointment
+                        </button>
                         <?php endif; ?>
                     <?php endif; ?>
 
