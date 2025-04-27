@@ -219,7 +219,19 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     }
                 }
 
-                // $products = $conn->query("SELECT * FROM product");
+                $perPage = 10; // Number of records per page
+                $page = isset($_GET['page']) ? $_GET['page'] : 1; // Get the current page from the URL, default to 1
+                $offset = ($page - 1) * $perPage; // Calculate the offset for pagination
+
+                // Get the total number of products to calculate total pages
+                $totalProductsResult = $conn->query("SELECT COUNT(*) AS total FROM product");
+                $totalProductsRow = $totalProductsResult->fetch_assoc();
+                $totalProducts = $totalProductsRow['total'];
+                $totalPages = ceil($totalProducts / $perPage); // Calculate total pages
+
+                // Query to fetch the products with LIMIT and OFFSET for pagination
+                $sql = "SELECT * FROM product LIMIT $perPage OFFSET $offset";
+                $products = $conn->query($sql);
             ?>
 
 
@@ -428,16 +440,27 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                             </div>
 
                         </div>
-                        <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-                            <li class="page-item">
-                                <a class="page-link" href="#" data-page="prev">
-                                    < </a>
-                            </li>
-                            <li class="page-item" id="pageNumbers"></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" data-page="next">></a>
-                            </li>
-                        </ul>
+                        <?php if ($totalProducts > $perPage): ?>
+                            <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
+                                <!-- Previous Button -->
+                                <li class="page-item <?= ($page == 1) ? 'disabled' : '' ?>">
+                                    <a class="page-link" href="?page=<?= $page - 1 ?>">‹</a>
+                                </li>
+
+                                <!-- Page Numbers -->
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                                    </li>
+                                <?php endfor; ?>
+
+                                <!-- Next Button -->
+                                <li class="page-item <?= ($page == $totalPages) ? 'disabled' : '' ?>">
+                                    <a class="page-link" href="?page=<?= $page + 1 ?>">›</a>
+                                </li>
+                            </ul>
+                        <?php endif; ?>
+
 
                     </div>
 
