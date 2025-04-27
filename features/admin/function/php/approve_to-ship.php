@@ -3,6 +3,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $id = $_POST['id']; 
+        $email = $_POST['email']; 
 
         $update_query = "UPDATE checkout SET status = 'to-receive' WHERE id = ?";
 

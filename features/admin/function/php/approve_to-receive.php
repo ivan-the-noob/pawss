@@ -3,11 +3,12 @@ include '../../../../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email']; 
+    $id = $_POST['id']; 
 
-    $update_query = "UPDATE checkout SET status = 'received-order' WHERE email = ?";
+    $update_query = "UPDATE checkout SET status = 'received-order' WHERE id = ?";
 
     if ($stmt = $conn->prepare($update_query)) {
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("s", $id);
         
         if ($stmt->execute()) {
             $notificationMessage = "Your profile info has been updated.";
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $notificationStmt->execute();
             $notificationStmt->close();
             
-            header("Location: ../../web/api/to-ship_checkout.php");
+            header("Location: ../../web/api/delivered_checkout.php");
             exit;  
         } else {
             header("Location: ../../view_orders.php?message=Error occurred while approving the orders.");
