@@ -12,18 +12,22 @@ function loadAllProducts() {
 }
 
 function filterProducts(type) {
-    currentCategory = type; 
+    currentCategory = type;
 
+    // Debugging line to check if the type is correct
+    console.log(`Filtering for: ${type}`);
 
     const filteredProducts = allProducts.filter(product => {
         const productType = product.dataset.type;
+        console.log(`Product type: ${productType}, Looking for: ${type}`);
         return productType === type || type === 'all';
     });
 
+    // Debugging line to ensure filtering is working
+    console.log(`Filtered Products: ${filteredProducts.length}`);
 
     displayLimitedProducts(filteredProducts, 6);
 }
-
 
 function displayLimitedProducts(products, limit) {
 
