@@ -188,26 +188,28 @@
                                 echo "<td>{$row['payment']}</td>";
                                 echo "<td>" . ($row['payment_option'] === 'onStore' ? 'On Store' : $row['payment_option']) . "</td>";
                                 echo "<td>
-                                <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewModal' 
-                                    onclick='viewAdditionalInfo(
-                                        {$row['id']}, 
-                                        \"" . addslashes($row['barangay']) . "\", 
-                                        \"" . addslashes($row['pet_type']) . "\", 
-                                        \"" . addslashes($row['breed']) . "\", 
-                                        \"" . addslashes($row['age']) . "\", 
-                                        \"" . addslashes($row['service']) . "\", 
-                                        \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
-                                        \"" . addslashes($row['add_info']) . "\", 
-                                        \"" . addslashes($row['contact_num']) . "\",
-                                        \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
-                                    )'>
-                                    <i class='fas fa-eye'></i>
-                                </button>
-                            
-                                <button class='btn btn-info btn-sm' style='margin-right: 5px;' data-bs-toggle='modal' data-bs-target='#locationModal' 
-                                    onclick='showMap({$row['latitude']}, {$row['longitude']})'>
-                                    <i class='fas fa-map-marker-alt'></i>
-                                </button>";
+        <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' 
+            onclick='viewAdditionalInfo(
+                {$row['id']}, 
+                \"" . addslashes($row['barangay']) . "\", 
+                \"" . addslashes($row['pet_type']) . "\", 
+                \"" . addslashes($row['breed']) . "\", 
+                \"" . addslashes($row['age']) . "\", 
+                \"" . addslashes($row['service']) . "\", 
+                \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
+                \"" . addslashes($row['add_info']) . "\", 
+                \"" . addslashes($row['contact_num']) . "\",
+                \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
+            )'>
+            <i class='fas fa-eye'></i>
+        </button>";
+
+            if ($row['payment_option'] != 'On Store') {
+                echo "<button class='btn btn-primary' style='margin-right: 5px;' data-bs-toggle='modal' data-bs-target='#locationModal' 
+                        onclick='showMap({$row['latitude']}, {$row['longitude']})'>
+                        <i class='fas fa-map-marker-alt'></i>
+                    </button>";
+            }
                             
                             if (!empty($row['gcash_image'])) {
                                 echo "<button class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#gcashModal' 

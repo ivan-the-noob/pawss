@@ -193,7 +193,7 @@ $showPagination = $totalRow['total'] > 10;
                                 echo "<td>{$row['payment']}</td>";
                                 echo "<td>" . (!empty($row['gcash_image']) ? $row['payment_option'] : "On Store") . "</td>";
                                 echo "<td>
-                                <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' 
+                                <button class='btn btn-primary' style='margin-right: 3px;' data-bs-toggle='modal' data-bs-target='#viewModal' 
                                     onclick='viewAdditionalInfo(
                                         {$row['id']}, 
                                         \"" . addslashes($row['barangay']) . "\", 
@@ -207,27 +207,30 @@ $showPagination = $totalRow['total'] > 10;
                                         \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
                                     )'>
                                     <i class='fas fa-eye'></i>
-                                </button>
-                            
-                                <button class='btn btn-primary' style='margin-right: 5px;'x data-bs-toggle='modal' data-bs-target='#locationModal' 
+                                </button>";
+                        
+                        if ($row['payment_option'] != 'onStore') {
+                            echo "<button class='btn btn-primary' style='margin-right: 5px;' data-bs-toggle='modal' data-bs-target='#locationModal' 
                                     onclick='showMap({$row['latitude']}, {$row['longitude']})'>
                                     <i class='fas fa-map-marker-alt'></i>
                                 </button>";
-                            
-                            if (!empty($row['gcash_image'])) {
-                                echo "<button class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#gcashModal' 
+                        }
+                        
+                        if (!empty($row['gcash_image'])) {
+                            echo "<button class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#gcashModal' 
                                     onclick='showGcashImage(\"" . addslashes($row['gcash_image']) . "\")'>
                                     <i class='fas fa-receipt'></i>
                                 </button>";
-                            }
-                            
-                            echo "<button class='btn btn-success' data-id='{$row['id']}' onclick='updateStatus(this, \"waiting\")'>
-                                    <i class='fas fa-check'></i>
-                                </button>
-                                <button class='btn btn-danger' data-id='{$row['id']}' onclick='updateStatus(this, \"cancel\")'>
-                                    <i class='fas fa-times'></i>
-                                </button>
-                            </td>";
+                        }
+                        
+                        echo "<button class='btn btn-success' data-id='{$row['id']}' onclick='updateStatus(this, \"waiting\")'>
+                                <i class='fas fa-check'></i>
+                            </button>
+                            <button class='btn btn-danger' data-id='{$row['id']}' onclick='updateStatus(this, \"cancel\")'>
+                                <i class='fas fa-times'></i>
+                            </button>
+                        </td>";
+                        
                             
                                 $index++;
                             }

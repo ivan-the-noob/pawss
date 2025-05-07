@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Bind parameters to the SQL statement
         $stmt->bind_param(
-            "ssssssssdddsss", 
+            "ssssssssdddssss", 
             $name, $email, $contact_num, $address_search, $payment_method, 
             $screenshot, $reference_id, $product_name, $quantity, $sub_total, 
             $shipping_fee, $total_amount, $product_img, $cost, $from_cart

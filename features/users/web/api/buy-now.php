@@ -108,7 +108,7 @@ if (isset($_SESSION['email'])) {
                                 </button>
                                 <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
                                     <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
-                                    <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
+                                    <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                                 </ul>
                             </div>
                           <?php
