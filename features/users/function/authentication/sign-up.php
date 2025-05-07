@@ -1,12 +1,15 @@
 <?php
-
 include '../../../../db.php';
 
-// Check if the form is submitted via POST
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $contact_number = $_POST['contact_number'];
+    $password = $_POST['password'];
+    $retype_password = $_POST['retype_password'];
+
+ 
 
     // Check if the email is already registered
     $check_sql = "SELECT id FROM users WHERE email = ?";
@@ -16,44 +19,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check_result = $check_stmt->get_result();
 
     if ($check_result->num_rows > 0) {
-        // Account already exists
         $_SESSION['error'] = "Account already registered with this email.";
-        header("Location: sign-up.php");  // Redirect back to sign-up page with error
+        header("Location: sign-up.php");
         exit();
     }
 
-    // Insert the user into the 'users' table if email is not already registered
-    $sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+    // Insert new user
+    $sql = "INSERT INTO users (name, email, contact_number, password) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $name, $email, $password);
+    $stmt->bind_param("ssss", $name, $email, $contact_number, $hashed_password);
 
     if ($stmt->execute()) {
-        // Insert registration info into the 'global_reports' table
-        $registration_time = date("h:i A | m/d/Y"); // Format for displaying registration time
+        $registration_time = date("h:i A | m/d/Y");
         $message = "User $email registered at $registration_time";
-        
-        // Insert the log message into global_reports
+
         $log_sql = "INSERT INTO global_reports (message, cur_time) VALUES (?, NOW())";
         $log_stmt = $conn->prepare($log_sql);
         $log_stmt->bind_param("s", $message);
         $log_stmt->execute();
         $log_stmt->close();
 
-        // Redirect to login page after successful registration
         header("Location: login.php");
         exit();
     } else {
-        // Display error message if registration fails
         $_SESSION['error'] = "Error: " . $stmt->error;
-        header("Location: sign-up.php");  // Redirect back to sign-up page with error
+        header("Location: sign-up.php");
         exit();
     }
 
-    // Close prepared statement
     $stmt->close();
     $check_stmt->close();
 }
 
-// Close database connection
 $conn->close();
 ?>

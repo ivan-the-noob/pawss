@@ -33,6 +33,7 @@ date_default_timezone_set('Asia/Manila');
 if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
     $email = $_SESSION['email'];
     $profile_picture = $_SESSION['profile_picture'];
+
 } else {
     header("Location: ../../web/api/login.php");
     exit();
@@ -327,10 +328,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <!-- Left Side: Autocomplete and Map -->
           <div class="col-md-6">
           <h6>Owner Information</h6>
-          <div class="form-group">
-          <label for="ownerName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="ownerName" name="ownerName" placeholder="Ex. Ivan Ablanida" required>
-              </div>
+          <?php
+include '../../../../db.php';
+
+
+$name = "";
+$home_street = "";
+
+if (isset($_SESSION['email'])) {
+    $session_email = $_SESSION['email'];
+
+    $sql = "SELECT home_street, name FROM users WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $session_email);
+    $stmt->execute();
+    $stmt->bind_result($fetched_home_street, $fetched_name);
+
+    if ($stmt->fetch()) {
+        $home_street = $fetched_home_street;
+        $name = $fetched_name;
+    }
+
+    $stmt->close();
+}
+
+$conn->close();
+?>
+
+            <div class="form-group">
+    <label for="ownerName" class="form-label">Name</label>
+    <input type="text" class="form-control" value="<?php echo htmlspecialchars($name); ?>" id="ownerName" name="ownerName"  readonly>
+</div>
+
+
               <div class="form-group">
                 <label for="contactNum" class="form-label">Contact #</label>
                 <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Ex. 09123456879" required>
@@ -340,6 +370,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   <input type="email" class="form-control" id="ownerEmail" name="ownerEmail" 
                         value="<?php echo htmlspecialchars($email); ?>" readonly required>
               </div>
+              <div class="form-group">
+              <label for="ownerEmail" class="form-label">Address</label>
+              <input type="text" value="<?php echo htmlspecialchars($home_street); ?>" class="form-control mb-1" id="addInfo" name="add-info"
+                placeholder="Street Name, Building, House No." 
+                >
+              </div>
               <h6 class="pet-divide">Pet Information</h6>
               <div class="form-group">
                 <label for="petType" class="form-label">Pet Type</label>
@@ -348,6 +384,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   <option>Dog</option>
                   <option>Rabbit</option>
                   <option>Reptile</option>
+                  <option>Others</option>
                 </select>
               </div>
               <div class="form-group">
@@ -477,6 +514,7 @@ $conn->close();
               <?php
                 require '../../../../db.php';
                     $email = $_SESSION['email']; // make sure session email is set
+                    $name = $_SESSION['name'];
 
                     $addressValue = '';
 
@@ -489,9 +527,7 @@ $conn->close();
                         $addressValue = !empty($row['address_search']) ? $row['address_search'] : $row['home_street'];
                     }
                 ?>
-              <input type="text" class="form-control mt-2 mb-1" id="addInfo" name="add-info"
-  placeholder="Street Name, Building, House No." required
-  value="<?php echo htmlspecialchars($addressValue); ?>">
+             
               <div class="form-group mt-3" id= "autocomplete-wrapper">
                 <input id="autocomplete" placeholder="Can't find your location? Search here." type="text" class="form-control">
               </div>

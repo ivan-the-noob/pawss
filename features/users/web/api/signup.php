@@ -33,6 +33,9 @@ include '../../function/authentication/sign-up.php';
                                 <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
                             </div>
                             <div class="mb-3">
+                                <input type="text" name="contact_number" class="form-control" placeholder="Enter contact number" required>
+                            </div>
+                            <div class="mb-3">
                                 <input type="password" name="password" class="form-control" placeholder="Enter password" required>
                             </div>
                             <div class="form-check mb-3">

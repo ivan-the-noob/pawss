@@ -252,29 +252,33 @@ $conn->close();
 
                             $bookingCount = $row['total'];
                         ?>
-                        <?php if ($bookingCount >= 3): ?>
-                      
-                        <!-- Modal -->
-                        <div class="modal fade" id="limitModal" tabindex="-1" aria-labelledby="limitModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                            <div class="modal-header d-flex justify-content-between">
-                                <h5 class="modal-title" id="limitModalLabel">Booking Limit Reached</h5>
-                                <button type="button" clas  s="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                You have reached the maximum of 3 bookings for today. Please come back tomorrow.
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Okay</button>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
+                       <?php if ($bookingCount >= 3): ?>
+    <!-- Button that will trigger the Modal (above the modal) -->
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#limitModal">
+        View Booking Limit
+    </button>
 
-
-                   
-                    <?php endif; ?>
+    <!-- Modal -->
+    <div class="modal fade" id="limitModal" tabindex="-1" aria-labelledby="limitModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between">
+                    <h5 class="modal-title" id="limitModalLabel">Booking Limit Reached</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You have reached the maximum of 3 bookings for today. Please come back tomorrow.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <!-- Button that links to appointment.php -->
+    <a href="features/users/web/api/appointment.php" class="btn appointment">Book an Appointment</a>
+<?php endif; ?>
 
                   
 

@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (password_verify($password, $user['password'])) {
             // Set session variables
             $_SESSION['email'] = $email;
+            $_SESSION['name'] = $name;
             $_SESSION['profile_picture'] = $user['profile_picture'] ?? null;
             $_SESSION['role'] = $user['role'];
 

@@ -170,7 +170,7 @@
                            
                             <th>Payment</th>
                             <th>Payment Options</th>
-                            <th>Buttons</th>
+                
                            
                         </tr>
                     </thead>
@@ -198,7 +198,7 @@
                                     \"" . addslashes($row['service']) . "\", 
                                     \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
                                     \"" . addslashes($row['add_info']) . "\", 
-                                    \"" . addslashes($row['contact_number']) . "\",
+                                    \"" . addslashes($row['contact_num']) . "\",
                                     \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
                                 )'>View</button>
                         
@@ -207,7 +207,7 @@
                         
                         if (!empty($row['gcash_image'])) {
                             echo "<button class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#gcashModal' 
-                                    onclick='showGcashImage(\"" . addslashes($row['gcash_image']) . "\")'>Receipt</button>";
+                                    onclick='showGcashImage(\"" . addslashes($row['gcash_image']) . "\")'>Proof</button>";
                         }
                         
                         echo "</td>";

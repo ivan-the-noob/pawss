@@ -359,7 +359,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                           <p class="mb-1"><span class="fw-bold">Service:</span> <?php echo $row['service']; ?></p>
                           <p class="mb-1"><span class="fw-bold">Pet:</span> <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
                           <p class="mb-1"><span class="fw-bold">Owner:</span><?php echo $row['owner_name']; ?></p>
-                          <p class="mb-1"><span class="fw-bold">Address:</span><?php echo $row['add_info']; ?></p>
+                          <p class="mb-1 d-none"><span class="fw-bold">Address:</span><?php echo $row['add_info']; ?></p>
                         </div>
                         <div class="mt-3 mt-md-0 text-md-right">
                         <p class="mb-1 status" style="background-color: 
@@ -383,9 +383,12 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
 
                           <p class="mb-1"><span class="fw-bold">Date of Appointment:</span> <?php echo $row['appointment_date']; ?></p>
                           <p class="mb-1"><span class="fw-bold">Booked Time:</span>  <?php echo date('g:i A', strtotime($row['created_at'])); ?> </p>
-                          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal<?php echo $row['id']; ?>">
-                            Cancel
-                          </button>
+                          <?php if ($row['status'] === 'pending'): ?>
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal<?php echo $row['id']; ?>">
+                              Cancel
+                            </button>
+                          <?php endif; ?>
+
 
                           <!-- Modal -->
                           <div class="modal fade" id="cancelModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="cancelModalLabel<?php echo $row['id']; ?>" aria-hidden="true">
@@ -435,7 +438,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                           <p class="mb-1"><span class="fw-bold">Service:</span> <?php echo $row['service']; ?></p>
                           <p class="mb-1"><span class="fw-bold">Pet:</span> <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
                           <p class="mb-1"><span class="fw-bold">Owner:</span> <?php echo $row['owner_name']; ?></p>
-                          <p class="mb-1"><span class="fw-bold">Address:</span><?php echo $row['add_info']; ?></p>
+                          <p class="mb-1 d-none"><span class="fw-bold">Address:</span><?php echo $row['add_info']; ?></p>
                         </div>
                         <div class="mt-3 mt-md-0 text-md-right">
 

@@ -175,7 +175,7 @@ $showPagination = $totalRow['total'] > 10;
                             
                             <th>Payment</th>
                             <th>Payment Options</th>
-                            <th>Buttons</th>
+                           
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -191,37 +191,44 @@ $showPagination = $totalRow['total'] > 10;
                                 echo "<td>{$row['email']}</td>";
                                 
                                 echo "<td>{$row['payment']}</td>";
-                                echo "<td>" . (!empty($row['gcash_image']) ? $row['payment_option'] : "On store") . "</td>";
+                                echo "<td>" . (!empty($row['gcash_image']) ? $row['payment_option'] : "On Store") . "</td>";
                                 echo "<td>
                                 <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#viewModal' 
-                                onclick='viewAdditionalInfo(
-                                    {$row['id']}, 
-                                    \"" . addslashes($row['barangay']) . "\", 
-                                    \"" . addslashes($row['pet_type']) . "\", 
-                                    \"" . addslashes($row['breed']) . "\", 
-                                    \"" . addslashes($row['age']) . "\", 
-                                    \"" . addslashes($row['service']) . "\", 
-                                    \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
-                                    \"" . addslashes($row['add_info']) . "\", 
-                                    \"" . addslashes($row['contact_number']) . "\",
-                                    \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
-                                )'>View</button>
-                        
-                                <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#locationModal' 
-                                    onclick='showMap({$row['latitude']}, {$row['longitude']})'>Location</button>";
-                        
-                        if (!empty($row['gcash_image'])) {
-                            echo "<button class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#gcashModal' 
-                                    onclick='showGcashImage(\"" . addslashes($row['gcash_image']) . "\")'>Receipt</button>";
-                        }
-                        
-                        echo "</td>";
-                        
-                                echo "<td>
-                                        <button class='btn btn-success' data-id='{$row['id']}' onclick='updateStatus(this, \"waiting\")'>Accept</button>
-                                        <button class='btn btn-danger' data-id='{$row['id']}' onclick='updateStatus(this, \"cancel\")'>Decline</button>
-                                    </td>";
-                                echo "</tr>";
+                                    onclick='viewAdditionalInfo(
+                                        {$row['id']}, 
+                                        \"" . addslashes($row['barangay']) . "\", 
+                                        \"" . addslashes($row['pet_type']) . "\", 
+                                        \"" . addslashes($row['breed']) . "\", 
+                                        \"" . addslashes($row['age']) . "\", 
+                                        \"" . addslashes($row['service']) . "\", 
+                                        \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
+                                        \"" . addslashes($row['add_info']) . "\", 
+                                        \"" . addslashes($row['contact_number']) . "\",
+                                        \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
+                                    )'>
+                                    <i class='fas fa-eye'></i>
+                                </button>
+                            
+                                <button class='btn btn-primary' style='margin-right: 5px;'x data-bs-toggle='modal' data-bs-target='#locationModal' 
+                                    onclick='showMap({$row['latitude']}, {$row['longitude']})'>
+                                    <i class='fas fa-map-marker-alt'></i>
+                                </button>";
+                            
+                            if (!empty($row['gcash_image'])) {
+                                echo "<button class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#gcashModal' 
+                                    onclick='showGcashImage(\"" . addslashes($row['gcash_image']) . "\")'>
+                                    <i class='fas fa-receipt'></i>
+                                </button>";
+                            }
+                            
+                            echo "<button class='btn btn-success' data-id='{$row['id']}' onclick='updateStatus(this, \"waiting\")'>
+                                    <i class='fas fa-check'></i>
+                                </button>
+                                <button class='btn btn-danger' data-id='{$row['id']}' onclick='updateStatus(this, \"cancel\")'>
+                                    <i class='fas fa-times'></i>
+                                </button>
+                            </td>";
+                            
                                 $index++;
                             }
                         } else {

@@ -209,8 +209,12 @@ require '../../../../db.php';
 $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d');
 $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
 
-// 1. Get Total Users (not date-based)
-$sql_users = "SELECT COUNT(*) AS total_users FROM users WHERE role = 'user'";
+$sql_users = "
+    SELECT COUNT(*) AS total_users 
+    FROM users 
+    WHERE role = 'user' 
+    AND DATE(created_at) BETWEEN '$start_date' AND '$end_date'
+";
 $result_users = $conn->query($sql_users);
 $total_users = $result_users->fetch_assoc()['total_users'];
 
@@ -232,7 +236,7 @@ $total_checkout = $result_checkout->fetch_assoc()['total_checkout'];
 
 <!-- Date Filter Form -->
 <div class="container row col-md-12 d-flex">
-    <form method="GET" action="" class="container d-flex gap-1  ">
+    <form method="GET" action="" class="container d-flex gap-5">
         <div class="col-md-2 m-1 d-flex">
             <label for="start_date">From:</label>
             <input type="date" class="form-control" name="start_date" value="<?php echo $start_date; ?>">
