@@ -241,7 +241,7 @@
                         <p class="d-none"><strong>Barangay:</strong> <span id="barangayDetail"></span></p>
                         <p><strong>Pet Type:</strong> <span id="petTypeDetail"></span></p>
                         <p><strong>Breed:</strong> <span id="breedDetail"></span></p>
-                        <p><strong>Age:</strong> <span id="ageDetail"></span></p>
+                        <p><strong>Age:</strong> <span id="ageDetail"></span> Months</p>
                         <p><strong>Service:</strong> <span id="serviceDetail"></span></p>
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
                         <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
