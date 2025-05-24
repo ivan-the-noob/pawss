@@ -307,21 +307,21 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                         <tr>    
                                             <th>#</th>
                                             <th>Image</th>
-                                           <th>
-                                            Name
+                                           <th class="d-flex gap-1 align-items-center justify-content-center">
+                                            <div>Name</div>
                                             <button class="sort-btn" data-sort="product_name" data-order="asc" title="Sort A-Z">▲</button>
                                             </th>
                                             <th>Description</th>
-                                           <th>
-                                            Type
+                                          <th class="d-flex gap-1 align-items-center justify-content-center">
+                                            <div>Type</div>
                                             <button class="sort-btn" data-sort="type" data-order="asc" title="Sort A-Z">▲</button>
                                             </th>
-                                            <th>
-                                            Price
+                                           <th class="d-flex gap-1 align-items-center justify-content-center">
+                                            <div>Price</div>
                                             <button class="sort-btn" data-sort="cost" data-order="asc" title="Sort Low-High">▲</button>
                                             </th>
-                                            <th>
-                                            Quantity
+                                           <th class="d-flex gap-1 align-items-center justify-content-center">
+                                           <div>Quantity</div>
                                             <button class="sort-btn" data-sort="quantity" data-order="asc" title="Sort Low-High">▲</button>
                                             </th>
                                             <th>Action</th>
