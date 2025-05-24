@@ -309,7 +309,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                             <th>Image</th>
                                            <th>
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <p>Name</p>
+                                                <p class="d-flex text-center">Name</p>
                                                 <button class="sort-btn" data-sort="product_name" data-order="asc" title="Sort A-Z">▲</button>
                                             </div>
                                             </th>
@@ -323,7 +323,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                             <th>
                                             <div class="d-flex justify-content-center align-items-center">
                                             <p>Price</p>
-                                            <button class="sort-btn" data-sort="cost" data-order="asc" title="Sort Low-High">▲</button>\
+                                            <button class="sort-btn" data-sort="cost" data-order="asc" title="Sort Low-High">▲</button>
                                              </div>
                                             </th>
                                             <th>
