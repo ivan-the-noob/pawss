@@ -235,7 +235,7 @@ $conn->close();
                                 <td><?php echo $index + 1; ?></td>
                                 <td><?php echo htmlspecialchars($review['email']); ?></td>
                                 
-                                <td> <img src="../../../../assets/img/<?php echo htmlspecialchars($review['profile_picture'] ?? '../../../../assets/img/default-avatar.png'); ?>" 
+                                <td class="d-flex gap-1"> <img src="../../../../assets/img/<?php echo htmlspecialchars($review['profile_picture'] ?? '../../../../assets/img/default-avatar.png'); ?>" 
                                         alt="Profile Picture" 
                                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;"><?php echo htmlspecialchars($review['name']); ?></td>
                                 <td><?php echo htmlspecialchars($review['review']); ?></td>
