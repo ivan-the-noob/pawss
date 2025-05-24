@@ -319,6 +319,60 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                             <th>Action</th>
                                         </tr>
                                     </thead>
+                                    <script>
+                                        document.querySelectorAll('.sort-btn').forEach(button => {
+                                            button.addEventListener('click', () => {
+                                            const sortKey = button.getAttribute('data-sort');
+                                            let order = button.getAttribute('data-order');
+
+                                            const tbody = document.getElementById('productTableBody');
+                                            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                                            rows.sort((a, b) => {
+                                                let aText, bText;
+
+                                                // Select the cell based on column key
+                                                switch (sortKey) {
+                                                case 'product_name':
+                                                    aText = a.querySelector('td:nth-child(3)').innerText.toLowerCase();
+                                                    bText = b.querySelector('td:nth-child(3)').innerText.toLowerCase();
+                                                    break;
+                                                case 'type':
+                                                    aText = a.querySelector('td:nth-child(5)').innerText.toLowerCase();
+                                                    bText = b.querySelector('td:nth-child(5)').innerText.toLowerCase();
+                                                    break;
+                                                case 'cost':
+                                                    // Remove "PHP" and parse float
+                                                    aText = parseFloat(a.querySelector('td:nth-child(6)').innerText.replace(/[^\d.-]/g, ''));
+                                                    bText = parseFloat(b.querySelector('td:nth-child(6)').innerText.replace(/[^\d.-]/g, ''));
+                                                    break;
+                                                case 'quantity':
+                                                    aText = parseInt(a.querySelector('td:nth-child(7)').innerText);
+                                                    bText = parseInt(b.querySelector('td:nth-child(7)').innerText);
+                                                    break;
+                                                default:
+                                                    aText = '';
+                                                    bText = '';
+                                                }
+
+                                                if (aText < bText) return order === 'asc' ? -1 : 1;
+                                                if (aText > bText) return order === 'asc' ? 1 : -1;
+                                                return 0;
+                                            });
+
+                                            // Remove all rows and append sorted rows
+                                            tbody.innerHTML = '';
+                                            rows.forEach(row => tbody.appendChild(row));
+
+                                            // Toggle order for next click
+                                            button.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
+
+                                            // Optionally update icon arrow direction:
+                                            button.textContent = order === 'asc' ? '▼' : '▲';
+                                            });
+                                        });
+                                        </script>
+
                                     <tbody id="productTableBody">
                                         <?php if ($products->num_rows > 0): ?>
                                             <?php while ($product = $products->fetch_assoc()): ?>
