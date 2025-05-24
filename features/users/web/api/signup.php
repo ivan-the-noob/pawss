@@ -32,6 +32,9 @@ include '../../function/authentication/sign-up.php';
                             <div class="mb-3">
                                 <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
                             </div>
+                            <div class="forgot-password">
+                                
+                            </div>
                             <div class="mb-3">
                                 <input type="text" name="contact_number" class="form-control" placeholder="Enter contact number" required>
                             </div>
@@ -45,6 +48,9 @@ include '../../function/authentication/sign-up.php';
                             <button type="submit" class="btn btn-success w-100">Sign Up</button>
                             <div class="text-center mt-3">
                                 <a href="login.php">Have an account? <span class="sign-up">Login</span></a>
+                            </div>
+                            <div class="forgot-password">
+                             
                             </div>
                         </form>
                     </div>
