@@ -22,7 +22,7 @@ $result = mysqli_query($conn, $query);
 $total_reviews = mysqli_fetch_row($result)[0];
 
 // Get paginated reviews with name and email
-$query = "SELECT users.name, users.email, users.profile_picture, review.review 
+$query = "SELECT users.name, users.email, review.profile_picture, review.review 
           FROM review 
           INNER JOIN users ON review.email = users.email 
           LIMIT $limit OFFSET $offset";
