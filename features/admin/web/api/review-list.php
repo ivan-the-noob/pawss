@@ -233,15 +233,19 @@ $conn->close();
                             <tr>
                                 <td><?php echo $index + 1; ?></td>
                                 <td><?php echo htmlspecialchars($review['email']); ?></td>
-                                
-                                <td class="d-flex gap-2 justify-content-center align-items-center"> <img src="../../../../assets/img/<?php echo htmlspecialchars($review['profile_picture'] ?? '../../../../assets/img/default-avatar.png'); ?>" 
+
+                                <td class="d-flex gap-2 justify-content-center align-items-center">
+                                    <img src="../../../../assets/img/<?php echo htmlspecialchars($review['profile_picture'] ?? 'default-avatar.png'); ?>" 
                                         alt="Profile Picture" 
-                                        style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;"><?php echo htmlspecialchars($review['name']); ?></td>
+                                        style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                                    <?php echo htmlspecialchars($review['name']); ?>
+                                </td>
+
                                 <td><?php echo htmlspecialchars($review['review']); ?></td>
+
                                 <td>
                                     <form action="../../function/php/delete_review.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?');">
-                                        <input type="hidden" name="email" value="<?php echo htmlspecialchars($review['email']); ?>">
-                                        <input type="hidden" name="review" value="<?php echo htmlspecialchars($review['review']); ?>">
+                                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($review['id']); ?>">
                                         <button type="submit" class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
@@ -255,6 +259,7 @@ $conn->close();
                         </tr>
                     <?php endif; ?>
                 </tbody>
+
             </table>
 
 
