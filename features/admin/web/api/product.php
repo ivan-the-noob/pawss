@@ -22,6 +22,14 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
 
 </head>
 
+<style>
+    .sort-btn{
+        background-color: transparent;
+        border: none;
+        color: #FFFFFF;
+    }
+</style>
+
 <body>
     <!--Navigation Links-->
     <div class="navbar flex-column bg-white shadow-sm p-3 collapse d-md-flex" id="navbar">
