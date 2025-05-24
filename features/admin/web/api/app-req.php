@@ -118,7 +118,7 @@ $showPagination = $totalRow['total'] > 10;
                     <span>Admin User List</span>
                 </a>
                 <a href="review-list.php">
-                    <i class="fa-pen"></i>
+                    <i class="book-open"></i>
                     <span>Review List</span>
                 </a>
             </div>
