@@ -228,37 +228,37 @@ $conn->close();
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <?php if (!empty($reviews)): ?>
-                        <?php foreach ($reviews as $index => $review): ?>
-                            <tr>
-                                <td><?php echo $index + 1; ?></td>
-                                <td><?php echo htmlspecialchars($review['email']); ?></td>
+    <?php if (!empty($reviews)): ?>
+        <?php foreach ($reviews as $index => $review): ?>
+            <tr>
+                <td><?php echo $index + 1; ?></td>
+                <td><?php echo htmlspecialchars($review['email']); ?></td>
 
-                                <td class="d-flex gap-2 justify-content-center align-items-center">
-                                    <img src="../../../../assets/img/<?php echo htmlspecialchars($review['profile_picture'] ?? 'default-avatar.png'); ?>" 
-                                        alt="Profile Picture" 
-                                        style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
-                                    <?php echo htmlspecialchars($review['name']); ?>
-                                </td>
+                <td class="d-flex gap-2 justify-content-center align-items-center">
+                    <img src="../../../../assets/img/<?php echo htmlspecialchars($review['profile_picture'] ?? 'default-avatar.png'); ?>" 
+                         alt="Profile Picture" 
+                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                    <?php echo htmlspecialchars($review['name']); ?>
+                </td>
 
-                                <td><?php echo htmlspecialchars($review['review']); ?></td>
+                <td><?php echo htmlspecialchars($review['review']); ?></td>
 
-                                <td>
-                                    <form action="../../function/php/delete_review.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?');">
-                                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($review['id']); ?>">
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="text-center">No reviews found</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
+                <td>
+                    <form action="../../function/php/delete_review.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                        <input type="hidden" name="id" value="<?php echo (int)$review['id']; ?>">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="5" class="text-center">No reviews found</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
 
             </table>
 
