@@ -307,22 +307,30 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                         <tr>    
                                             <th>#</th>
                                             <th>Image</th>
-                                           <th class="d-flex gap-1 align-items-center justify-content-center">
-                                            <div>Name</div>
-                                            <button class="sort-btn" data-sort="product_name" data-order="asc" title="Sort A-Z">▲</button>
+                                           <th>
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <p>Name</p>
+                                                <button class="sort-btn" data-sort="product_name" data-order="asc" title="Sort A-Z">▲</button>
+                                            </div>
                                             </th>
                                             <th>Description</th>
-                                          <th class="d-flex gap-1 align-items-center justify-content-center">
-                                            <div>Type</div>
+                                           <th>
+                                             <div class="d-flex justify-content-center align-items-center">
+                                            <p>Type</p>
                                             <button class="sort-btn" data-sort="type" data-order="asc" title="Sort A-Z">▲</button>
+                                             </div>
                                             </th>
-                                           <th class="d-flex gap-1 align-items-center justify-content-center">
-                                            <div>Price</div>
-                                            <button class="sort-btn" data-sort="cost" data-order="asc" title="Sort Low-High">▲</button>
+                                            <th>
+                                            <div class="d-flex justify-content-center align-items-center">
+                                            <p>Price</p>
+                                            <button class="sort-btn" data-sort="cost" data-order="asc" title="Sort Low-High">▲</button>\
+                                             </div>
                                             </th>
-                                           <th class="d-flex gap-1 align-items-center justify-content-center">
-                                           <div>Quantity</div>
+                                            <th>
+                                            <div class="d-flex justify-content-center align-items-center">
+                                            <p>Quantity</p>
                                             <button class="sort-btn" data-sort="quantity" data-order="asc" title="Sort Low-High">▲</button>
+                                             </div>
                                             </th>
                                             <th>Action</th>
                                         </tr>
