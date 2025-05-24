@@ -80,6 +80,10 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     <i class="fa-solid fa-user-shield"></i>
                     <span>Admin User List</span>
                 </a>
+                <a href="review-list.php">
+                    <i class="fa-pen"></i>
+                    <span>Review List</span>
+                </a>
             </div>
 
         </div>

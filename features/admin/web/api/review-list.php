@@ -114,6 +114,10 @@ $conn->close();
                     <i class="fa-solid fa-user-shield"></i>
                     <span>Admin User List</span>
                 </a>
+                 <a href="review-list.php" class="navbar-highlight">
+                    <i class="fa-pen"></i>
+                    <span>Review List</span>
+                </a>
             </div>
 
         </div>
@@ -144,7 +148,7 @@ $conn->close();
         </div>
         <!--Noticiation and Profile Admin End-->
         <div class="app-req">
-            <h3>Admin User List</h3>
+            <h3>Review List</h3>
             <div class="walk-in px-lg-5">
                 <div class="mb-3 x d-flex">
                     <div class="">

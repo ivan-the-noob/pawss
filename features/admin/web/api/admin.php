@@ -165,6 +165,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
                     <i class="fa-solid fa-user-shield"></i>
                     <span>Admin User List</span>
                 </a>
+                <a href="review-list.php">
+                    <i class="fa-pen"></i>
+                    <span>Review List</span>
+                </a>
             </div>
 
         </div>
