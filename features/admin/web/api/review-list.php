@@ -224,7 +224,6 @@ $conn->close();
                     <tr>
                         <th>#</th>
                         <th>Email</th>
-                        <th>Avatar</th> <!-- Profile Picture -->
                         <th>Name</th>
                         <th>Review</th>
                     </tr>
