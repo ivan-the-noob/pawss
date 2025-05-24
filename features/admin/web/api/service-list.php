@@ -94,7 +94,7 @@ $conn->close();
                     <span>Admin User List</span>
                 </a>
                 <a href="review-list.php">
-                    <i class="book-open"></i>
+                    <i class="fa-solid fa-calendar-check"></i>
                     <span>Review List</span>
                 </a>
             </div>
