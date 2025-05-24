@@ -22,10 +22,11 @@ $result = mysqli_query($conn, $query);
 $total_reviews = mysqli_fetch_row($result)[0];
 
 // Get paginated reviews with name and email
-$query = "SELECT users.name, users.email, review.review 
+$query = "SELECT users.name, users.email, users.profile_picture, review.review 
           FROM review 
           INNER JOIN users ON review.email = users.email 
           LIMIT $limit OFFSET $offset";
+
 $result = mysqli_query($conn, $query);
 $reviews = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
@@ -45,7 +46,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin User List | Admin</title>
+    <title>Review | Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/admin-user.css">
@@ -223,6 +224,7 @@ $conn->close();
                     <tr>
                         <th>#</th>
                         <th>Email</th>
+                        <th>Avatar</th> <!-- Profile Picture -->
                         <th>Name</th>
                         <th>Review</th>
                     </tr>
@@ -233,17 +235,23 @@ $conn->close();
                             <tr>
                                 <td><?php echo $index + 1; ?></td>
                                 <td><?php echo htmlspecialchars($review['email']); ?></td>
+                                <td>
+                                    <img src="<?php echo htmlspecialchars($review['profile_picture'] ?? '../../../../assets/img/default-avatar.png'); ?>" 
+                                        alt="Profile Picture" 
+                                        style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                                </td>
                                 <td><?php echo htmlspecialchars($review['name']); ?></td>
                                 <td><?php echo htmlspecialchars($review['review']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">No reviews found</td>
+                            <td colspan="5" class="text-center">No reviews found</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
+
 
                 <script>
 window.onload = function () {
