@@ -316,19 +316,19 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                             <th>Description</th>
                                            <th>
                                              <div class="d-flex justify-content-center align-items-center">
-                                            <p>Type</p>
+                                            <p class="mb-0">Type</p>
                                             <button class="sort-btn" data-sort="type" data-order="asc" title="Sort A-Z">▲</button>
                                              </div>
                                             </th>
                                             <th>
                                             <div class="d-flex justify-content-center align-items-center">
-                                            <p>Price</p>
+                                            <p class="mb-0">Price</p>
                                             <button class="sort-btn" data-sort="cost" data-order="asc" title="Sort Low-High">▲</button>
                                              </div>
                                             </th>
                                             <th>
                                             <div class="d-flex justify-content-center align-items-center">
-                                            <p>Quantity</p>
+                                            <p class="mb-0">Quantity</p>
                                             <button class="sort-btn" data-sort="quantity" data-order="asc" title="Sort Low-High">▲</button>
                                              </div>
                                             </th>
