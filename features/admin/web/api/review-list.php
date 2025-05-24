@@ -110,12 +110,12 @@ $conn->close();
                     <i class="fa-solid fa-box"></i>
                     <span>Product</span>
                 </a>
-                <a href="admin-user.php" class="navbar-highlight">
+                <a href="admin-user.php" >
                     <i class="fa-solid fa-user-shield"></i>
                     <span>Admin User List</span>
                 </a>
                  <a href="review-list.php" class="navbar-highlight">
-                    <i class="fa-pen"></i>
+                    <i class="fa-star"></i>
                     <span>Review List</span>
                 </a>
             </div>
