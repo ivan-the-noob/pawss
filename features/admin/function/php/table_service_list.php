@@ -30,26 +30,29 @@ try {
     }
     $stmt->close();
     
-    // Display service list
-    if ($services) {
-        foreach ($services as $service) {
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($service['id']) . "</td>"; 
-            echo "<td>" . htmlspecialchars($service['service_type']) . "</td>"; 
-            echo "<td>" . htmlspecialchars($service['service_name']) . "</td>";
-            echo "<td>₱" . htmlspecialchars($service['cost']) . "</td>";
-            echo "<td>" . htmlspecialchars($service['discount']) . "%</td>";
-            echo "<td>" . htmlspecialchars($service['info']) . "</td>";
-            
-            echo '<td>
-                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal' . $service['id'] . '"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $service['id'] . '"><i class="fas fa-trash-alt"></i></button>
-                  </td>';
-            echo "</tr>";
-        }
-    } else {
-        echo "<tr><td colspan='7'>No services found.</td></tr>";
+   // Display service list
+if ($services) {
+    $counter = 1; // Initialize counter
+    foreach ($services as $service) {
+        echo "<tr>";
+        echo "<td>" . $counter . "</td>"; // Use counter instead of $service['id']
+        echo "<td>" . htmlspecialchars($service['service_type']) . "</td>"; 
+        echo "<td>" . htmlspecialchars($service['service_name']) . "</td>";
+        echo "<td>₱" . htmlspecialchars($service['cost']) . "</td>";
+        echo "<td>" . htmlspecialchars($service['discount']) . "%</td>";
+        echo "<td>" . htmlspecialchars($service['info']) . "</td>";
+        
+        echo '<td>
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal' . $counter . '"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $counter . '"><i class="fas fa-trash-alt"></i></button>
+              </td>';
+        echo "</tr>";
+        $counter++; // Increment counter
     }
+} else {
+    echo "<tr><td colspan='7'>No services found.</td></tr>";
+}
+
 
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
