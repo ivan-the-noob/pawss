@@ -155,9 +155,7 @@ $conn->close();
                     </div>
                   
                    
-                    <button type="button" class=" btn-new" data-toggle="modal" data-target="#addCategoryModal">
-                        Add new
-                    </button>
+                   
                 </div>
             </div>
             <!--Category Modal-->
@@ -226,6 +224,7 @@ $conn->close();
                         <th>Email</th>
                         <th>Name</th>
                         <th>Review</th>
+                         <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -239,6 +238,15 @@ $conn->close();
                                         alt="Profile Picture" 
                                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;"><?php echo htmlspecialchars($review['name']); ?></td>
                                 <td><?php echo htmlspecialchars($review['review']); ?></td>
+                                <td>
+                                    <form action="../../function/php/delete_review.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                                        <input type="hidden" name="email" value="<?php echo htmlspecialchars($review['email']); ?>">
+                                        <input type="hidden" name="review" value="<?php echo htmlspecialchars($review['review']); ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -268,31 +276,7 @@ window.onload = function () {
                 <?php endif; ?>
 
             </div>
-            <?php
-// Check if pagination is needed
-$showPagination = $total_users > 5; // Only show pagination if more than 5 users
-
-if ($showPagination): ?>
-    <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
-        <li class="page-item prev <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-            <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" data-page="prev">&lt;</a>
-        </li>
-        
-        <ul class="pagination" id="pageNumbers">
-            <?php
-            for ($i = 1; $i <= $total_pages; $i++) {
-                echo "<li class='page-item " . ($i == $page ? 'active' : '') . "'>
-                        <a class='page-link' href='?page=$i&search=" . urlencode($search) . "'>$i</a>
-                    </li>";
-            }
-            ?>
-        </ul>
-
-        <li class="page-item next <?php echo ($page >= $total_pages) ? 'disabled' : ''; ?>">
-            <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" data-page="next">&gt;</a>
-        </li>
-    </ul>
-<?php endif; ?>
+            
 
 
 
