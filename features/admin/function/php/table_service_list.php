@@ -30,12 +30,12 @@ try {
     }
     $stmt->close();
     
-   // Display service list
+
 if ($services) {
-    $counter = 1; // Initialize counter
+    $counter = 1; 
     foreach ($services as $service) {
         echo "<tr>";
-        echo "<td>" . $counter . "</td>"; // Use counter instead of $service['id']
+        echo "<td>" . $counter . "</td>"; 
         echo "<td>" . htmlspecialchars($service['service_type']) . "</td>"; 
         echo "<td>" . htmlspecialchars($service['service_name']) . "</td>";
         echo "<td>₱" . htmlspecialchars($service['cost']) . "</td>";
@@ -47,7 +47,7 @@ if ($services) {
                 <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $counter . '"><i class="fas fa-trash-alt"></i></button>
               </td>';
         echo "</tr>";
-        $counter++; // Increment counter
+        $counter++;
     }
 } else {
     echo "<tr><td colspan='7'>No services found.</td></tr>";
