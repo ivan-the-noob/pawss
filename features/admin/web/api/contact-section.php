@@ -19,7 +19,7 @@ $result = mysqli_query($conn, $query);
 $total_contacts = mysqli_fetch_row($result)[0];
 
 // Fetch paginated contact messages
-$query = "SELECT * FROM contact LIMIT $limit OFFSET $offset";
+$query = "SELECT * FROM contact LIMIT $limit OFFSET $offset WHERE status = 1";
 $result = mysqli_query($conn, $query);
 $contacts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
