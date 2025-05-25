@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../../css/cart.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <link rel="icon" href="../../../../assets/img/logo.png" type="image/x-icon">
   
 </head>
 

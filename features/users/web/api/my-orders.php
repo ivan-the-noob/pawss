@@ -14,6 +14,7 @@
         
     </script>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+        <link rel="icon" href="../../../../assets/img/logo.png" type="image/x-icon">
 
 </head>
 

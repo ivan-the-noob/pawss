@@ -20,6 +20,7 @@ if (isset($_SESSION['email'])) {
     <title>PAWS| Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/login.css">
+      <link rel="icon" href="../../../../assets/img/logo.png" type="image/x-icon">
 </head>
 
 <body>
