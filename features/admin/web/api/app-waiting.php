@@ -250,9 +250,10 @@ if ($result->num_rows > 0) {
                         <p><strong>Age:</strong> <span id="ageDetail"></span> Months</p>
                         <p><strong>Service:</strong> <span id="serviceDetail"></span></p>
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
+                         <p><strong>Date of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
                         <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
                         <p><strong>Contact Number:</strong> <span id="contact_numberDetail"></span></p>
-                        <p><strong>Time of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
+                       
                     </div>
                     <script>
                     function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_number, created_at) {
@@ -264,14 +265,7 @@ if ($result->num_rows > 0) {
                         document.getElementById('appointmentDateDetail').innerText = appointmentDate;
                         document.getElementById('additionalInfoDetail').innerText = additionalInfo;
                         document.getElementById('contact_numberDetail').innerText = contact_number;
-
-                        // Format the time from created_at to show only the time (HH:MM AM/PM)
-                        const timeOfBooked = new Date(created_at).toLocaleString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                        });
-                        document.getElementById('timeOfBookedDetail').innerText = timeOfBooked;
+                       document.getElementById('timeOfBookedDetail').innerText = created_at;
                     }
                 </script>
 

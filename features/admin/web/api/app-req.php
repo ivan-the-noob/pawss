@@ -13,7 +13,7 @@ $limit = 10;
 $offset = ($page - 1) * $limit;
 
 // Updated query: join appointment with users to get contact_number
-$sql = "SELECT appointment.*, users.contact_number 
+$sql = "SELECT appointment.*, appointment.contact_number 
         FROM appointment 
         LEFT JOIN users ON appointment.email = users.email 
         WHERE appointment.status = 'pending'";
@@ -259,9 +259,10 @@ $showPagination = $totalRow['total'] > 10;
                         <p><strong>Age:</strong> <span id="ageDetail"></span> Months</p>
                         <p><strong>Service:</strong> <span id="serviceDetail"></span></p>
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
+                        <p><strong>Date of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
                         <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
                         <p><strong>Contact Number:</strong> <span id="contact_numberDetail"></span></p>
-                        <p><strong>Time of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
+                        
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
