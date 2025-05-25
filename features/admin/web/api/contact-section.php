@@ -14,7 +14,7 @@ $limit = 5;
 $offset = ($page - 1) * $limit;
 
 // Get total contacts
-$query = "SELECT COUNT(*) FROM contact";
+$query = "SELECT COUNT(*) FROM contact WHERE status = 1";
 $result = mysqli_query($conn, $query);
 $total_contacts = mysqli_fetch_row($result)[0];
 
@@ -260,7 +260,7 @@ $conn->close();
                                                 <input type="hidden" name="contact_id" value="<?= (int)$contact['id'] ?>">
                                                 <div class="form-group">
                                                     <label for="message">Message</label>
-                                                    <textarea name="message" class="form-control" rows="4" required></textarea>
+                                                    <textarea name="message" value="Thank you for contacting us." class="form-control" rows="4" required></textarea>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
