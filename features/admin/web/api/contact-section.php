@@ -246,10 +246,10 @@ $conn->close();
 
                             <!-- Modal for Reply -->
                             <div class="modal fade" id="replyModal<?= $contact['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel<?= $contact['id'] ?>" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
                                     <form action="../../function/php/reply_contact.php" method="POST">
                                         <div class="modal-content">
-                                            <div class="modal-header">
+                                            <div class="modal-header d-flex justify-content-between">
                                                 <h5 class="modal-title" id="replyModalLabel<?= $contact['id'] ?>">Reply to <?= htmlspecialchars($contact['email']) ?></h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
