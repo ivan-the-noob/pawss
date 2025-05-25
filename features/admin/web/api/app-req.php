@@ -13,7 +13,7 @@ $limit = 10;
 $offset = ($page - 1) * $limit;
 
 // Updated query: join appointment with users to get contact_number
-$sql = "SELECT appointment.*, users.contact_number 
+$sql = "SELECT appointment.*
         FROM appointment 
         LEFT JOIN users ON appointment.email = users.email 
         WHERE appointment.status = 'pending'";
@@ -207,7 +207,7 @@ $showPagination = $totalRow['total'] > 10;
                                         \"" . addslashes($row['service']) . "\", 
                                         \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
                                         \"" . addslashes($row['add_info']) . "\", 
-                                        \"" . addslashes($row['contact_number']) . "\",
+                                        \"" . addslashes($row['contact_num']) . "\",
                                         \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
                                     )'>
                                     <i class='fas fa-eye'></i>
@@ -261,7 +261,7 @@ $showPagination = $totalRow['total'] > 10;
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
                         <p><strong>Date of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
                         <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
-                        <p><strong>Contact Number:</strong> <span id="contact_numberDetail"></span></p>
+                        <p><strong>Contact Number:</strong> <span id="contact_numDetail"></span></p>
                         
                     </div>
                     <div class="modal-footer">
@@ -273,7 +273,7 @@ $showPagination = $totalRow['total'] > 10;
             
          
                 <script>
-                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_number, created_at) {
+                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_num, created_at) {
                         document.getElementById('barangayDetail').innerText = barangay;
                         document.getElementById('petTypeDetail').innerText = petType;
                         document.getElementById('breedDetail').innerText = breed;
@@ -281,7 +281,7 @@ $showPagination = $totalRow['total'] > 10;
                         document.getElementById('serviceDetail').innerText = service;
                         document.getElementById('appointmentDateDetail').innerText = appointmentDate;
                         document.getElementById('additionalInfoDetail').innerText = additionalInfo;
-                        document.getElementById('contact_numberDetail').innerText = contact_number;
+                        document.getElementById('contact_numDetail').innerText = contact_num;
                         document.getElementById('timeOfBookedDetail').innerText = created_at;
                     }
                 </script>
