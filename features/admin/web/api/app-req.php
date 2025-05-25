@@ -13,7 +13,7 @@ $limit = 10;
 $offset = ($page - 1) * $limit;
 
 // Updated query: join appointment with users to get contact_number
-$sql = "SELECT appointment.*, appointment.contact_num
+$sql = "SELECT appointment.*, users.contact_number 
         FROM appointment 
         LEFT JOIN users ON appointment.email = users.email 
         WHERE appointment.status = 'pending'";
@@ -207,7 +207,7 @@ $showPagination = $totalRow['total'] > 10;
                                         \"" . addslashes($row['service']) . "\", 
                                         \"" . date('F j, Y', strtotime($row['appointment_date'])) . "\", 
                                         \"" . addslashes($row['add_info']) . "\", 
-                                        \"" . addslashes($row['contact_num']) . "\",
+                                        \"" . addslashes($row['contact_number']) . "\",
                                         \"" . date('F j, Y h:i A', strtotime($row['created_at'])) . "\"
                                     )'>
                                     <i class='fas fa-eye'></i>
@@ -273,7 +273,7 @@ $showPagination = $totalRow['total'] > 10;
             
          
                 <script>
-                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_num, created_at) {
+                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_number, created_at) {
                         document.getElementById('barangayDetail').innerText = barangay;
                         document.getElementById('petTypeDetail').innerText = petType;
                         document.getElementById('breedDetail').innerText = breed;
