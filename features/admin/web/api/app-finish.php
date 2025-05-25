@@ -246,7 +246,7 @@
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
                          <p><strong>Date of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
                         <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
-                        <p><strong>Contact Number:</strong> <span id="contact_numberDetail"></span></p>
+                        <p><strong>Contact Number:</strong> <span id="contact_numDetail"></span></p>
                     </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -255,7 +255,7 @@
   </div>
 </div>
 <script>
-                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_number, created_at) {
+                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_num, created_at) {
                         document.getElementById('barangayDetail').innerText = barangay;
                         document.getElementById('petTypeDetail').innerText = petType;
                         document.getElementById('breedDetail').innerText = breed;
@@ -263,7 +263,7 @@
                         document.getElementById('serviceDetail').innerText = service;
                         document.getElementById('appointmentDateDetail').innerText = appointmentDate;
                         document.getElementById('additionalInfoDetail').innerText = additionalInfo;
-                        document.getElementById('contact_numberDetail').innerText = contact_number;
+                        document.getElementById('contact_numDetail').innerText = contact_num;
 
                         document.getElementById('timeOfBookedDetail').innerText = created_at;
                     }
