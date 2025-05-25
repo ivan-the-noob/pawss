@@ -281,14 +281,7 @@ $showPagination = $totalRow['total'] > 10;
                         document.getElementById('appointmentDateDetail').innerText = appointmentDate;
                         document.getElementById('additionalInfoDetail').innerText = additionalInfo;
                         document.getElementById('contact_numberDetail').innerText = contact_number;
-
-                        // Format the time from created_at to show only the time (HH:MM AM/PM)
-                        const timeOfBooked = new Date(created_at).toLocaleString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                        });
-                        document.getElementById('timeOfBookedDetail').innerText = timeOfBooked;
+                        document.getElementById('timeOfBookedDetail').innerText = created_at;
                     }
                 </script>
 
