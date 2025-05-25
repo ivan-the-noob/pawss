@@ -105,9 +105,13 @@ $conn->close();
                     <i class="fa-solid fa-user-shield"></i>
                     <span>Admin User List</span>
                 </a>
-                 <a href="review-list.php" class="navbar-highlight">
+                 <a href="review-list.php">
                     <i class="fa-solid fa-calendar-check"></i>
                     <span>Review List</span>
+                </a>
+                  <a href="review-list.php" class="navbar-highlight">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>Contact Section</span>
                 </a>
             </div>
 
@@ -139,7 +143,7 @@ $conn->close();
         </div>
         <!--Noticiation and Profile Admin End-->
         <div class="app-req">
-            <h3>Review List</h3>
+            <h3>Contact Section</h3>
             <div class="walk-in px-lg-5">
                 <div class="mb-3 x d-flex">
                     <div class="">
