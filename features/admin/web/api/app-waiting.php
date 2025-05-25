@@ -252,11 +252,11 @@ if ($result->num_rows > 0) {
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
                          <p><strong>Date of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
                         <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
-                        <p><strong>Contact Number:</strong> <span id="contact_numberDetail"></span></p>
+                        <p><strong>Contact Number:</strong> <span id="contact_numbDetail"></span></p>
                        
                     </div>
                     <script>
-                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_number, created_at) {
+                    function viewAdditionalInfo(id, barangay, petType, breed, age, service, appointmentDate, additionalInfo, contact_num, created_at) {
                         document.getElementById('barangayDetail').innerText = barangay;
                         document.getElementById('petTypeDetail').innerText = petType;
                         document.getElementById('breedDetail').innerText = breed;
@@ -264,7 +264,7 @@ if ($result->num_rows > 0) {
                         document.getElementById('serviceDetail').innerText = service;
                         document.getElementById('appointmentDateDetail').innerText = appointmentDate;
                         document.getElementById('additionalInfoDetail').innerText = additionalInfo;
-                        document.getElementById('contact_numberDetail').innerText = contact_number;
+                        document.getElementById('contact_numDetail').innerText = contact_num;
                        document.getElementById('timeOfBookedDetail').innerText = created_at;
                     }
                 </script>
