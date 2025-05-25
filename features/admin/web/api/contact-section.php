@@ -227,7 +227,7 @@ $conn->close();
                             <tr>
                                 <td><?= $index + 1 ?></td>
                                 <td><?= htmlspecialchars($contact['email']) ?></td>
-                                <td><?= htmlspecialchars($contact['concern']) ?></td>
+                                <td><?= htmlspecialchars($contact['message']) ?></td>
                                 <td class="d-flex gap-2">
                                     <!-- Reply Button -->
                                     <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#replyModal<?= $contact['id'] ?>">
