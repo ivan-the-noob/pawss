@@ -232,10 +232,19 @@ $sql_booked = "SELECT COUNT(*) AS total_booked FROM appointment WHERE DATE(appoi
 $result_booked = $conn->query($sql_booked);
 $total_booked = $result_booked->fetch_assoc()['total_booked'];
 
-// 3. Get Total Sales with date filter
+// 1. Get Total Sales from `appointment`
 $sql_sales = "SELECT SUM(payment) AS total_sales FROM appointment WHERE DATE(appointment_date) BETWEEN '$start_date' AND '$end_date'";
 $result_sales = $conn->query($sql_sales);
-$total_sales = $result_sales->fetch_assoc()['total_sales'] ?? 0;
+$appointment_sales = $result_sales->fetch_assoc()['total_sales'] ?? 0;
+
+// 2. Get Total Sales from `manual_input`
+$sql_manual = "SELECT SUM(sales_amount) AS manual_sales FROM manual_input WHERE DATE(created_at) BETWEEN '$start_date' AND '$end_date'";
+$result_manual = $conn->query($sql_manual);
+$manual_sales = $result_manual->fetch_assoc()['manual_sales'] ?? 0;
+
+// 3. Add both together
+$total_sales = $appointment_sales + $manual_sales;
+
 
 // 4. Get Total Checkout with date filter
 $sql_checkout = "SELECT COUNT(*) AS total_checkout FROM checkout WHERE DATE(created_at) BETWEEN '$start_date' AND '$end_date'";
