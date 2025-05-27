@@ -179,10 +179,7 @@ if (isset($_GET['message'])) {
                 <input type="hidden" name="longitude" id="modalLongitude">
                 <input type="hidden" name="add_info" id="add-info-hidden">
                                 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="declineButton" onclick="submitDecline()">Decline</button>
-                    <button type="submit" class="btn btn-primary">Approve</button>
-                </div>
+                
             </form>
 
             </div>
