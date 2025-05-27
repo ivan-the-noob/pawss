@@ -109,14 +109,14 @@ if (isset($_GET['message'])) {
 
                     <div class="col-md-6 mt-4 mb-4">
                         <h6>Address Information</h6>
-                        <div class="form-group mt-2 mb-2">
+                        <div class="form-group mt-2 mb-2 d-none">
                             <label for="modalBarangay">Barangay:</label>
                             <input type="text" class="form-control" id="modalBarangay" readonly>
                         </div>
                         <h6>Location Map</h6>
                         <div id="map" style="height: 300px; width: 100%;"></div>
                         <div class="form-group mt-2 mb-2">
-                            <label for="add-info">Street Name</label>
+                            <label for="add-info">Complete Address</label>
                             <input type="text" class="form-control" id="add-info" readonly>
                         </div>
                     </div>
