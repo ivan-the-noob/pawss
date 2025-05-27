@@ -169,6 +169,7 @@ if (isset($_GET['message'])) {
                             <label for="modalPaymentMethod">Payment Method:</label>
                             <input type="text" class="form-control form-order" id="modalPaymentMethod" readonly>
                         </div>
+                        <div id="gcashFields" style="display: none;">
                         <div class="form-group">
                             <label for="modalScreenshot">Screenshot:</label>
                             <img id="modalScreenshot" src="" class="img-fluid screenshots" alt="Screenshot">
@@ -177,6 +178,26 @@ if (isset($_GET['message'])) {
                             <label for="modalReferenceId">Reference ID:</label>
                             <input type="text" class="form-control form-order" id="modalReferenceId" readonly>
                         </div>
+                    </div>
+                    <script>
+                        $('#viewModal').on('show.bs.modal', function (event) {
+                            var button = $(event.relatedTarget);
+
+                            var paymentMethod = button.data('payment-method');
+                            var screenshot = button.data('screenshot');
+                            var referenceId = button.data('reference_id');
+
+                            if (paymentMethod === 'gcash') {
+                                $('#gcashFields').show();
+                                $('#modalScreenshot').attr('src', screenshot);
+                                $('#modalReferenceId').val(referenceId);
+                            } else {
+                                $('#gcashFields').hide();
+                                $('#modalScreenshot').attr('src', '');
+                                $('#modalReferenceId').val('');
+                            }
+                        });
+                        </script>
                     </div>
                     
                     <div class="col-md-4">
