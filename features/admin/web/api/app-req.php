@@ -265,7 +265,7 @@ $showPagination = $totalRow['total'] > 10;
                         <p><strong>Service:</strong> <span id="serviceDetail"></span></p>
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
                         <p><strong>Date of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
-                        <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
+                        <p><strong>CompeleteAddress:</strong> <span id="additionalInfoDetail"></span></p>
                         <p><strong>Contact Number:</strong> <span id="contact_numDetail"></span></p>
                         
                     </div>

@@ -256,8 +256,8 @@ if ($result->num_rows > 0) {
                         <p><strong>Service:</strong> <span id="serviceDetail"></span></p>
                         <p><strong>Appointment Date:</strong> <span id="appointmentDateDetail"></span></p>
                          <p><strong>Date of Booked:</strong> <span id="timeOfBookedDetail"></span></p>
-                        <p><strong>Address:</strong> <span id="additionalInfoDetail"></span></p>
-                        <p><strong>Contact Number:</strong> <span id="contact_numbDetail"></span></p>
+                        <p><strong>Complete Address:</strong> <span id="additionalInfoDetail"></span></p>
+                        <p><strong>Contact Number:</strong> <span id="contact_numDetail"></span></p>
                        
                     </div>
                     <script>
