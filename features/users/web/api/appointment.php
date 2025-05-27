@@ -372,7 +372,7 @@ $conn->close();
                         value="<?php echo htmlspecialchars($email); ?>" readonly required>
               </div>
               <div class="form-group">
-              <label for="ownerEmail" class="form-label">Address</label>
+              <label for="ownerEmail" class="form-label">Complete Address</label>
               <input type="text" value="<?php echo htmlspecialchars($home_street); ?>" class="form-control mb-1" id="addInfo" name="add-info"
                 placeholder="Street Name, Building, House No." 
                 >
