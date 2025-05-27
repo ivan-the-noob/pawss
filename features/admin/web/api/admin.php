@@ -455,34 +455,15 @@ document.getElementById('exportBtn').addEventListener('click', function () {
                 <h5 class="modal-title" id="salesModalLabel">Add Sales</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="salesForm">
+           <form id="salesForm">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="salesAmount" class="form-label">Sales Amount:</label>
                         <input type="number" step="0.01" class="form-control" id="salesAmount" name="salesAmount" required>
                     </div>
                     <div class="mb-3">
-                        <label for="salesMonth" class="form-label">Month:</label>
-                        <select class="form-select" id="salesMonth" name="salesMonth" required>
-                            <option value="" disabled selected>Select Month</option>
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="salesYear" class="form-label">Year:</label>
-                        <input type="number" class="form-control" id="salesYear" name="salesYear" 
-                               min="2000" max="2100" value="<?= date('Y') ?>" required>
+                        <label for="salesDate" class="form-label">Date:</label>
+                        <input type="date" class="form-control" id="salesDate" name="salesDate" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -490,23 +471,22 @@ document.getElementById('exportBtn').addEventListener('click', function () {
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById("salesForm").addEventListener("submit", function (e) {
+document.getElementById("salesForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
     const salesAmount = document.getElementById("salesAmount").value;
-    const salesMonth = document.getElementById("salesMonth").value;
-    const salesYear = document.getElementById("salesYear").value;
+    const salesDate = document.getElementById("salesDate").value;
 
     const form = new FormData();
     form.append("action", "addSales");
     form.append("salesAmount", salesAmount);
-    form.append("salesMonth", salesMonth);
-    form.append("salesYear", salesYear);
+    form.append("salesDate", salesDate);
 
     fetch("../../function/php/add_sales.php", {
         method: "POST",
@@ -524,6 +504,7 @@ document.getElementById('exportBtn').addEventListener('click', function () {
     .catch(error => console.error("Error:", error));
 });
 </script>
+
 
         <!--Pos Card with graphs End-->
 

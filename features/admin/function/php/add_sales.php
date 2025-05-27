@@ -1,17 +1,14 @@
-<?php 
+<?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'addSales') {
     include '../../../../db.php';
 
     $salesAmount = isset($_POST['salesAmount']) ? floatval($_POST['salesAmount']) : 0;
-    $salesMonth = isset($_POST['salesMonth']) ? intval($_POST['salesMonth']) : null;
-    $salesYear = isset($_POST['salesYear']) ? intval($_POST['salesYear']) : null;
+    $salesDate = isset($_POST['salesDate']) ? $_POST['salesDate'] : null;
 
-    if ($salesAmount > 0 && $salesMonth && $salesYear) {
-        $created_at = "$salesYear-$salesMonth-01"; 
-
+    if ($salesAmount > 0 && $salesDate) {
         $sql = "INSERT INTO manual_input (created_at, sales_amount) VALUES (?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sd", $created_at, $salesAmount);
+        $stmt->bind_param("sd", $salesDate, $salesAmount);
 
         if ($stmt->execute()) {
             echo json_encode(["success" => true]);
@@ -27,5 +24,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $conn->close();
     exit;
 }
-
 ?>
