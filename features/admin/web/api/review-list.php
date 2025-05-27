@@ -119,7 +119,7 @@ $conn->close();
                     <i class="fa-solid fa-calendar-check"></i>
                     <span>Review List</span>
                 </a>
-                 <a href="service-list.php" >
+                 <a href="contact-section.php" >
                     <i class="fa-solid fa-phone"></i>
                     <span>Contact List</span>
                 </a>
