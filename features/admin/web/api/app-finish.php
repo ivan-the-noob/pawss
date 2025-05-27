@@ -214,7 +214,7 @@
                                     <i class='fas fa-eye'></i>
                                 </button>";
                         
-                        if ($row['payment_option'] != 'On Store') {
+                        if ($row['payment_option'] != 'onStore') {
                             echo "<button class='btn btn-primary' style='margin-right: 5px;' data-bs-toggle='modal' data-bs-target='#locationModal' 
                                     onclick='showMap({$row['latitude']}, {$row['longitude']})'>
                                     <i class='fas fa-map-marker-alt'></i>
