@@ -179,6 +179,7 @@
                            
                             <th>Payment</th>
                             <th>Payment Options</th>
+                            <th>Actions</th>
                 
                            
                         </tr>
