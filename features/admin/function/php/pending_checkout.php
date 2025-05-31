@@ -11,7 +11,6 @@ $sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id
         WHERE c.status = 'orders'";
 $result = $conn->query($sql);
 
-$data = [];
 
 if ($result) {
     // Loop through the query results
