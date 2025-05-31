@@ -56,7 +56,9 @@ if (($row['total'] ?? 0) >= 3) {
 
 // Handle POST request for booking an appointment
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $ownerName = htmlspecialchars($_POST['ownerName']);
+    $firstName = htmlspecialchars($_POST['firstName']);
+    $lastName = htmlspecialchars($_POST['lastName']);
+    $ownerName = trim($firstName . ' ' . $lastName);
     $contactNum = htmlspecialchars($_POST['contactNum']);
     $email = htmlspecialchars($_POST['ownerEmail']);
     $barangay = isset($_POST['barangayDropdown']) ? htmlspecialchars($_POST['barangayDropdown']) : null;
@@ -305,21 +307,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div id="modalContent" class="col-6"></div>
             <input type="hidden" id="appointment_date" name="appointment_date" value="">
             <script>
-  // When a date is clicked in the calendar
-  document.querySelectorAll('.calendar-day').forEach(day => {
-    day.addEventListener('click', function () {
-      const clickedDate = this.getAttribute('data-date'); // format: "YYYY-MM-DD"
+                // When a date is clicked in the calendar
+                document.querySelectorAll('.calendar-day').forEach(day => {
+                    day.addEventListener('click', function () {
+                    const clickedDate = this.getAttribute('data-date'); // format: "YYYY-MM-DD"
 
-      const date = new Date(clickedDate);
-      date.setDate(date.getDate() + 1); // Add 1 day
+                    const date = new Date(clickedDate);
+                    date.setDate(date.getDate() + 1); // Add 1 day
 
-      const adjustedDate = date.toISOString().split('T')[0]; // Get "YYYY-MM-DD"
-      document.getElementById('appointment_date').value = adjustedDate;
+                    const adjustedDate = date.toISOString().split('T')[0]; // Get "YYYY-MM-DD"
+                    document.getElementById('appointment_date').value = adjustedDate;
 
-      console.log('Adjusted Appointment Date:', adjustedDate);
-    });
-  });
-</script>
+                    console.log('Adjusted Appointment Date:', adjustedDate);
+                    });
+                });
+                </script>
 
           </div>
          
@@ -357,9 +359,14 @@ $conn->close();
 ?>
 
             <div class="form-group">
-    <label for="ownerName" class="form-label">Name</label>
-    <input type="text" class="form-control" value="<?php echo htmlspecialchars($name); ?>" id="ownerName" name="ownerName"  readonly>
-</div>
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" value="<?php echo htmlspecialchars(explode(' ', $name)[0]); ?>" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" value="<?php echo htmlspecialchars(explode(' ', $name)[1] ?? ''); ?>" id="lastName" name="lastName" required>
+            </div>
+
 
 
               <div class="form-group">
