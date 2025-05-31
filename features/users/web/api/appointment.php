@@ -371,8 +371,20 @@ $conn->close();
 
               <div class="form-group">
                 <label for="contactNum" class="form-label">Contact #</label>
-                <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Ex. 09123456879" required>
-              </div>
+                <div class="input-group">
+                    <span class="input-group-text">+63</span>
+                    <input type="tel" 
+                        class="form-control" 
+                        id="contactNum" 
+                        name="contactNum" 
+                        placeholder="9123456789" 
+                        pattern="[0-9]{10}" 
+                        maxlength="10" 
+                        required>
+                </div>
+                <small class="form-text text-muted">Enter 10-digit number (e.g., 9123456789)</small>
+                </div>
+
               <div class="form-group">
                   <label for="ownerEmail" class="form-label">Email</label>
                   <input type="email" class="form-control" id="ownerEmail" name="ownerEmail" 
