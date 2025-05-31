@@ -59,7 +59,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $firstName = htmlspecialchars($_POST['firstName']);
     $lastName = htmlspecialchars($_POST['lastName']);
     $ownerName = trim($firstName . ' ' . $lastName);
-    $contactNum = htmlspecialchars($_POST['contactNum']);
+   $rawContact = preg_replace('/\D/', '', $_POST['contactNum']);
+    if (strlen($rawContact) === 10 && $rawContact[0] === '9') {
+        $contactNum = '0' . $rawContact; 
+    } else {
+        die("Invalid contact number. Please enter a valid 10-digit mobile number starting with 9.");
+    }
     $email = htmlspecialchars($_POST['ownerEmail']);
     $barangay = isset($_POST['barangayDropdown']) ? htmlspecialchars($_POST['barangayDropdown']) : null;
     $petType = htmlspecialchars($_POST['petType']);
