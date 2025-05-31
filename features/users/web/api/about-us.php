@@ -36,7 +36,7 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
 <div class="navbar-container">
 <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
-            <a class="navbar-brand d-none d-lg-block" href="#">
+            <a class="navbar-brand d-none d-lg-block" href="../../../../index.php">
                     <img src="../../../../assets/img/logo.png" alt="Logo" width="30" height="30">
                 </a>
 

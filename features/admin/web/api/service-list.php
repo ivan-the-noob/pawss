@@ -39,7 +39,7 @@ $conn->close();
     <!--Navigation Links-->
     <div class="navbar flex-column bg-white shadow-sm p-3 collapse d-md-flex" id="navbar">
         <div class="navbar-links">
-            <a class="navbar-brand d-none d-md-block logo-container" href="#">
+            <a class="navbar-brand d-none d-md-block logo-container" href="admin.php">
                 <img src="../../../../assets/img/logo.png" alt="Logo">
             </a>
             <a href="admin.php">
