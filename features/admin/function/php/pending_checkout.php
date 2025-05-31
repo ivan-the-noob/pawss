@@ -33,7 +33,7 @@ if ($result) {
                 'longitude' => $row['longitude'],
                 'screenshot' => $row['screenshot'],
                 'reference_id' => $row['reference_id'],
-                'products' => [], // Initialize products array
+                'products' => [], 
                 'total_amount' => 0,
             ];
         }

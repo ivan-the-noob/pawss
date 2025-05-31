@@ -145,7 +145,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     <tbody id="tableBody">
 
                         <?php
-                        include '../../../../db.php';
+                  
                         include '../../function/php/pending_checkout.php'
                         ?>
 
