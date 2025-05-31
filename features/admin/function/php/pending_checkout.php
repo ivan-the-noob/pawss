@@ -1,26 +1,26 @@
 <?php
 include '../../../../db.php';
 
-$limit = 10;  // Declare limit for pagination
-$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1; // Get the current page
-$offset = ($page - 1) * $limit; // Calculate the offset for pagination
+$limit = 10;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
 
-$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id
+$sql = "SELECT c.*, u.latitude, u.longitude, c.screenshot, c.reference_id, c.created_at
         FROM checkout c 
         LEFT JOIN users u ON c.email = u.email
-        WHERE c.status = 'orders'";
+        WHERE c.status = 'pending'
+        ORDER BY c.created_at DESC";
 $result = $conn->query($sql);
 
-
+$data = [];
 if ($result) {
-    // Loop through the query results
     while ($row = $result->fetch_assoc()) {
         $email = $row['email'];
-        $uniqueKey = $row['id']; // Use 'id' as a unique key
+        $createdAt = date('Y-m-d H:i:s', strtotime($row['created_at']));
+        $key = $email . '|' . $createdAt;
 
-        if (!isset($data[$uniqueKey])) {
-            // Initialize the data entry with an empty products array
-            $data[$uniqueKey] = [
+        if (!isset($data[$key])) {
+            $data[$key] = [
                 'id' => $row['id'],
                 'name' => $row['name'],
                 'email' => $row['email'],
@@ -32,13 +32,13 @@ if ($result) {
                 'longitude' => $row['longitude'],
                 'screenshot' => $row['screenshot'],
                 'reference_id' => $row['reference_id'],
-                'products' => [], 
+                'created_at' => $createdAt,
+                'products' => [],
                 'total_amount' => 0,
             ];
         }
 
-        // Add product details to the corresponding entry
-        $data[$uniqueKey]['products'][] = [
+        $data[$key]['products'][] = [
             'product_name' => $row['product_name'],
             'product_img' => $row['product_img'],
             'quantity' => $row['quantity'],
@@ -46,25 +46,21 @@ if ($result) {
             'sub_total' => $row['sub_total'],
         ];
 
-        // Calculate the total amount for the order
-        $data[$uniqueKey]['total_amount'] += $row['sub_total'];
+        $data[$key]['total_amount'] += $row['sub_total'];
     }
 
     foreach ($data as &$details) {
-        // Include the shipping fee in the total amount
         $details['total_amount'] += $details['shipping_fee'];
     }
 
-    // Pagination setup
     $totalRows = count($data);
     $totalPages = ceil($totalRows / $limit);
     $paginatedData = array_slice($data, $offset, $limit, true);
 
-    // Output the paginated data as table rows
     $count = $offset + 1;
     foreach ($paginatedData as $details) {
         echo "<tr>";
-        echo "<td>" . htmlspecialchars($details['id']) . "</td>";
+        echo "<td>$count</td>";
         echo "<td>" . htmlspecialchars($details['name']) . "</td>";
         echo "<td>" . htmlspecialchars($details['email']) . "</td>";
         echo "<td class='d-flex gap-2 justify-content-center'>";
@@ -78,7 +74,7 @@ if ($result) {
         data-products='" . htmlspecialchars(json_encode($details['products'])) . "'
         data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "'
         data-total-amount='" . htmlspecialchars($details['total_amount']) . "'
-        data-latitude='" . htmlspecialchars($details['latitude']) . "' 
+        data-latitude='" . htmlspecialchars($details['latitude']) . "'
         data-longitude='" . htmlspecialchars($details['longitude']) . "'
         data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
         data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>View</button>";
@@ -90,7 +86,6 @@ if ($result) {
     echo "Error: " . $conn->error;
 }
 ?>
-
 
 <?php if ($totalRows > $limit): ?>
     <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
@@ -188,7 +183,7 @@ if (isset($_GET['message'])) {
                             <label for="modalPaymentMethod">Payment Method:</label>
                             <input type="text" class="form-control form-order" id="modalPaymentMethod" readonly>
                         </div>
-                     <div id="gcashFields" style="display: none;">
+                       <div id="gcashFields" style="display: none;">
                         <div class="form-group">
                             <label for="modalScreenshot">Screenshot:</label>
                             <img id="modalScreenshot" src="" class="img-fluid screenshots" alt="Screenshot">
@@ -217,8 +212,6 @@ if (isset($_GET['message'])) {
                             }
                         });
                         </script>
-
-
                     </div>
                     
                     <div class="col-md-4">
