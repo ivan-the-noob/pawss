@@ -53,10 +53,11 @@ if (isset($_SESSION['email'])) {
   $contactNumber = htmlspecialchars($user['contact_number']);
   $homeStreet = htmlspecialchars($user['home_street']);
   $addressSearch = htmlspecialchars($user['address_search']);
-} else {
-  echo "User not logged in.";
+  } else {
+  header("Location: login.php");
   exit;
-}
+    exit;
+  }
 
 ?>
 
