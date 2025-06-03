@@ -358,7 +358,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                         <div>
                             <h5 class="mb-1">Appointment</h5>
                           <p class="mb-1"><span class="fw-bold">Service:</span> <?php echo $row['service']; ?></p>
-                          <p class="mb-1"><span class="fw-bold">Pet:</span> <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Pet:</span> <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Months'; ?></p>
                           <p class="mb-1"><span class="fw-bold">Owner:</span><?php echo $row['owner_name']; ?></p>
                           <p class="mb-1 d-none"><span class="fw-bold">Address:</span><?php echo $row['add_info']; ?></p>
                         </div>
@@ -437,7 +437,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                         <div>
                             <h5 class="mb-1">Appointment</h5>
                           <p class="mb-1"><span class="fw-bold">Service:</span> <?php echo $row['service']; ?></p>
-                          <p class="mb-1"><span class="fw-bold">Pet:</span> <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
+                          <p class="mb-1"><span class="fw-bold">Pet:</span> <?php echo $row['pet_type'] . ', ' . $row['age'] . 'Months'; ?></p>
                           <p class="mb-1"><span class="fw-bold">Owner:</span> <?php echo $row['owner_name']; ?></p>
                           <p class="mb-1 d-none"><span class="fw-bold">Address:</span><?php echo $row['add_info']; ?></p>
                         </div>
