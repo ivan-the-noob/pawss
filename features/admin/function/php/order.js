@@ -30,7 +30,11 @@ $('#viewModal').on('show.bs.modal', function (event) {
     var referenceId = button.data('reference_id');
     var shippingFee = button.data('shipping-fee');
     var totalAmount = button.data('total-amount');
-    var products = button.data('products');
+    var productName = button.data('product-name');
+var productImg = button.data('product-img');
+var quantity = button.data('quantity');
+var cost = button.data('cost');
+var subTotal = button.data('sub-total');
     var latitude = button.data('latitude');
     var longitude = button.data('longitude');
 
@@ -49,26 +53,25 @@ $('#viewModal').on('show.bs.modal', function (event) {
     modal.find('#modalTotalAmount').val(totalAmount);
     
     // Set the products inside the modal
-    var productCardHtml = '';
-    products.forEach(function (product) {
-        productCardHtml += `
-            <div class="row">
-                <div class="col-md-4">
-                    <img src="../../../../assets/img/product/${product.product_img}" class="img-fluid" alt="${product.product_name}">
-                </div>
-                <div class="col-md-8">
-                    <h5 class="card-title">${product.product_name}</h5>
-                    <div class="d-flex justify-content-between">
-                        <p class="card-text">Qty: ${product.quantity}x</p>
-                        <p class="card-text">₱${parseFloat(product.sub_total).toFixed(2)}</p>
-                   </div>
-                </div>
+  var productCardHtml = `
+    <div class="row">
+        <div class="col-md-4">
+            <img src="../../../../assets/img/product/${productImg}" class="img-fluid" alt="${productName}">
+        </div>
+        <div class="col-md-8">
+            <h5 class="card-title">${productName}</h5>
+            <div class="d-flex justify-content-between">
+                <p class="card-text">Qty: ${quantity}x</p>
+                <p class="card-text">₱${parseFloat(subTotal).toFixed(2)}</p>
             </div>
-            <hr>
-        `;
-    });
+        </div>
+    </div>
+    <hr>
+`;
 
-    modal.find('#productCards').html(productCardHtml);
+modal.find('#productCards').html(productCardHtml);
+
+
 
     // Initialize the map if coordinates exist
     if (latitude && longitude) {
