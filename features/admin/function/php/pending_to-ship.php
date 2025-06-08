@@ -14,6 +14,7 @@ $sql = "SELECT c.*, u.latitude, u.longitude
 $result = $conn->query($sql);
 
 $count = $offset + 1;
+$totalRows = 0;
 
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
