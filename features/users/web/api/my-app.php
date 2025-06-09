@@ -444,21 +444,26 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                         <div class="mt-3 mt-md-0 text-md-right">
 
                         <div class="d-flex gap-1">
-                        <p class="mb-1 status" style="background-color: 
-                            <?php 
-                                if ($row['status'] == 'finish') {
-                                    echo 'green';
-                                }
-                            ?>; color: #000;">
-                            <?php 
-                                if ($row['status'] == 'finish') {
-                                    echo 'Finished';  
-                                } else {
-                                    echo ucfirst($row['status']); // Capitalize other statuses
-                                }
-                            ?>
-                        </p>
-                        <?php if ($row['is_rated'] == 0): ?>
+                       <p class="mb-1 status" style="background-color: 
+                          <?php 
+                              if ($row['status'] == 'finish') {
+                                  echo 'green';
+                              } elseif ($row['status'] == 'cancel') {
+                                  echo 'red';
+                              }
+                          ?>; color: #000;">
+                          <?php 
+                              if ($row['status'] == 'finish') {
+                                  echo 'Finished';  
+                              } elseif ($row['status'] == 'cancel') {
+                                  echo 'Cancelled';  
+                              } else {
+                                  echo ucfirst($row['status']); 
+                              }
+                          ?>
+                      </p>
+
+                        <?php if ($row['is_rated'] == 0 && $row['status'] != 'cancel'): ?>
                           <button class="btn btn-warning btn-sm text-white fw-bold" data-bs-toggle="modal" data-bs-target="#ratingModal">
                             Rate our service
                           </button>
