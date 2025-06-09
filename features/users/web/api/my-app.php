@@ -324,7 +324,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
 <?php endif; ?>
 
     <!--Book-History Section-->
-  <section class="booked-history" id="bookedHistorySection">
+ <section class="booked-history" id="bookedHistorySection">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-12 col-24">
@@ -368,16 +368,16 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                                 if ($row['status'] == 'pending') {
                                     echo '#007bff';
                                 } elseif ($row['status'] == 'waiting') {
-                                    echo '#ffc107'; // Yellow background for waiting status
+                                    echo '#ffc107';
                                 } elseif ($row['status'] == 'on-going') {
-                                    echo '#28a745'; // Green background for on-going
+                                    echo '#28a745';
                                 }
                             ?>; color: #000;">
                             <?php 
                                 if ($row['status'] == 'waiting') {
-                                    echo 'Confirmed'; // Display "Confirmed" for waiting status
+                                    echo 'Confirmed';
                                 } else {
-                                    echo ucfirst($row['status']); // Capitalize the first letter of other statuses
+                                    echo ucfirst($row['status']);
                                 }
                             ?>
                         </p>
@@ -385,13 +385,12 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                           <p class="mb-1"><span class="fw-bold">Date of Appointment:</span> <?php echo $row['appointment_date']; ?></p>
                           <p class="mb-1"><span class="fw-bold">Booked Time:</span>  <?php echo date('g:i A', strtotime($row['created_at'])); ?> </p>
                           <?php if ($row['status'] === 'pending'): ?>
-                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal<?php echo $row['id']; ?>">
+                            <button class="btn btn-danger cancel-btn" data-bs-toggle="modal" data-bs-target="#cancelModal<?php echo $row['id']; ?>">
                               Cancel
                             </button>
                           <?php endif; ?>
 
-
-                          <!-- Modal -->
+                          <!-- Cancel Modal -->
                           <div class="modal fade" id="cancelModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="cancelModalLabel<?php echo $row['id']; ?>" aria-hidden="true">
                             <div class="modal-dialog modal-md modal-dialog-centered">
                               <form action="../../function/php/appointment_cancel.php" method="POST">
@@ -408,7 +407,6 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                                     </div>
                                   </div>
                                   <div class="modal-footer">
-  
                                     <button type="submit" name="cancel_appointment" class="btn btn-danger">Confirm Cancel</button>
                                   </div>
                                 </div>
@@ -422,12 +420,11 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                   }
                 } 
                 
-                $conn->close();
-                ?>
-               <?php 
-                require '../../../../db.php';
-                $sql = "SELECT * FROM appointment WHERE status IN ('cancel', 'finish')";
-                $result = $conn->query($sql);
+                $sql = "SELECT * FROM appointment WHERE status IN ('cancel', 'finish') AND email = ? ORDER BY appointment_date DESC";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("s", $email);
+                $stmt->execute();
+                $result = $stmt->get_result();
                 
                 if ($result->num_rows > 0) {
                   while ($row = $result->fetch_assoc()) {
@@ -464,37 +461,37 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                       </p>
 
                         <?php if ($row['is_rated'] == 0 && $row['status'] != 'cancel'): ?>
-                          <button class="btn btn-warning btn-sm text-white fw-bold" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                          <button class="btn btn-warning btn-sm text-white fw-bold rate-btn" data-bs-toggle="modal" data-bs-target="#ratingModal<?php echo $row['id']; ?>">
                             Rate our service
                           </button>
                         <?php endif; ?>
                        
 
                         <!-- Rating Modal -->
-                        <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="ratingModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="ratingModalLabel<?php echo $row['id']; ?>" aria-hidden="true">
                           <div class="modal-dialog modal-dialog-centered">
                             <form action="../../function/php/submit_rating.php" method="POST">
                             <input type="hidden" name="appointment_id" value="<?php echo $row['id']; ?>">
 
                               <div class="modal-content">
                                 <div class="modal-header">
-                                  <h5 class="modal-title" id="ratingModalLabel">Rate Our Service</h5>
+                                  <h5 class="modal-title" id="ratingModalLabel<?php echo $row['id']; ?>">Rate Our Service</h5>
                                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 
                                 <div class="modal-body">
                                   <!-- Star Rating -->
                                   <div class="mb-3 text-center">
-                                    <input type="hidden" name="rating" id="ratingValue">
+                                    <input type="hidden" name="rating" id="ratingValue<?php echo $row['id']; ?>">
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                                      <i class="fa-regular fa-star fa-2x star" data-value="<?php echo $i; ?>" style="cursor:pointer; color: #ccc;"></i>
+                                      <i class="fa-regular fa-star fa-2x star" data-value="<?php echo $i; ?>" data-modal="<?php echo $row['id']; ?>" style="cursor:pointer; color: #ccc;"></i>
                                     <?php endfor; ?>
                                   </div>
 
                                   <!-- Comment -->
                                   <div class="mb-3">
-                                    <label for="comment" class="form-label fw-bold">Comments (optional)</label>
-                                    <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Tell us what you think..."></textarea>
+                                    <label for="comment<?php echo $row['id']; ?>" class="form-label fw-bold">Comments (optional)</label>
+                                    <textarea name="comment" id="comment<?php echo $row['id']; ?>" class="form-control" rows="3" placeholder="Tell us what you think..."></textarea>
                                   </div>
                                 </div>
                                 
@@ -514,9 +511,6 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                         <?php if ($row['status'] == 'cancel'): ?>
                             <p class="mb-1"><span class="fw-bold">Cancel reason:</span> <?php echo $row['cancel_reason']; ?></p>
                         <?php endif; ?>
-
-                      
-                        
                         </div>
                       </div>
                     </li>
@@ -526,28 +520,6 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                 
                 $conn->close();
                 ?>
-
-                <script>
-                  const stars = document.querySelectorAll('.star');
-                  const ratingValue = document.getElementById('ratingValue');
-
-                  stars.forEach((star, index) => {
-                    star.addEventListener('click', () => {
-                      ratingValue.value = star.dataset.value;
-                      stars.forEach((s, i) => {
-                        s.classList.remove('fa-solid');
-                        s.classList.add('fa-regular');
-                        s.style.color = '#ccc';
-                        if (i < star.dataset.value) {
-                          s.classList.remove('fa-regular');
-                          s.classList.add('fa-solid');
-                          s.style.color = '#ffc107';
-                        }
-                      });
-                    });
-                  });
-                </script>
-
               </ul>
               <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center mt-3" id="paginationControls">
@@ -561,6 +533,75 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
       </div>
     </div>
   </section>
+
+<script>
+// Event delegation for modals
+document.addEventListener('click', function(e) {
+  // Handle cancel buttons
+  if (e.target.classList.contains('cancel-btn')) {
+    e.preventDefault();
+    const modalId = e.target.getAttribute('data-bs-target');
+    const modal = new bootstrap.Modal(document.querySelector(modalId));
+    modal.show();
+  }
+  
+  // Handle rating buttons
+  if (e.target.classList.contains('rate-btn')) {
+    e.preventDefault();
+    const modalId = e.target.getAttribute('data-bs-target');
+    const modal = new bootstrap.Modal(document.querySelector(modalId));
+    modal.show();
+  }
+  
+  // Handle star ratings
+  if (e.target.classList.contains('star')) {
+    const star = e.target;
+    const modalId = star.getAttribute('data-modal');
+    const starsContainer = star.closest('.mb-3');
+    const ratingValue = document.getElementById('ratingValue' + modalId);
+    const stars = starsContainer.querySelectorAll('.star');
+    
+    const value = star.getAttribute('data-value');
+    ratingValue.value = value;
+    
+    stars.forEach((s, i) => {
+      s.classList.remove('fa-solid');
+      s.classList.add('fa-regular');
+      s.style.color = '#ccc';
+      if (i < value) {
+        s.classList.remove('fa-regular');
+        s.classList.add('fa-solid');
+        s.style.color = '#ffc107';
+      }
+    });
+  }
+});
+
+// Pagination handling
+document.querySelectorAll('#paginationControls .page-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const page = this.getAttribute('data-page');
+    // Load content for the selected page via AJAX
+    loadPageContent(page);
+  });
+});
+
+function loadPageContent(page) {
+  // Implement your AJAX call here to load the content for the selected page
+  // After loading the content, the event delegation will continue to work
+  console.log('Loading page', page);
+  
+  // Example AJAX implementation:
+  /*
+  fetch(`your_php_script.php?page=${page}`)
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('historyList').innerHTML = html;
+    });
+  */
+}
+</script>
  
 
   <!--Book-History Modal Section-->
