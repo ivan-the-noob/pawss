@@ -451,7 +451,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
                               } elseif ($row['status'] == 'cancel') {
                                   echo 'red';
                               }
-                          ?>; color: #000;">
+                          ?>; color: #fff;">
                           <?php 
                               if ($row['status'] == 'finish') {
                                   echo 'Finished';  
