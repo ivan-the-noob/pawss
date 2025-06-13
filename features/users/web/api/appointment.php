@@ -414,7 +414,7 @@ $conn->close();
               </div>
               <div class="form-group">
                 <label for="breed" class="form-label">Breed</label>
-                <input type="text" class="form-control" id="breed" name="breed" placeholder="Husky">
+                <input type="text" class="form-control" id="breed" name="breed" placeholder="Husky" required>
               </div>
               <div class="form-group">
                 <label for="age" class="form-label">Age</label>
@@ -471,8 +471,9 @@ $conn->close();
 <div class="form-group">
     <select class="form-control" id="service" name="service" required onchange="updatePayment()" required>
         <!-- Clinic Services -->
-        <optgroup label="Clinic Services">
         <option value="">Select a service</option>
+        <optgroup label="Clinic Services">
+       
             <?php foreach ($clinic_services as $service): ?>
                 <option 
                     value="<?php echo htmlspecialchars($service['service_name']); ?>" 
