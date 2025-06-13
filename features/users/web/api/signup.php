@@ -33,14 +33,12 @@ include '../../function/authentication/sign-up.php';
                             <div class="mb-3">
                                 <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
                             </div>
-                            <div class="forgot-password">
-                                
-                            </div>
+                            <div class="forgot-password"></div>
                             <div class="mb-3">
                                 <input type="text" name="contact_number" class="form-control" placeholder="Enter contact number" required>
                             </div>
                             <div class="mb-3">
-                                <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
                             </div>
                             <div class="form-check mb-3">
                                 <input type="checkbox" class="form-check-input" id="showPassword">
@@ -50,10 +48,9 @@ include '../../function/authentication/sign-up.php';
                             <div class="text-center mt-3">
                                 <a href="login.php">Have an account? <span class="sign-up">Login</span></a>
                             </div>
-                            <div class="forgot-password">
-                             
-                            </div>
+                            <div class="forgot-password"></div>
                         </form>
+
                         <script>
                             document.getElementById('showPassword').addEventListener('change', function () {
                                 const passwordInput = document.getElementById('password');
