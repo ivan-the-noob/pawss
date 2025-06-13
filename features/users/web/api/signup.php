@@ -37,7 +37,7 @@ include '../../function/authentication/sign-up.php';
                             <div class="mb-3">
                                 <input type="text" name="contact_number" class="form-control" placeholder="Enter contact number" required>
                             </div>
-                            <div class="mb-3">
+                           <div class="mb-3">
                                 <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
                             </div>
                             <div class="form-check mb-3">
@@ -51,17 +51,21 @@ include '../../function/authentication/sign-up.php';
                             <div class="forgot-password"></div>
                         </form>
 
-                        <script>
-                            document.getElementById('showPassword').addEventListener('change', function () {
-                                const passwordInput = document.getElementById('password');
-                                passwordInput.type = this.checked ? 'text' : 'password';
-                            });
-                        </script>
+                       
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+
+    <script>
+        document.getElementById('showPassword').addEventListener('change', function () {
+            const passwordInput = document.getElementById('password');
+            passwordInput.type = this.checked ? 'text' : 'password';
+        });
+    </script>
+
 
     <!-- Ivan updated this on June 13 -->
 
