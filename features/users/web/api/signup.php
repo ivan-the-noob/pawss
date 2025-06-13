@@ -54,11 +54,19 @@ include '../../function/authentication/sign-up.php';
                              
                             </div>
                         </form>
+                        <script>
+                            document.getElementById('showPassword').addEventListener('change', function () {
+                                const passwordInput = document.getElementById('password');
+                                passwordInput.type = this.checked ? 'text' : 'password';
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Ivan updated this on June 13 -->
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

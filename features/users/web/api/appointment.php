@@ -469,7 +469,7 @@ $conn->close();
 
 <!-- HTML Select Element -->
 <div class="form-group">
-    <select class="form-control" id="service" name="service" required onchange="updatePayment()">
+    <select class="form-control" id="service" name="service" required onchange="updatePayment()" required>
         <!-- Clinic Services -->
         <optgroup label="Clinic Services">
         <option value="">Select a service</option>
