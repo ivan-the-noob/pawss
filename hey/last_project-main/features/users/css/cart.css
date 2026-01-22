@@ -1,0 +1,364 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  margin: 0;
+}
+
+body{
+  background-color: #FBF9FA;
+}
+
+.wave-container{
+    background-color: #FBF9FA;
+    padding-bottom: 0;
+}
+.wave-container1{
+    background-color: #FBF9FA;
+    padding-top: 0;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.header-cart{
+  background-color: transparent;
+  border: none;
+}
+
+.material-symbols-outlined{
+  font-size: 30px !important;
+}
+
+/* navbar */
+
+.navbar-toggler{
+    margin-left: auto;
+}
+.navbar-brand img{
+    width: 80px;
+    height: 50px;
+}
+.navbar-toggler{
+    border: none;
+}
+
+.navbar-toggler:focus {
+    border: none;
+}
+
+.navbar-container{
+  width: 100%; 
+  height: auto;
+  padding: 15px 0 10px 0;
+
+}
+
+.navbar{
+    background-color: #FBF9FA;
+    border-radius: 50px;
+    margin: auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    width: 70%;
+    
+}
+
+.navbar .profile{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid #7A3015;
+}
+
+.navbar a{
+  color: #000;
+
+}
+
+.navbar a:hover{
+  color: orange;
+}
+
+.dropdown button{
+  border: none !important;
+  background-color: transparent !important;
+}
+.btn-theme{
+    background-color: #7A3015;
+    color: #fff !important;
+    border: none;
+    border-radius: 3px;
+    padding: 10px 15px;
+    text-decoration: none;
+}
+
+.btn-theme-profile{
+  cursor: pointer;
+}
+
+.first-dropdown .dropdown-menu{
+  padding: 15px;
+  overflow-y: auto;
+  height: 40vh;
+}
+.fa-shopping-cart{
+  font-size: 24px;
+  color: #000;
+}
+.cart-width{
+  width: 400px !important;
+}
+
+.cart-img{
+  height: 100%;
+  border-radius: 3px;
+}
+
+.dropdown-menu[data-bs-popper] {
+  right: 0 !important;
+}
+
+.custom-center-dropdown {
+  left: 40%;
+  transform: translateX(-40%);
+  position: absolute;
+}
+.third-ul li{
+  border: 2px solid #000;
+  margin: 5px 2px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.p-name{
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+.header-cart {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.header-cart .material-symbols-outlined {
+  font-size: 24px; 
+}
+
+.header-cart .badge {
+  position: absolute;
+  top: -5px;  
+  right: -5px;  
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  transform: translate(50%, -50%);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Fix for floating navbar on mobile */
+@media (max-width: 991px) {
+    .navbar-container {
+        position: relative;
+        z-index: 1050;
+    }
+    
+    .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to right, #FFEDD5 5%, #FBF9FA 75%);
+        z-index: 1040;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+        border-radius: 0 0 50px 50px;
+        padding: 15px;
+        margin-top: 10px;
+    }
+    
+    /* Ensure the navbar itself doesn't move */
+    .navbar {
+        position: relative;
+    }
+    
+    /* Adjust the navbar toggler position if needed */
+    .navbar-toggler {
+        margin-left: auto;
+    }
+    
+    /* Style the nav items */
+    .navbar-nav {
+        padding: 10px 0;
+    }
+    
+    .nav-item {
+        text-align: center;
+        margin: 5px 0;
+    }
+    
+    /* Style the right-side buttons */
+    .d-flex.ml-auto {
+        justify-content: center !important;
+    }
+    
+    /* Profile dropdown adjustments */
+    .second-dropdown {
+        margin: 0 auto;
+    }
+}
+
+/* Optional: Add a backdrop when navbar is open */
+.navbar-collapse.show::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1039;
+    display: none;
+}
+
+/* navbar end */
+
+/*Container Section */
+
+.container h5{
+    font-size: 24px;
+}
+
+.order-button{
+    background-color: #EDEBEB;
+    padding: 15px 10px;
+    border-radius: 10px;
+}
+
+.order-button button{
+    background-color: transparent;
+    border: transparent;
+    font-weight:400;
+    color: #000;
+    padding: 12px 40px;
+
+}
+
+.button-highlight{
+    background-color: #7A3015 !important;
+    color: #fff !important;
+    font-weight: 500 !important;
+    padding: 15px 40px;
+    border-radius: 15px;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .total-row {
+    font-weight: bold;
+  }
+
+  .price {
+    color: #7A3015; 
+    font-weight: bold;
+  }
+
+  .cart-item{
+    width: 100%;
+  }
+
+  .cart-item .card{
+    width: 100%;
+  }
+
+  .check-out{
+    display: flex;
+    justify-content: center;
+  }
+
+
+  .check-out button{
+    width: 90%;
+    background-color: #7A3015;
+    border: none;
+  }
+
+  .check-out button:hover{
+    background-color: #943512;
+  }
+
+  .cart-content{
+    height: 50vh !important;
+    overflow-y: auto !important;
+    background-color: green !important;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #7A3015;
+    background-color: #fff;
+    cursor: pointer;
+    appearance: none; 
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    margin: auto;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #7A3015; 
+    border-color: #7A3015;    
+}
+
+input[type="checkbox"]:focus {
+    outline: 2px solid #7A3015;
+}
+
+.cart-container{
+  border: 2px solid #7A3015;
+  border-radius: 10px;
+  height: 90vh;
+}
+
+.card-contents{
+  border: none !important;
+  margin: 0 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.card-box{
+  height: 80vh;
+  overflow-y: auto;
+}
+
+.product-card-item{
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#product-card{
+    max-height: 160px;
+    overflow-y: auto;
+}
+
+ 
+/*Container Section End*/
+
+.dropdown-menu .dropdown-item {
+  white-space: normal;  
+  overflow: hidden;   
+  word-wrap: break-word; 
+  max-width: 280px;   
+  }
+

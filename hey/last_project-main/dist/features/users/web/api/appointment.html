@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/appointment.9a927a93.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
+
+
+<script src="/appointment.9a927a93.js"></script></head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand d-none d-md-block" href="#">
+        <img src="/logo.fb412750.png" alt="Logo" width="30" height="30">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="stroke: black; fill: none;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Appointment</a>
+          </li>
+        </ul>
+
+        <div class="d-flex ml-auto">
+          <button class="btn-theme" type="button">Login</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+
+  <section class="appointment">
+    <div class="content py-5 date">
+      <div class="col-md-8 col-11 app">
+        <div class="appoints">
+          <button>Appointment Availability</button>
+          <button class="appoint" id="toggleViewBtn">My Appointment</button>
+        </div>
+        <div class="card card-outline card-primary rounded-0 shadow" id="appointmentSection">
+          <div class="card-body">
+            <div class="calendar-container">
+              <div id="appointmentCalendar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="dayModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header d-flex justify-content-between">
+            <h5 class="modal-title" id="modalLabel">Day Details</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="sched">
+              <p>Appointment Schedule</p>
+              <div id="modalContent" class="col-6 col-md-4"></div>
+              <div class="line"></div>
+            </div>
+            <div class="container">
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>Owner Information</h6>
+                  <div class="mb-3">
+                    <label for="ownerName" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="ownerName" placeholder="Racel Mae Loquellano">
+                  </div>
+                  <div class="mb-3">
+                    <label for="contactNum" class="form-label">Contact #</label>
+                    <input type="number" class="form-control" id="contactNum" placeholder="09123456789">
+                  </div>
+                  <div class="mb-3">
+                    <label for="ownerEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="ownerEmail" placeholder="bardyardpets@gmail.com">
+                  </div>
+                  <div class="mb-3">
+                    <label for="ownerAddress" class="form-label">Address</label>
+                    <textarea class="form-control" id="ownerAddress" rows="3" placeholder="2nd Floor A & A Building Magdiwang Highway"></textarea>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <h6>Pet Information</h6>
+                  <div class="mb-3">
+                    <label for="petType" class="form-label">Pet Type</label>
+                    <select class="form-control" id="petType">
+                      <option>Cat</option>
+                      <option>Dog</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="breed" class="form-label">Breed</label>
+                    <input type="text" class="form-control" placeholder="husky" id="breed">
+                  </div>
+                  <div class="mb-3">
+                    <label for="age" class="form-label">Age</label>
+                    <input type="number" class="form-control" placeholder="1 Yr Old" id="age">
+                  </div>
+                  <div class="mb-3">
+                    <label for="serviceCategory" class="form-label">Service Category</label>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="serviceCategoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Select Category
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="serviceCategoryDropdown">
+                        <a class="dropdown-item" href="#" data-value="medical">Medical</a>
+                        <a class="dropdown-item" href="#" data-value="nonMedical">Non-Medical</a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="service" class="form-label">Service</label>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="serviceDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Select Service
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="serviceDropdown">
+                        <!-- Medical Services -->
+                        <div class="medical-services">
+                          <a class="dropdown-item" href="#" data-value="1200.00">Diagnostic and Therapeutic -
+                            ₱1200.00</a>
+                          <a class="dropdown-item" href="#" data-value="850.00">Preventive Health Care - ₱850.00</a>
+                          <a class="dropdown-item" href="#" data-value="1500.00">Internal Medicine Consults -
+                            ₱1500.00</a>
+                          <a class="dropdown-item" href="#" data-value="2500.00">Surgical Services - ₱2500.00</a>
+                          <a class="dropdown-item" href="#" data-value="300.00">Pharmacy - ₱300.00</a>
+                          <a class="dropdown-item" href="#" data-value="500.00">House Visit - ₱500.00</a>
+                        </div>
+                        <!-- Non-Medical Services -->
+                        <div class="nonMedical-services">
+                          <a class="dropdown-item" href="#" data-value="999.00">Grooming - ₱999.00</a>
+                          <a class="dropdown-item" href="#" data-value="700.00">Boarding - ₱700.00</a>
+                          <a class="dropdown-item" href="#" data-value="300.00">Pet Supplies - ₱300.00</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-3">
+                    <label for="totalPayment" class="form-label">Total Payment</label>
+                    <p id="totalPayment">₱0.00</p>
+                  </div>
+                  <div class="mt-3">
+                    <button class="book-save">Book Appointment</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="booked-history py-5" id="bookedHistorySection" style="display: none;">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-12 col-24">
+          <div class="card card-outline card-primary rounded-0 shadow">
+            <div class="card-header rounded-0">
+              <h4 class="card-title text-center">Booked History</h4>
+            </div>
+            <div class="tab-bar">
+              <button id="currentBtn">Current Appointment</button>
+              <button class="none"> |</button>
+              <button id="pastBtn">Past Appointment</button>
+            </div>
+            <div class="card-body">
+              <ul class="list-group" id="historyList">
+                <li class="list-group-item current-appointment">
+                  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                    <div>
+                      <h5 class="mb-1">Appointment with Dr. John Doe</h5>
+                      <p class="mb-1">Service: Grooming</p>
+                      <p class="mb-1">Pet: Husky, 1 Yr Old</p>
+                      <p>Owner: Racel Mae Loquellano</p>
+                    </div>
+                    <div class="mt-3 mt-md-0 text-md-right">
+                      <p class="mb-1">Date: 2024-07-10</p>
+                      <p class="mb-1">Time: 10:00 AM</p>
+                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal1">View Info</button>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item past-appointment">
+                  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                    <div>
+                      <h5 class="mb-1">Appointment with Dr. Jane Smith</h5>
+                      <p class="mb-1">Service: Health Checkup</p>
+                      <p class="mb-1">Pet: Cat, 2 Yr Old</p>
+                      <p>Owner: John Doe</p>
+                    </div>
+                    <div class="mt-3 mt-md-0 text-md-right">
+                      <p class="mb-1">Date: 2024-06-20</p>
+                      <p class="mb-1">Time: 2:00 PM</p>
+                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal2">View Info</button>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item past-appointment">
+                  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                    <div>
+                      <h5 class="mb-1">Appointment with Dr. Alan Brown</h5>
+                      <p class="mb-1">Service: Vaccination</p>
+                      <p class="mb-1">Pet: Dog, 3 Yr Old</p>
+                      <p>Owner: Emily Clark</p>
+                    </div>
+                    <div class="mt-3 mt-md-0 text-md-right">
+                      <p class="mb-1">Date: 2024-05-15</p>
+                      <p class="mb-1">Time: 9:00 AM</p>
+                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal3">View Info</button>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item past-appointment">
+                  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                    <div>
+                      <h5 class="mb-1">Appointment with Dr. ivan</h5>
+                      <p class="mb-1">Service: Surgery</p>
+                      <p class="mb-1">Pet: Rabbit, 2 Yr Old</p>
+                      <p>Owner: Mark Johnson</p>
+                    </div>
+                    <div class="mt-3 mt-md-0 text-md-right">
+                      <p class="mb-1">Date: 2024-04-22</p>
+                      <p class="mb-1">Time: 11:00 AM</p>
+                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal4">View Info</button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center mt-3" id="paginationControls">
+                  <li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#" data-page="2">2</a></li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+
+
+  <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="modalLabel1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between">
+          <h5 class="modal-title" id="modalLabel1">Appointment Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h5>Appointment with Dr. John Doe</h5>
+          <p>Service: Grooming</p>
+          <p>Pet: Husky, 1 Yr Old</p>
+          <p>Date: 2024-07-10</p>
+          <p>Time: 10:00 AM</p>
+          <p>Owner: Racel Mae Loquellano</p>
+          <hr>
+          <h6>Medical Record</h6>
+          <p>Last Vaccination: 2024-05-01</p>
+          <p>Allergies: None</p>
+          <p>Previous Illnesses: None</p>
+          <p>Medications: None</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="modalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between">
+          <h5 class="modal-title" id="modalLabel2">Appointment Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h5>Appointment with Dr. Jane Smith</h5>
+          <p>Service: Health Checkup</p>
+          <p>Pet: Cat, 2 Yr Old</p>
+          <p>Date: 2024-06-20</p>
+          <p>Time: 2:00 PM</p>
+          <p>Owner: John Doe</p>
+          <hr>
+          <h6>Medical Record</h6>
+          <p>Last Vaccination: 2024-04-15</p>
+          <p>Allergies: Fish</p>
+          <p>Previous Illnesses: Skin Infection</p>
+          <p>Medications: Antibiotics</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="modalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between">
+          <h5 class="modal-title" id="modalLabel3">Appointment Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h5>Appointment with Dr. Alan Brown</h5>
+          <p>Service: Vaccination</p>
+          <p>Pet: Dog, 3 Yr Old</p>
+          <p>Date: 2024-05-15</p>
+          <p>Time: 9:00 AM</p>
+          <p>Owner: Emily Clark</p>
+          <hr>
+          <h6>Medical Record</h6>
+          <p>Last Vaccination: 2024-03-20</p>
+          <p>Allergies: None</p>
+          <p>Previous Illnesses: Kennel Cough</p>
+          <p>Medications: Cough Syrup</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modal4" tabindex="-1" role="dialog" aria-labelledby="modalLabel4" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between">
+          <h5 class="modal-title" id="modalLabel4">Appointment Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h5>Appointment with Dr. Sarah White</h5>
+          <p>Service: Surgery</p>
+          <p>Pet: Rabbit, 2 Yr Old</p>
+          <p>Date: 2024-04-22</p>
+          <p>Time: 11:00 AM</p>
+          <p>Owner: Mark Johnson</p>
+          <hr>
+          <h6>Medical Record</h6>
+          <p>Last Vaccination: 2024-02-10</p>
+          <p>Allergies: Carrots</p>
+          <p>Previous Illnesses: None</p>
+          <p>Medications: Painkillers</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <button id="chat-bot-button" onclick="toggleChat()">
+    <i class="fa-solid fa-headset"></i>
+  </button>
+
+  <div id="chat-interface" class="hidden">
+    <div id="chat-header">
+      <p>Amazing Day! How may I help you?</p>
+      <button onclick="toggleChat()">X</button>
+    </div>
+    <div id="chat-body">
+      <div class="button-bot">
+        <button>How to book?</button>
+        <button>?</button>
+        <button>How to book?</button>
+        <button>How to book?</button>
+        <button>How to book?</button>
+        <button>How to book?</button>
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="admin mt-3">
+      <div class="admin-chat">
+        <img src="/vet logo.5177bd72.jpg" alt="Admin">
+        <p>Admin</p>
+      </div>
+      <p class="text">Hello, I am Chat Bot. Please Ask me a question just by pressing the question buttons.</p>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="/pagination-history.d1f5bce9.js"></script>
+<script src="/calendar.32bf4cfc.js"></script>
+<script src="/toggle-appointment.8e0399de.js"></script>
+<script src="/tab-bar.692d8419.js"></script>
+<script src="/service-dropdown.60cb78a0.js"></script>
+<script src="/chatbot-toggle.2f459eae.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</html>

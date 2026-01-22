@@ -1,0 +1,19 @@
+CREATE TABLE `checkout` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL,
+    `contact_num` VARCHAR(20) NOT NULL,
+    `address_search` TEXT NOT NULL,
+    `payment_method` ENUM('cash', 'gcash') NOT NULL,
+    `screenshot` VARCHAR(255) NULL,
+    `reference_id` VARCHAR(255) NULL,
+    `product_name` VARCHAR(255) NOT NULL,
+    `size` VARCHAR(50) NOT NULL,
+    `quantity` INT DEFAULT 1,
+    `cost` DECIMAL(10, 2) NOT NULL,
+    `sub_total` DECIMAL(10, 2) NOT NULL,
+    `shipping_fee` DECIMAL(10, 2) DEFAULT 69.00,
+    `total_amount` DECIMAL(10, 2) NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
